@@ -685,3 +685,100 @@ setInterval(() => {
 checkBadges();
 save();
 render();
+
+
+// My Life Plus — incremental feature layer (keeps existing data and workflows).
+const originalRender = render;
+const plusDefaults = { goals: [], journal: {}, theme: 'light', waterTarget: 8 };
+state.goals = Array.isArray(state.goals) ? state.goals : [];
+state.journal = state.journal && typeof state.journal === 'object' ? state.journal : {};
+state.settings = { ...plusDefaults, ...(state.settings || {}) };
+
+function plusEscape(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function plusSave() {
+  localStorage.setItem('myLifeState', JSON.stringify(state));
+}
+function plusRender() {
+  originalRender();
+  document.documentElement.dataset.theme = state.settings.theme;
+  const main = document.querySelector('.main-content');
+  if (!main || document.getElementById('plus-tools')) return;
+  const section = document.createElement('section');
+  section.id = 'plus-tools';
+  section.className = 'plus-grid';
+  section.innerHTML =
+    '<div class="panel plus-panel" id="plus-goals">' +
+      '<div class="plus-heading"><div><span class="eyebrow">YOUR BIG PICTURE</span><h2>🎯 هدف‌های من</h2><p>هدف‌های مهمت رو ثبت کن و قدم‌به‌قدم جلو برو.</p></div><span class="plus-chip">' + state.goals.filter(g => g.done).length + ' / ' + state.goals.length + ' انجام‌شده</span></div>' +
+      '<form id="plus-goal-form" class="plus-form"><input name="title" maxlength="90" placeholder="مثلاً: یادگیری یک مهارت جدید..." required><button>افزودن هدف +</button></form>' +
+      '<div class="plus-goal-list">' + (state.goals.length ? state.goals.map(g => '<div class="plus-goal ' + (g.done ? 'done' : '') + '"><button data-plus="goal-toggle" data-id="' + g.id + '">' + (g.done ? '✓' : '○') + '</button><span>' + plusEscape(g.title) + '</span><button class="remove" data-plus="goal-delete" data-id="' + g.id + '">×</button></div>').join('') : '<div class="plus-empty">هنوز هدفی ثبت نکردی؛ اولین هدفت رو اضافه کن ✨</div>') + '</div>' +
+    '</div>' +
+    '<div class="panel plus-panel" id="plus-journal">' +
+      '<div class="plus-heading"><div><span class="eyebrow">DAILY REFLECTION</span><h2>📔 ژورنال روزانه</h2><p>اتفاق‌ها، ایده‌ها و چیزهایی که یاد گرفتی.</p></div><span class="plus-chip">ذخیره خودکار</span></div>' +
+      '<textarea id="plus-journal-input" placeholder="امروز چه چیزی برات ارزشمند بود؟">' + plusEscape(state.journal[state.date] || '') + '</textarea>' +
+      '<div class="plus-journal-foot"><span id="plus-journal-status">اطلاعات فقط روی همین دستگاه ذخیره می‌شود.</span><span id="plus-journal-count">' + (state.journal[state.date] || '').length + ' کاراکتر</span></div>' +
+    '</div>' +
+    '<div class="panel plus-panel plus-backup">' +
+      '<div class="plus-heading"><div><span class="eyebrow">YOUR DATA, YOUR CONTROL</span><h2>🛡️ مدیریت اطلاعات</h2><p>از اطلاعاتت نسخه پشتیبان بگیر یا آن را بازیابی کن.</p></div></div>' +
+      '<div class="plus-actions"><button id="plus-export">↓ دریافت نسخه پشتیبان</button><label class="plus-import">↑ بازیابی نسخه پشتیبان<input id="plus-import-file" type="file" accept="application/json"></label><button id="plus-theme">' + (state.settings.theme === 'dark' ? '☀ حالت روشن' : '☾ حالت تاریک') + '</button></div>' +
+      '<small class="plus-note">پیشنهاد: هر چند وقت یک‌بار از اطلاعاتت خروجی بگیر. پاک‌کردن داده‌های مرورگر می‌تواند اطلاعات محلی را حذف کند.</small>' +
+    '</div>';
+  const footer = main.querySelector('.footer');
+  if (footer) main.insertBefore(section, footer);
+  const form = document.getElementById('plus-goal-form');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const title = new FormData(form).get('title').trim();
+    if (!title) return;
+    state.goals.push({ id: Date.now(), title, done: false });
+    plusSave(); plusRender(); showToast('هدف جدید ثبت شد 🎯');
+  });
+  section.querySelectorAll('[data-plus]').forEach(button => button.addEventListener('click', () => {
+    const id = Number(button.dataset.id);
+    if (button.dataset.plus === 'goal-toggle') {
+      const goal = state.goals.find(g => g.id === id);
+      if (goal) goal.done = !goal.done;
+    } else {
+      state.goals = state.goals.filter(g => g.id !== id);
+    }
+    plusSave(); plusRender();
+  }));
+  const journal = document.getElementById('plus-journal-input');
+  journal.addEventListener('input', () => {
+    state.journal[state.date] = journal.value;
+    state.notes = journal.value;
+    plusSave();
+    document.getElementById('plus-journal-status').textContent = 'ذخیره شد ✓';
+    document.getElementById('plus-journal-count').textContent = journal.value.length + ' کاراکتر';
+  });
+  document.getElementById('plus-export').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url; link.download = 'my-life-backup-' + state.date + '.json';
+    link.click(); URL.revokeObjectURL(url);
+    showToast('نسخه پشتیبان آماده شد');
+  });
+  document.getElementById('plus-import-file').addEventListener('change', event => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        if (!imported || !Array.isArray(imported.tasks) || !Array.isArray(imported.habits)) throw new Error('invalid');
+        if (!confirm('اطلاعات فعلی با نسخه پشتیبان جایگزین شود؟')) return;
+        state = { ...state, ...imported, settings: { ...state.settings, ...(imported.settings || {}) } };
+        plusSave(); plusRender(); showToast('اطلاعات با موفقیت بازیابی شد');
+      } catch { showToast('فایل انتخاب‌شده معتبر نیست'); }
+    };
+    reader.readAsText(file);
+  });
+  document.getElementById('plus-theme').addEventListener('click', () => {
+    state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
+    plusSave(); plusRender();
+  });
+}
+render = function() { plusRender(); };
+render();
