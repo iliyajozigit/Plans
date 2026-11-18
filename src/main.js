@@ -138,6 +138,8 @@ function getHabitPercent() {
   );
 }
 
+let activeView = 'dashboard';
+
 function render() {
   const completedTasks = state.tasks.filter(t => t.done).length;
   const completedHabits = state.habits.filter(h => h.done).length;
@@ -158,14 +160,13 @@ function render() {
 
         <nav class="navigation">
           <p class="nav-label">فضای شخصی</p>
-          <a class="nav-item active" href="#dashboard">▦ <span>داشبورد</span></a>
-          <a class="nav-item" href="#tasks">☑ <span>وظایف من</span></a>
-          <a class="nav-item" href="#habits">◈ <span>عادت‌ها</span></a>
-          <a class="nav-item" href="#achievements">🏆 <span>دستاوردها</span></a>
-
-          <p class="nav-label">ابزارها</p>
-          <a class="nav-item" href="#focus">◷ <span>تمرکز</span></a>
-          <a class="nav-item" href="#notes">✎ <span>یادداشت‌ها</span></a>
+          <a class="nav-item active" href="#dashboard" data-view="dashboard"><span class="nav-symbol">▦</span><span>نمای کلی</span></a>
+          <a class="nav-item" href="#planner" data-view="planner"><span class="nav-symbol">☑</span><span>برنامه‌ریزی</span></a>
+          <a class="nav-item" href="#growth" data-view="growth"><span class="nav-symbol">✧</span><span>رشد من</span></a>
+          <p class="nav-label">ابزارهای من</p>
+          <a class="nav-item" href="#focus" data-view="focus"><span class="nav-symbol">◷</span><span>تمرکز</span></a>
+          <a class="nav-item" href="#journal" data-view="journal"><span class="nav-symbol">✎</span><span>دفتر شخصی</span></a>
+          <a class="nav-item" href="#settings" data-view="settings"><span class="nav-symbol">⚙</span><span>تنظیمات</span></a>
         </nav>
 
         <div class="sidebar-bottom">
@@ -196,12 +197,13 @@ function render() {
           </div>
         </header>
 
+        <section class="page-view ${activeView === 'dashboard' ? 'active' : ''}" data-page="dashboard">
         <section class="hero-card">
           <div class="hero-content">
             <span class="hero-label">A NEW DAY, A NEW CHANCE</span>
             <h2>هر روز، یک قدم<br>بهتر از دیروز باش.</h2>
             <p>پیشرفت‌های کوچک، در طول زمان نتایج بزرگی می‌سازند.</p>
-            <a href="#tasks" class="hero-button">
+            <a href="#planner" data-view="planner" class="hero-button">
               شروع برنامه امروز <span>←</span>
             </a>
           </div>
@@ -293,6 +295,10 @@ function render() {
           </div>
         </section>
 
+        </section>
+
+        <section class="page-view ${activeView === 'planner' ? 'active' : ''}" data-page="planner">
+          <div class="page-intro"><span class="eyebrow">PLAN YOUR DAY</span><h2>برنامه‌ریزی هوشمند</h2><p>کارها و عادت‌هایت را با آرامش مدیریت کن.</p></div>
         <section class="content-grid">
 
           <div class="panel tasks-panel" id="tasks">
@@ -373,6 +379,10 @@ function render() {
           </div>
         </section>
 
+        </section>
+
+        <section class="page-view ${activeView === 'growth' ? 'active' : ''}" data-page="growth">
+          <div class="page-intro"><span class="eyebrow">PERSONAL GROWTH</span><h2>مسیر رشد تو</h2><p>دستاوردهایت را ببین و قدم‌های بعدی را بردار.</p></div>
         <section class="panel achievements-panel" id="achievements">
           <div class="section-heading">
             <div>
@@ -433,6 +443,10 @@ function render() {
           </div>
         </section>
 
+        </section>
+
+        <section class="page-view ${activeView === 'focus' ? 'active' : ''}" data-page="focus">
+          <div class="page-intro"><span class="eyebrow">FOCUS & WELLBEING</span><h2>فضای تمرکز</h2><p>برای کار عمیق و مراقبت از خودت زمان بساز.</p></div>
         <section class="content-grid lower-grid">
 
           <div class="panel focus-panel" id="focus">
@@ -486,6 +500,10 @@ function render() {
           </div>
         </section>
 
+        </section>
+
+        <section class="page-view ${activeView === 'journal' ? 'active' : ''}" data-page="journal">
+          <div class="page-intro"><span class="eyebrow">YOUR PRIVATE SPACE</span><h2>دفتر شخصی</h2><p>فکرها و ایده‌هایت را اینجا ثبت کن؛ فقط برای خودت.</p></div>
         <section class="panel notes-panel" id="notes">
           <div class="section-heading">
             <div>
@@ -505,6 +523,12 @@ function render() {
           </div>
         </section>
 
+        </section>
+
+        <section class="page-view ${activeView === 'settings' ? 'active' : ''}" data-page="settings">
+          <div class="page-intro"><span class="eyebrow">PREFERENCES</span><h2>تنظیمات فضای تو</h2><p>ظاهر برنامه، هدف‌ها و نسخه پشتیبان اطلاعاتت را مدیریت کن.</p></div>
+        </section>
+
         <footer class="footer">
           <span>MY LIFE ✦</span>
           <p>Small steps. Big changes.</p>
@@ -520,6 +544,20 @@ function render() {
 }
 
 function bindEvents() {
+  document.querySelectorAll('[data-view]').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      activeView = link.dataset.view;
+      document.querySelectorAll('[data-view]').forEach(item => item.classList.toggle('active', item === link));
+      document.querySelectorAll('[data-page]').forEach(page => page.classList.toggle('active', page.dataset.page === activeView));
+      const titles = { dashboard: 'روزت رو بساز', planner: 'برنامه‌ریزی هوشمند', growth: 'مسیر رشد تو', focus: 'فضای تمرکز', journal: 'دفتر شخصی', settings: 'تنظیمات' };
+      const heading = $('.topbar h1');
+      if (heading) heading.innerHTML = `${titles[activeView]} <span class="wave">✦</span>`;
+      history.replaceState(null, '', `#${activeView}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
   $('#task-form').addEventListener('submit', e => {
     e.preventDefault();
 
@@ -724,8 +762,20 @@ function plusRender() {
       '<div class="plus-actions"><button id="plus-export">↓ دریافت نسخه پشتیبان</button><label class="plus-import">↑ بازیابی نسخه پشتیبان<input id="plus-import-file" type="file" accept="application/json"></label><button id="plus-theme">' + (state.settings.theme === 'dark' ? '☀ حالت روشن' : '☾ حالت تاریک') + '</button></div>' +
       '<small class="plus-note">پیشنهاد: هر چند وقت یک‌بار از اطلاعاتت خروجی بگیر. پاک‌کردن داده‌های مرورگر می‌تواند اطلاعات محلی را حذف کند.</small>' +
     '</div>';
-  const footer = main.querySelector('.footer');
-  if (footer) main.insertBefore(section, footer);
+  const goalsPanel = section.querySelector('#plus-goals');
+  const journalPanel = section.querySelector('#plus-journal');
+  const backupPanel = section.querySelector('.plus-backup');
+  const goalsWrap = document.createElement('div');
+  const journalWrap = document.createElement('div');
+  const backupWrap = document.createElement('div');
+  goalsWrap.className = journalWrap.className = backupWrap.className = 'plus-grid';
+  goalsWrap.appendChild(goalsPanel);
+  journalWrap.appendChild(journalPanel);
+  backupWrap.appendChild(backupPanel);
+  main.querySelector('[data-page="growth"]').appendChild(goalsWrap);
+  main.querySelector('[data-page="journal"]').appendChild(journalWrap);
+  main.querySelector('[data-page="settings"]').appendChild(backupWrap);
+  main.appendChild(section);
   const form = document.getElementById('plus-goal-form');
   form.addEventListener('submit', e => {
     e.preventDefault();
@@ -734,7 +784,7 @@ function plusRender() {
     state.goals.push({ id: Date.now(), title, done: false });
     plusSave(); plusRender(); showToast('هدف جدید ثبت شد 🎯');
   });
-  section.querySelectorAll('[data-plus]').forEach(button => button.addEventListener('click', () => {
+  main.querySelectorAll('[data-plus]').forEach(button => button.addEventListener('click', () => {
     const id = Number(button.dataset.id);
     if (button.dataset.plus === 'goal-toggle') {
       const goal = state.goals.find(g => g.id === id);
