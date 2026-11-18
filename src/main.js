@@ -160,13 +160,13 @@ function render() {
 
         <nav class="navigation">
           <p class="nav-label">فضای شخصی</p>
-          <a class="nav-item active" href="#dashboard" data-view="dashboard"><span class="nav-symbol">▦</span><span>نمای کلی</span></a>
-          <a class="nav-item" href="#planner" data-view="planner"><span class="nav-symbol">☑</span><span>برنامه‌ریزی</span></a>
-          <a class="nav-item" href="#growth" data-view="growth"><span class="nav-symbol">✧</span><span>رشد من</span></a>
+          <a class="nav-item ${activeView === 'dashboard' ? 'active' : ''}" href="#dashboard" data-view="dashboard"><span class="nav-symbol">▦</span><span>نمای کلی</span></a>
+          <a class="nav-item ${activeView === 'planner' ? 'active' : ''}" href="#planner" data-view="planner"><span class="nav-symbol">☑</span><span>برنامه‌ریزی</span></a>
+          <a class="nav-item ${activeView === 'growth' ? 'active' : ''}" href="#growth" data-view="growth"><span class="nav-symbol">✧</span><span>رشد من</span></a>
           <p class="nav-label">ابزارهای من</p>
-          <a class="nav-item" href="#focus" data-view="focus"><span class="nav-symbol">◷</span><span>تمرکز</span></a>
-          <a class="nav-item" href="#journal" data-view="journal"><span class="nav-symbol">✎</span><span>دفتر شخصی</span></a>
-          <a class="nav-item" href="#settings" data-view="settings"><span class="nav-symbol">⚙</span><span>تنظیمات</span></a>
+          <a class="nav-item ${activeView === 'focus' ? 'active' : ''}" href="#focus" data-view="focus"><span class="nav-symbol">◷</span><span>تمرکز</span></a>
+          <a class="nav-item ${activeView === 'journal' ? 'active' : ''}" href="#journal" data-view="journal"><span class="nav-symbol">✎</span><span>دفتر شخصی</span></a>
+          <a class="nav-item ${activeView === 'settings' ? 'active' : ''}" href="#settings" data-view="settings"><span class="nav-symbol">⚙</span><span>تنظیمات</span></a>
         </nav>
 
         <div class="sidebar-bottom">
@@ -187,7 +187,7 @@ function render() {
         <header class="topbar">
           <div>
             <span class="eyebrow">PERSONAL DASHBOARD</span>
-            <h1>روزت رو بساز <span class="wave">✦</span></h1>
+            <h1>${({dashboard:'روزت رو بساز',planner:'برنامه‌ریزی هوشمند',growth:'مسیر رشد تو',focus:'فضای تمرکز',journal:'دفتر شخصی',settings:'تنظیمات'})[activeView]} <span class="wave">✦</span></h1>
             <p class="date-text" id="live-date">${formatDate()}</p>
           </div>
 
