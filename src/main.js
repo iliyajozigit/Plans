@@ -1,5 +1,6 @@
 
 import './style.css';
+import './smart.js';
 
 const $ = (selector) => document.querySelector(selector);
 const today = () => new Date().toLocaleDateString('en-CA');
