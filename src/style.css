@@ -2109,3 +2109,151 @@ html[data-theme="dark"] .smart-xp { border-color:#344b39; }
   .smart-heading { flex-direction:column; }
   .smart-card { padding:16px; }
 }
+
+
+/* Mobile-first refinement + Achievement Gallery 2.0 */
+.achievements-panel { overflow:hidden; }
+.badge-hero {
+  position:relative; display:flex; align-items:center; justify-content:space-between;
+  gap:20px; min-height:190px; padding:26px 30px; margin:-2px -2px 17px;
+  overflow:hidden; border:1px solid #dce9d9; border-radius:22px;
+  background:radial-gradient(circle at 12% 15%,rgba(215,239,139,.45),transparent 34%),
+    linear-gradient(120deg,#e9f2e4 0%,#f7f8ee 55%,#e5efe2 100%);
+}
+.badge-hero::after { content:""; position:absolute; width:230px;height:230px;border:1px solid rgba(50,100,65,.09);border-radius:50%;left:-65px;bottom:-150px; }
+.badge-hero-copy { position:relative;z-index:1;max-width:520px; }
+.badge-hero h2 { margin:8px 0 5px;color:#204b38;font-size:25px;font-weight:900; }
+.badge-hero p { margin:0;color:#718579;font-size:12px;line-height:1.9; }
+.badge-hero-progress { display:flex;align-items:center;gap:12px;margin-top:18px; }
+.badge-hero-progress strong { color:#3e704d;font-size:10px;white-space:nowrap; }
+.badge-hero-track { width:min(240px,42vw);height:8px;overflow:hidden;border-radius:20px;background:#d6e4d2; }
+.badge-hero-track span { display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#83aa69,#286b52);transition:width .5s ease; }
+.badge-trophy { position:relative;z-index:1;display:grid;place-items:center;flex:0 0 112px;width:112px;height:112px;border:1px solid rgba(255,255,255,.85);border-radius:34px;background:linear-gradient(145deg,#fff9d9,#e5efc9);box-shadow:0 14px 35px rgba(54,94,52,.12);transform:rotate(5deg); }
+.badge-trophy span { font-size:57px;filter:drop-shadow(0 7px 7px rgba(90,92,40,.18)); }
+.badge-trophy i { position:absolute;top:13px;right:15px;color:#9cb96d;font-size:17px;font-style:normal; }
+.badge-overview { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 22px; }
+.badge-overview-item { display:flex;align-items:center;gap:11px;min-width:0;padding:13px 15px;border:1px solid #e4ebe1;border-radius:15px;background:#fbfcf8; }
+.badge-overview-icon { display:grid;place-items:center;flex:0 0 37px;width:37px;height:37px;border-radius:12px;background:#edf4e8;font-size:18px; }
+.badge-overview-item div { display:grid;gap:2px;min-width:0; }
+.badge-overview-item strong { color:#2c543d;font-size:19px;line-height:1.2; }
+.badge-overview-item small { color:#89978c;font-size:9px;white-space:nowrap; }
+.badge-filter-heading { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px; }
+.badge-filter-heading div { display:grid;gap:3px; }
+.badge-filter-heading strong { color:#2b4435;font-size:13px; }
+.badge-filter-heading small,.badge-filter-heading>span { color:#91a094;font-size:10px; }
+.badge-filters { display:flex;gap:8px;overflow-x:auto;padding:2px 1px 10px;scrollbar-width:none; }
+.badge-filters::-webkit-scrollbar { display:none; }
+.badge-filters .filter-btn { flex:0 0 auto;min-height:39px;padding:8px 15px;border-radius:12px;font-size:11px; }
+.badge-grid { grid-template-columns:repeat(4,minmax(0,1fr));gap:14px; }
+.badge-card {
+  display:flex;flex-direction:column;align-items:stretch;min-height:260px;padding:14px;
+  border-radius:20px;background:linear-gradient(155deg,#fffefa,#f5f8f0);
+  border-color:#e1e9dd;box-shadow:0 7px 20px rgba(40,75,49,.045);
+}
+.badge-card::before { content:"";position:absolute;inset:0 0 auto;height:4px;background:currentColor;opacity:.75; }
+.badge-card.locked { filter:none;opacity:.78;background:linear-gradient(155deg,#f8f9f5,#f0f2ec); }
+.badge-card-topline { display:flex;align-items:center;justify-content:space-between;gap:6px; }
+.badge-rarity-chip { display:inline-flex;align-items:center;padding:5px 8px;border-radius:20px;font-size:9px;font-weight:800;background:#edf3e9;color:#5b795b; }
+.rarity-epic { background:#f0eafa;color:#7960a4; }
+.rarity-legendary { background:#fbf0d7;color:#9b7731; }
+.badge-lock { display:grid;place-items:center;width:25px;height:25px;border-radius:9px;background:#edf2e9;color:#4c7952;font-size:12px; }
+.badge-emblem-wrap { position:relative;display:grid;place-items:center;margin:9px auto 10px; }
+.badge-emblem { width:76px;height:76px;margin:0;border-radius:25px;background:linear-gradient(145deg,#fff,currentColor);border:1px solid rgba(255,255,255,.9);box-shadow:0 10px 25px rgba(42,72,49,.12),inset 0 0 0 5px rgba(255,255,255,.4); }
+.badge-emblem span { font-size:36px; }
+.badge-emblem-spark { position:absolute;right:-8px;bottom:1px;display:grid;place-items:center;width:23px;height:23px;border:2px solid #fff;border-radius:50%;background:#e6efdc;color:#668b58;font-size:12px; }
+.badge-card-copy { min-height:55px; }
+.badge-card h3 { color:#2d4937;font-size:13px;line-height:1.7;margin:0 0 3px; }
+.badge-card p { color:#87958a;font-size:10px;line-height:1.8;margin:0; }
+.badge-progress { margin-top:auto;padding-top:12px; }
+.badge-progress-label { display:flex;align-items:center;justify-content:space-between;margin-bottom:6px; }
+.badge-progress-label small { color:#849286;font-size:9px; }
+.badge-progress-label strong { color:currentColor;font-size:10px; }
+.badge-progress-track { height:7px;background:#e7ede3; }
+.badge-progress-track div { background:linear-gradient(90deg,#a9c982,#397c58); }
+.badge-progress-count { display:block;margin-top:6px;color:#91a093;font-size:9px; }
+html[data-theme="dark"] .badge-hero { border-color:#3a5841;background:radial-gradient(circle at 12% 15%,rgba(155,190,112,.14),transparent 34%),linear-gradient(120deg,#233b2c,#1d3025); }
+html[data-theme="dark"] .badge-hero h2,html[data-theme="dark"] .badge-filter-heading strong { color:#e3efdf; }
+html[data-theme="dark"] .badge-hero p,html[data-theme="dark"] .badge-hero-progress strong { color:#a9bea7; }
+html[data-theme="dark"] .badge-hero-track { background:#344b38; }
+html[data-theme="dark"] .badge-trophy { border-color:#526348;background:linear-gradient(145deg,#3c4930,#293c2d); }
+html[data-theme="dark"] .badge-overview-item { border-color:#344b39;background:#203329; }
+html[data-theme="dark"] .badge-overview-item strong { color:#e0eddf; }
+html[data-theme="dark"] .badge-overview-item small,html[data-theme="dark"] .badge-filter-heading small,html[data-theme="dark"] .badge-filter-heading>span { color:#9caf9f; }
+html[data-theme="dark"] .badge-overview-icon { background:#2c4534; }
+html[data-theme="dark"] .badge-card { background:linear-gradient(155deg,#263c2e,#1d3025);border-color:#3a5940; }
+html[data-theme="dark"] .badge-card.locked { background:linear-gradient(155deg,#202f26,#1b2921); }
+html[data-theme="dark"] .badge-card h3 { color:#e5efe4; }
+html[data-theme="dark"] .badge-card p,html[data-theme="dark"] .badge-progress-label small,html[data-theme="dark"] .badge-progress-count { color:#9caf9f; }
+html[data-theme="dark"] .badge-lock { color:#d4e8d0;background:#294233; }
+html[data-theme="dark"] .badge-rarity-chip { background:#2d4935;color:#c5dfb5; }
+html[data-theme="dark"] .rarity-epic { background:#40364f;color:#d5c3ed; }
+html[data-theme="dark"] .rarity-legendary { background:#4b412b;color:#eed79a; }
+html[data-theme="dark"] .badge-emblem-spark { border-color:#263b2d;background:#49613d;color:#e0edc9; }
+html[data-theme="dark"] .badge-progress-track { background:#344b38; }
+@media (max-width:1100px) {
+  .badge-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media (max-width:750px) {
+  .main-content { padding:18px 14px 30px; }
+  .topbar { align-items:flex-start;gap:10px; }
+  .topbar h1 { font-size:clamp(19px,5vw,23px); }
+  .topbar-right { flex-direction:row;align-items:center;gap:7px; }
+  .level-pill { padding:8px 10px;font-size:10px;white-space:nowrap; }
+  .avatar { width:36px;height:36px;border-radius:12px; }
+  .hero-card { min-height:0;padding:24px 20px; }
+  .hero-content { max-width:100%; }
+  .hero-card p { max-width:260px;line-height:1.9; }
+  .hero-art { display:none; }
+  .hero-button { min-height:44px;margin-top:17px; }
+  .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr));gap:10px; }
+  .stat-card { min-width:0;padding:14px; }
+  .content-grid,.lower-grid { grid-template-columns:1fr; }
+  .panel,.plus-panel { padding:16px;border-radius:17px; }
+  .add-form { gap:8px; }
+  .add-form input { min-width:0;width:100%;min-height:46px; }
+  .add-form button,.primary-button,.secondary-button { min-height:44px; }
+  .task-item,.habit-item { min-height:48px; }
+  .timer-controls button { min-height:46px; }
+  .water-glasses { gap:7px; }
+  .smart-city-form,.smart-coach-form { flex-wrap:wrap; }
+  .smart-city-form button,.smart-coach-form button { min-height:42px; }
+  .badge-hero { min-height:155px;padding:19px 17px;border-radius:18px; }
+  .badge-hero h2 { font-size:21px; }
+  .badge-hero p { max-width:330px;font-size:11px; }
+  .badge-trophy { flex-basis:76px;width:76px;height:76px;border-radius:24px; }
+  .badge-trophy span { font-size:39px; }
+  .badge-overview { gap:7px; }
+  .badge-overview-item { flex-direction:column;align-items:flex-start;gap:7px;padding:10px;border-radius:13px; }
+  .badge-overview-icon { width:31px;height:31px;flex-basis:31px;font-size:15px; }
+  .badge-overview-item strong { font-size:17px; }
+  .badge-overview-item small { white-space:normal;font-size:9px; }
+  .badge-grid { grid-template-columns:repeat(2,minmax(0,1fr));gap:9px; }
+  .badge-card { min-height:238px;padding:11px;border-radius:16px; }
+  .badge-emblem { width:65px;height:65px;border-radius:21px; }
+  .badge-emblem span { font-size:31px; }
+  .badge-card h3 { font-size:11px; }
+  .badge-card p { font-size:9px; }
+  .filter-btn { min-height:40px; }
+  input,textarea,select { font-size:16px; }
+  button,a { -webkit-tap-highlight-color:transparent; }
+}
+@media (max-width:390px) {
+  .main-content { padding-left:10px;padding-right:10px; }
+  .topbar { gap:6px; }
+  .topbar-right { gap:5px; }
+  .level-pill { font-size:9px;padding:7px 8px; }
+  .hero-card h2 { font-size:21px; }
+  .badge-hero { padding:16px 13px; }
+  .badge-trophy { flex-basis:62px;width:62px;height:62px;border-radius:20px; }
+  .badge-trophy span { font-size:32px; }
+  .badge-overview-item { padding:8px; }
+  .badge-overview-item small { font-size:8px; }
+  .badge-card { min-height:225px;padding:9px; }
+  .badge-emblem { width:58px;height:58px; }
+  .badge-emblem span { font-size:28px; }
+}
+@media (max-width:340px) {
+  .badge-grid { grid-template-columns:1fr; }
+  .badge-card { min-height:215px; }
+  .badge-overview-item { flex-direction:row;align-items:center; }
+}
