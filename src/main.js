@@ -1,0 +1,687 @@
+
+import './style.css';
+
+const $ = (selector) => document.querySelector(selector);
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const formatDate = () =>
+  new Intl.DateTimeFormat('fa-IR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(new Date());
+
+const defaultState = {
+  date: today(),
+  tasks: [],
+  habits: [
+    { id: 1, title: 'مطالعه و یادگیری', icon: '📚', done: false },
+    { id: 2, title: 'ورزش و تحرک', icon: '🏃', done: false },
+    { id: 3, title: 'نوشیدن آب', icon: '💧', done: false },
+    { id: 4, title: 'برنامه‌ریزی روزانه', icon: '📝', done: false }
+  ],
+  xp: 0,
+  water: 0,
+  notes: '',
+  earned: [],
+  focusSessions: 0
+};
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('myLifeState'));
+    return saved ? { ...structuredClone(defaultState), ...saved } : structuredClone(defaultState);
+  } catch {
+    return structuredClone(defaultState);
+  }
+}
+
+let state = loadState();
+
+function resetDailyData() {
+  state.date = today();
+  state.tasks = [];
+  state.habits = state.habits.map(h => ({ ...h, done: false }));
+  state.water = 0;
+}
+
+if (state.date !== today()) resetDailyData();
+
+const badges = [
+  { id: 'first-task', title: 'شروع قدرتمند', description: 'اولین وظیفه خود را کامل کن', icon: '🚀', color: 'purple', target: 1, type: 'tasks' },
+  { id: 'task-master', title: 'استاد وظایف', description: '۱۰ وظیفه را به پایان برسان', icon: '🎯', color: 'blue', target: 10, type: 'tasks' },
+  { id: 'habit-starter', title: 'شروع عادت‌ها', description: 'اولین عادت را انجام بده', icon: '🌱', color: 'green', target: 1, type: 'habits' },
+  { id: 'habit-master', title: 'معمار عادت‌ها', description: '۴ عادت را در یک روز کامل کن', icon: '🌳', color: 'emerald', target: 4, type: 'dailyHabits' },
+  { id: 'water-lover', title: 'قطره‌های سلامتی', description: '۸ لیوان آب ثبت کن', icon: '💎', color: 'cyan', target: 8, type: 'water' },
+  { id: 'focus-master', title: 'استاد تمرکز', description: '۵ جلسه تمرکز انجام بده', icon: '🧠', color: 'orange', target: 5, type: 'focus' },
+  { id: 'xp-collector', title: 'شکارچی تجربه', description: '۱۰۰ امتیاز تجربه کسب کن', icon: '⭐', color: 'gold', target: 100, type: 'xp' },
+  { id: 'legend', title: 'افسانه My Life', description: 'به ۵۰۰ امتیاز تجربه برس', icon: '👑', color: 'pink', target: 500, type: 'xp' }
+];
+
+function save() {
+  localStorage.setItem('myLifeState', JSON.stringify(state));
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
+
+function getProgress(type) {
+  switch (type) {
+    case 'tasks':
+      return state.tasks.filter(t => t.done).length;
+    case 'habits':
+    case 'dailyHabits':
+      return state.habits.filter(h => h.done).length;
+    case 'water':
+      return state.water;
+    case 'focus':
+      return state.focusSessions;
+    case 'xp':
+      return state.xp;
+    default:
+      return 0;
+  }
+}
+
+function checkBadges() {
+  badges.forEach(badge => {
+    if (!state.earned.includes(badge.id) && getProgress(badge.type) >= badge.target) {
+      state.earned.push(badge.id);
+      showToast(`🏆 نشان «${badge.title}» را دریافت کردی!`);
+    }
+  });
+}
+
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('toast-out');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+function addXP(amount) {
+  state.xp += amount;
+  checkBadges();
+}
+
+function getLevel() {
+  return Math.floor(state.xp / 100) + 1;
+}
+
+function getLevelProgress() {
+  return state.xp % 100;
+}
+
+function getTaskPercent() {
+  const total = state.tasks.length;
+  if (!total) return 0;
+  return Math.round(state.tasks.filter(t => t.done).length / total * 100);
+}
+
+function getHabitPercent() {
+  return Math.round(
+    state.habits.filter(h => h.done).length /
+    Math.max(state.habits.length, 1) * 100
+  );
+}
+
+function render() {
+  const completedTasks = state.tasks.filter(t => t.done).length;
+  const completedHabits = state.habits.filter(h => h.done).length;
+  const taskPercent = getTaskPercent();
+  const habitPercent = getHabitPercent();
+
+  $('#app').innerHTML = `
+    <div class="app-shell">
+
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">✦</div>
+          <div>
+            <h2>My Life</h2>
+            <span>YOUR PERSONAL SPACE</span>
+          </div>
+        </div>
+
+        <nav class="navigation">
+          <p class="nav-label">فضای شخصی</p>
+          <a class="nav-item active" href="#dashboard">▦ <span>داشبورد</span></a>
+          <a class="nav-item" href="#tasks">☑ <span>وظایف من</span></a>
+          <a class="nav-item" href="#habits">◈ <span>عادت‌ها</span></a>
+          <a class="nav-item" href="#achievements">🏆 <span>دستاوردها</span></a>
+
+          <p class="nav-label">ابزارها</p>
+          <a class="nav-item" href="#focus">◷ <span>تمرکز</span></a>
+          <a class="nav-item" href="#notes">✎ <span>یادداشت‌ها</span></a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="mini-level">
+            <span>سطح فعلی</span>
+            <strong>LV. ${getLevel()}</strong>
+            <div class="progress-track">
+              <div style="width:${getLevelProgress()}%"></div>
+            </div>
+            <small>${getLevelProgress()} / 100 XP</small>
+          </div>
+          <div class="sidebar-footer">Made for a better you ✨</div>
+        </div>
+      </aside>
+
+      <main class="main-content" id="dashboard">
+
+        <header class="topbar">
+          <div>
+            <span class="eyebrow">PERSONAL DASHBOARD</span>
+            <h1>روزت رو بساز <span class="wave">✦</span></h1>
+            <p class="date-text" id="live-date">${formatDate()}</p>
+          </div>
+
+          <div class="topbar-right">
+            <div class="level-pill">⭐ سطح ${getLevel()}</div>
+            <div class="avatar">M</div>
+          </div>
+        </header>
+
+        <section class="hero-card">
+          <div class="hero-content">
+            <span class="hero-label">A NEW DAY, A NEW CHANCE</span>
+            <h2>هر روز، یک قدم<br>بهتر از دیروز باش.</h2>
+            <p>پیشرفت‌های کوچک، در طول زمان نتایج بزرگی می‌سازند.</p>
+            <a href="#tasks" class="hero-button">
+              شروع برنامه امروز <span>←</span>
+            </a>
+          </div>
+
+          <div class="hero-art">
+            <div class="growth-card">
+              <div class="growth-card-header">
+                <span>YOUR PROGRESS</span>
+                <span class="growth-live">● LIVE</span>
+              </div>
+
+              <div class="growth-content">
+                <div class="growth-chart">
+                  <svg viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="48" class="chart-bg"/>
+                    <circle cx="60" cy="60" r="48" class="chart-progress"/>
+                  </svg>
+                  <div class="growth-percent">
+                    <strong>${Math.round((taskPercent + habitPercent) / 2)}%</strong>
+                    <small>پیشرفت</small>
+                  </div>
+                </div>
+
+                <div class="growth-details">
+                  <div class="growth-detail">
+                    <span class="growth-dot purple-dot"></span>
+                    <span>وظایف</span>
+                    <strong>${completedTasks}/${state.tasks.length}</strong>
+                  </div>
+                  <div class="growth-detail">
+                    <span class="growth-dot green-dot"></span>
+                    <span>عادت‌ها</span>
+                    <strong>${completedHabits}/${state.habits.length}</strong>
+                  </div>
+                  <div class="growth-detail">
+                    <span class="growth-dot orange-dot"></span>
+                    <span>اهداف</span>
+                    <strong>${getLevel()} LV</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="growth-footer">
+                <span>🌱</span>
+                <span>هر قدم، یک پیشرفت تازه</span>
+              </div>
+            </div>
+
+            <div class="floating-leaf">🌿</div>
+            <div class="floating-sparkle">✦</div>
+          </div>
+        </section>
+
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon purple">☑</div>
+            <span>وظایف تکمیل‌شده</span>
+            <strong>${completedTasks}<small> / ${state.tasks.length}</small></strong>
+            <div class="stat-progress">
+              <div style="width:${taskPercent}%"></div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">◈</div>
+            <span>عادت‌های امروز</span>
+            <strong>${completedHabits}<small> / ${state.habits.length}</small></strong>
+            <div class="stat-progress">
+              <div style="width:${habitPercent}%"></div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange">⭐</div>
+            <span>امتیاز تجربه</span>
+            <strong>${state.xp}<small> XP</small></strong>
+            <div class="stat-progress">
+              <div style="width:${getLevelProgress()}%"></div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon cyan">💧</div>
+            <span>آب نوشیده‌شده</span>
+            <strong>${state.water}<small> / 8 لیوان</small></strong>
+            <div class="stat-progress">
+              <div style="width:${Math.min(state.water / 8 * 100, 100)}%"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+
+          <div class="panel tasks-panel" id="tasks">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">DAILY PLANNER</span>
+                <h2>وظایف امروز</h2>
+              </div>
+              <span class="counter">${completedTasks}/${state.tasks.length}</span>
+            </div>
+
+            <form id="task-form" class="add-form">
+              <input
+                id="task-input"
+                placeholder="چه کاری باید انجام بدی؟"
+                maxlength="100"
+                required
+              >
+              <button type="submit">+</button>
+            </form>
+
+            <div class="task-list">
+              ${state.tasks.length ? state.tasks.map(task => `
+                <div class="task-item ${task.done ? 'completed' : ''}">
+                  <button
+                    class="task-check"
+                    data-action="task-toggle"
+                    data-id="${task.id}"
+                  >${task.done ? '✓' : ''}</button>
+
+                  <span>${escapeHTML(task.title)}</span>
+
+                  <button
+                    class="delete-button"
+                    data-action="task-delete"
+                    data-id="${task.id}"
+                  >×</button>
+                </div>
+              `).join('') : `
+                <div class="empty-state">
+                  هنوز کاری ثبت نکردی. اولین وظیفه‌ات رو اضافه کن ✨
+                </div>
+              `}
+            </div>
+          </div>
+
+          <div class="panel habits-panel" id="habits">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">BUILD YOURSELF</span>
+                <h2>عادت‌های روزانه</h2>
+              </div>
+              <span class="counter">${habitPercent}%</span>
+            </div>
+
+            <div class="habit-list">
+              ${state.habits.map(habit => `
+                <button
+                  class="habit-item ${habit.done ? 'habit-done' : ''}"
+                  data-action="habit-toggle"
+                  data-id="${habit.id}"
+                >
+                  <span class="habit-icon">${habit.icon}</span>
+                  <span class="habit-title">${habit.title}</span>
+                  <span class="habit-status">${habit.done ? '✓' : '+'}</span>
+                </button>
+              `).join('')}
+            </div>
+
+            <div class="habit-summary">
+              <div class="progress-track">
+                <div style="width:${habitPercent}%"></div>
+              </div>
+              <small>
+                ${completedHabits} عادت از ${state.habits.length} عادت انجام شده
+              </small>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel achievements-panel" id="achievements">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">YOUR JOURNEY</span>
+              <h2>تالار افتخارات</h2>
+              <p class="section-subtitle">
+                هر دستاورد، نشانه‌ای از پیشرفت توست.
+              </p>
+            </div>
+            <div class="achievement-count">
+              ${state.earned.length} / ${badges.length} نشان
+            </div>
+          </div>
+
+          <div class="badge-filters">
+            <button class="filter-btn active" data-filter="all">همه</button>
+            <button class="filter-btn" data-filter="earned">دریافت‌شده</button>
+            <button class="filter-btn" data-filter="locked">قفل‌شده</button>
+          </div>
+
+          <div class="badge-grid">
+            ${badges.map(badge => {
+              const earned = state.earned.includes(badge.id);
+              const progress = Math.min(getProgress(badge.type), badge.target);
+              const percent = Math.round(progress / badge.target * 100);
+
+              return `
+                <div
+                  class="badge-card ${earned ? 'unlocked' : 'locked'} ${badge.color}"
+                  data-badge="${badge.id}"
+                  data-status="${earned ? 'earned' : 'locked'}"
+                >
+                  <div class="badge-top">
+                    <span class="badge-rarity">
+                      ${earned ? 'UNLOCKED' : 'LOCKED'}
+                    </span>
+                    <span class="badge-lock">${earned ? '✦' : '🔒'}</span>
+                  </div>
+
+                  <div class="badge-emblem">
+                    <span>${badge.icon}</span>
+                  </div>
+
+                  <h3>${badge.title}</h3>
+                  <p>${badge.description}</p>
+
+                  <div class="badge-progress">
+                    <div class="badge-progress-track">
+                      <div style="width:${earned ? 100 : percent}%"></div>
+                    </div>
+                    <small>
+                      ${earned ? 'دستاورد دریافت شد' : `${progress} / ${badge.target}`}
+                    </small>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+
+        <section class="content-grid lower-grid">
+
+          <div class="panel focus-panel" id="focus">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">DEEP WORK</span>
+                <h2>زمان تمرکز</h2>
+              </div>
+              <span class="focus-icon">◷</span>
+            </div>
+
+            <div class="timer" id="timer">25:00</div>
+            <p class="timer-description">
+              ۲۵ دقیقه تمرکز برای کارهای مهم
+            </p>
+
+            <div class="timer-controls">
+              <button id="timer-start" class="primary-button">شروع</button>
+              <button id="timer-reset" class="secondary-button">بازنشانی</button>
+            </div>
+
+            <small class="focus-count">
+              جلسات کامل‌شده: ${state.focusSessions}
+            </small>
+          </div>
+
+          <div class="panel water-panel">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">STAY HYDRATED</span>
+                <h2>ردیاب آب</h2>
+              </div>
+              <span class="water-icon">💧</span>
+            </div>
+
+            <div class="water-number">
+              ${state.water}<small> / 8</small>
+            </div>
+
+            <p>لیوان آب امروز</p>
+
+            <div class="water-glasses">
+              ${Array.from({ length: 8 }, (_, i) => `
+                <span class="${i < state.water ? 'filled' : ''}">♧</span>
+              `).join('')}
+            </div>
+
+            <button class="primary-button water-add" id="water-add">
+              + ثبت یک لیوان
+            </button>
+          </div>
+        </section>
+
+        <section class="panel notes-panel" id="notes">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">THOUGHTS & IDEAS</span>
+              <h2>دفتر یادداشت من</h2>
+            </div>
+            <span class="notes-icon">✎</span>
+          </div>
+
+          <textarea
+            id="notes-input"
+            placeholder="ایده‌ها، افکار و اتفاقات امروزت رو اینجا بنویس..."
+          >${escapeHTML(state.notes)}</textarea>
+
+          <div class="notes-footer">
+            <span id="save-status">ذخیره خودکار فعال است</span>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <span>MY LIFE ✦</span>
+          <p>Small steps. Big changes.</p>
+          <span>ساخته‌شده برای نسخه بهتر تو</span>
+        </footer>
+
+      </main>
+    </div>
+  `;
+
+  bindEvents();
+  updateTimerDisplay();
+}
+
+function bindEvents() {
+  $('#task-form').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const input = $('#task-input');
+    const title = input.value.trim();
+
+    if (!title) return;
+
+    state.tasks.push({
+      id: Date.now(),
+      title,
+      done: false
+    });
+
+    addXP(5);
+    save();
+    render();
+    showToast('وظیفه جدید اضافه شد ✨');
+  });
+
+  document.querySelectorAll('[data-action]').forEach(button => {
+    button.addEventListener('click', () => {
+      const id = Number(button.dataset.id);
+
+      if (button.dataset.action === 'task-toggle') {
+        const task = state.tasks.find(t => t.id === id);
+        if (!task) return;
+
+        task.done = !task.done;
+
+        if (task.done) addXP(10);
+        else state.xp = Math.max(0, state.xp - 10);
+      }
+
+      if (button.dataset.action === 'task-delete') {
+        state.tasks = state.tasks.filter(t => t.id !== id);
+      }
+
+      if (button.dataset.action === 'habit-toggle') {
+        const habit = state.habits.find(h => h.id === id);
+        if (!habit) return;
+
+        habit.done = !habit.done;
+
+        if (habit.done) addXP(15);
+        else state.xp = Math.max(0, state.xp - 15);
+      }
+
+      checkBadges();
+      save();
+      render();
+    });
+  });
+
+  document.querySelectorAll('.filter-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active');
+      });
+
+      button.classList.add('active');
+
+      document.querySelectorAll('.badge-card').forEach(card => {
+        const filter = button.dataset.filter;
+        card.style.display =
+          filter === 'all' || card.dataset.status === filter ? '' : 'none';
+      });
+    });
+  });
+
+  $('#water-add').addEventListener('click', () => {
+    if (state.water >= 8) {
+      showToast('هدف روزانه آب تکمیل شده است 💧');
+      return;
+    }
+
+    state.water++;
+    addXP(2);
+    save();
+    render();
+  });
+
+  $('#notes-input').addEventListener('input', e => {
+    state.notes = e.target.value;
+    save();
+    $('#save-status').textContent = 'ذخیره شد ✓';
+  });
+
+  $('#timer-start').addEventListener('click', toggleTimer);
+  $('#timer-reset').addEventListener('click', resetTimer);
+}
+
+let timerSeconds = 25 * 60;
+let timerInterval = null;
+let timerRunning = false;
+
+function updateTimerDisplay() {
+  const timer = $('#timer');
+  if (!timer) return;
+
+  const minutes = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+  const seconds = String(timerSeconds % 60).padStart(2, '0');
+
+  timer.textContent = `${minutes}:${seconds}`;
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    $('#timer-start').textContent = 'ادامه';
+    return;
+  }
+
+  timerRunning = true;
+  $('#timer-start').textContent = 'توقف';
+
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+
+    if (timerSeconds <= 0) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      timerSeconds = 0;
+
+      state.focusSessions++;
+      addXP(25);
+      save();
+
+      showToast('جلسه تمرکزت با موفقیت تمام شد! 🧠');
+      timerSeconds = 25 * 60;
+      render();
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 25 * 60;
+
+  updateTimerDisplay();
+  $('#timer-start').textContent = 'شروع';
+}
+
+function updateClock() {
+  const dateElement = $('#live-date');
+  if (dateElement) dateElement.textContent = formatDate();
+}
+
+setInterval(() => {
+  if (today() !== state.date) {
+    resetDailyData();
+    save();
+    render();
+    showToast('روز جدیدی آغاز شد! ✨');
+  } else {
+    updateClock();
+  }
+}, 30000);
+
+checkBadges();
+save();
+render();
