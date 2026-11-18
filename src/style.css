@@ -2042,3 +2042,70 @@ html[data-theme="dark"] .page-intro h2 { color:#edf4ed; }
 @media (max-width:750px) {
   html[data-theme="dark"] .sidebar { background:rgba(23,34,28,.97); border-color:#2b4033; }
 }
+
+
+/* My Life Intelligence Hub */
+.smart-hub { margin:26px 0 30px; padding:25px; border:1px solid #dfe9dc; border-radius:25px; background:linear-gradient(145deg,#f9fbf5 0%,#eef5e9 100%); box-shadow:0 16px 42px rgba(34,75,49,.07); }
+.smart-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:19px; }
+.smart-heading h2 { margin:5px 0 6px; color:#244535; font-size:21px; }
+.smart-heading h2 span { color:#8dbb63; }
+.smart-heading p { margin:0; color:#7c8d80; font-size:12px; }
+.smart-status { display:inline-flex; align-items:center; gap:7px; padding:8px 11px; border:1px solid #d6e6d1; border-radius:30px; color:#52765b; background:#f5faf1; font-size:9px; font-weight:800; letter-spacing:.7px; white-space:nowrap; }
+.smart-status i { width:7px; height:7px; border-radius:50%; background:#79b96c; box-shadow:0 0 0 4px rgba(121,185,108,.13); }
+.smart-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; }
+.smart-card { min-width:0; padding:18px; border:1px solid #e2eadd; border-radius:19px; background:rgba(255,255,255,.83); }
+.smart-card-top { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; }
+.smart-card-top h3 { margin:4px 0 0; color:#2b4637; font-size:15px; }
+.smart-kicker { color:#91a18f; font-size:9px; font-weight:800; letter-spacing:1px; }
+.smart-icon { display:grid; place-items:center; width:37px; height:37px; border-radius:12px; background:#eff5e9; color:#4c7855; font-size:20px; }
+.weather-result { min-height:105px; display:flex; flex-direction:column; justify-content:center; gap:9px; color:#7b8a7d; font-size:12px; }
+.weather-main { display:flex; align-items:center; gap:11px; color:#375b43; }
+.weather-main > span { font-size:34px; }
+.weather-main strong { font-size:37px; line-height:1; letter-spacing:-2px; }
+.weather-main small { color:#738477; font-size:12px; }
+.weather-place { color:#617765; font-size:11px; }
+.weather-details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin-top:4px; }
+.weather-details span { display:flex; justify-content:space-between; gap:5px; padding:7px 9px; border-radius:9px; background:#f3f7ef; color:#819084; font-size:10px; }
+.weather-details b { color:#3d6249; }
+.smart-city-form { display:flex; gap:7px; margin-top:12px; }
+.smart-city-form input,.smart-coach-form input { min-width:0; width:100%; padding:9px 11px; border:1px solid #e1e9dd; border-radius:10px; outline:none; background:#fbfcf9; color:#3e5144; font:inherit; font-size:11px; }
+.smart-city-form button { padding:8px 11px; border:0; border-radius:10px; background:#315f46; color:#fff; font:inherit; font-size:10px; white-space:nowrap; cursor:pointer; }
+.smart-source { display:block; margin-top:10px; color:#a0aa9f; font-size:9px; }
+.smart-quote-result { min-height:145px; display:flex; flex-direction:column; justify-content:center; gap:12px; }
+.smart-quote-result blockquote { margin:0; color:#385543; font-family:inherit; font-size:15px; font-weight:600; line-height:2; }
+.smart-quote-result > span { color:#819283; font-size:11px; }
+.coach-card { background:linear-gradient(145deg,#f8fbf5,#f0f6eb); }
+.coach-insight { min-height:125px; }
+.coach-tag { display:inline-block; padding:5px 9px; border-radius:20px; background:#e6f0dd; color:#527653; font-size:9px; font-weight:700; }
+.coach-insight h4 { margin:11px 0 6px; color:#31533e; font-size:15px; }
+.coach-insight p { margin:0; color:#748578; font-size:11px; line-height:2; }
+.smart-coach-form { display:flex; gap:7px; margin-top:12px; }
+.smart-coach-form button { flex:0 0 38px; border:0; border-radius:10px; background:#315f46; color:#fff; font-size:20px; cursor:pointer; }
+.smart-coach-answer { min-height:18px; margin:10px 0 0; color:#66806d; font-size:10px; line-height:1.9; }
+.smart-metric { display:grid; grid-template-columns:1fr auto; align-items:center; gap:6px 12px; margin:12px 0; color:#788a7c; font-size:11px; }
+.smart-metric strong { color:#355c43; font-size:12px; }
+.smart-metric strong small { color:#9aa89c; font-size:10px; font-weight:500; }
+.smart-metric > div { grid-column:1/-1; height:6px; overflow:hidden; border-radius:10px; background:#eaf0e6; }
+.smart-metric > div i { display:block; height:100%; border-radius:10px; background:linear-gradient(90deg,#a8cc7b,#548a62); }
+.smart-xp { display:flex; justify-content:space-between; margin-top:15px; padding-top:12px; border-top:1px solid #e8eee4; color:#819184; font-size:11px; }
+.smart-xp strong { color:#547a58; }
+.smart-refresh { width:100%; margin-top:14px; padding:10px; border:1px solid #dce8d7; border-radius:10px; background:#f5f9f1; color:#527357; font:inherit; font-size:10px; cursor:pointer; }
+.smart-refresh span { margin-right:5px; font-size:15px; }
+.smart-footnote { margin-top:13px; color:#91a092; font-size:10px; line-height:1.9; }
+.smart-loading { display:inline-block; width:15px; height:15px; border:2px solid #dce8d8; border-top-color:#568361; border-radius:50%; animation:smartSpin .8s linear infinite; }
+.weather-error { color:#a66b55; font-size:11px; line-height:1.8; }
+@keyframes smartSpin { to { transform:rotate(360deg); } }
+html[data-theme="dark"] .smart-hub { border-color:#304638; background:linear-gradient(145deg,#1b2b21,#1c3024); box-shadow:0 16px 42px rgba(0,0,0,.15); }
+html[data-theme="dark"] .smart-heading h2,html[data-theme="dark"] .smart-card-top h3,html[data-theme="dark"] .weather-main,html[data-theme="dark"] .weather-details b,html[data-theme="dark"] .smart-quote-result blockquote,html[data-theme="dark"] .coach-insight h4,html[data-theme="dark"] .smart-metric strong { color:#e0eddf; }
+html[data-theme="dark"] .smart-heading p,html[data-theme="dark"] .smart-source,html[data-theme="dark"] .smart-footnote,html[data-theme="dark"] .coach-insight p,html[data-theme="dark"] .smart-metric,html[data-theme="dark"] .smart-quote-result>span { color:#9caf9f; }
+html[data-theme="dark"] .smart-card,html[data-theme="dark"] .coach-card { border-color:#344b39; background:#203329; }
+html[data-theme="dark"] .smart-icon,html[data-theme="dark"] .weather-details span,html[data-theme="dark"] .coach-tag,html[data-theme="dark"] .smart-city-form input,html[data-theme="dark"] .smart-coach-form input { color:#d7e8d5; border-color:#3a5541; background:#294233; }
+html[data-theme="dark"] .smart-city-form button,html[data-theme="dark"] .smart-coach-form button { background:#4c805b; }
+html[data-theme="dark"] .smart-refresh { color:#d4e8d0; border-color:#3b5541; background:#294233; }
+html[data-theme="dark"] .smart-xp { border-color:#344b39; }
+@media (max-width:750px) {
+  .smart-hub { padding:17px; border-radius:20px; }
+  .smart-grid { grid-template-columns:1fr; }
+  .smart-heading { flex-direction:column; }
+  .smart-card { padding:16px; }
+}
