@@ -385,19 +385,25 @@ function render() {
         <section class="page-view ${activeView === 'growth' ? 'active' : ''}" data-page="growth">
           <div class="page-intro"><span class="eyebrow">PERSONAL GROWTH</span><h2>مسیر رشد تو</h2><p>دستاوردهایت را ببین و قدم‌های بعدی را بردار.</p></div>
         <section class="panel achievements-panel" id="achievements">
-          <div class="section-heading">
-            <div>
-              <span class="eyebrow">YOUR JOURNEY</span>
+          <div class="badge-hero">
+            <div class="badge-hero-copy">
+              <span class="eyebrow">YOUR JOURNEY · ACHIEVEMENT GALLERY</span>
               <h2>تالار افتخارات</h2>
-              <p class="section-subtitle">
-                هر دستاورد، نشانه‌ای از پیشرفت توست.
-              </p>
+              <p>هر نشان، یادگاری از قدم‌هایی است که برای رشدت برداشته‌ای.</p>
+              <div class="badge-hero-progress">
+                <div class="badge-hero-track"><span style="width:${Math.round(state.earned.length / badges.length * 100)}%"></span></div>
+                <strong>${Math.round(state.earned.length / badges.length * 100)}٪ تکمیل‌شده</strong>
+              </div>
             </div>
-            <div class="achievement-count">
-              ${state.earned.length} / ${badges.length} نشان
-            </div>
+            <div class="badge-trophy" aria-hidden="true"><span>🏆</span><i>✦</i></div>
+          </div>
+          <div class="badge-overview">
+            <div class="badge-overview-item"><span class="badge-overview-icon">🏅</span><div><strong>${state.earned.length}</strong><small>نشان دریافت‌شده</small></div></div>
+            <div class="badge-overview-item"><span class="badge-overview-icon">🔒</span><div><strong>${badges.length - state.earned.length}</strong><small>نشان باقی‌مانده</small></div></div>
+            <div class="badge-overview-item"><span class="badge-overview-icon">⭐</span><div><strong>${state.xp}</strong><small>امتیاز تجربه</small></div></div>
           </div>
 
+          <div class="badge-filter-heading"><div><strong>مجموعه نشان‌ها</strong><small>مسیر پیشرفتت را دنبال کن</small></div><span>${state.earned.length} از ${badges.length}</span></div>
           <div class="badge-filters">
             <button class="filter-btn active" data-filter="all">همه</button>
             <button class="filter-btn" data-filter="earned">دریافت‌شده</button>
@@ -411,34 +417,29 @@ function render() {
               const percent = Math.round(progress / badge.target * 100);
 
               return `
-                <div
+                <article
                   class="badge-card ${earned ? 'unlocked' : 'locked'} ${badge.color}"
                   data-badge="${badge.id}"
                   data-status="${earned ? 'earned' : 'locked'}"
                 >
-                  <div class="badge-top">
-                    <span class="badge-rarity">
-                      ${earned ? 'UNLOCKED' : 'LOCKED'}
-                    </span>
-                    <span class="badge-lock">${earned ? '✦' : '🔒'}</span>
+                  <div class="badge-card-topline">
+                    <span class="badge-rarity-chip ${badge.target >= 500 ? 'rarity-legendary' : badge.target >= 100 || badge.target >= 10 ? 'rarity-epic' : 'rarity-rare'}">${badge.target >= 500 ? 'افسانه‌ای' : badge.target >= 100 || badge.target >= 10 ? 'حماسی' : 'ویژه'}</span>
+                    <span class="badge-lock">${earned ? '✓' : '🔒'}</span>
                   </div>
-
-                  <div class="badge-emblem">
-                    <span>${badge.icon}</span>
+                  <div class="badge-emblem-wrap">
+                    <div class="badge-emblem"><span>${badge.icon}</span></div>
+                    <span class="badge-emblem-spark">✦</span>
                   </div>
-
-                  <h3>${badge.title}</h3>
-                  <p>${badge.description}</p>
-
+                  <div class="badge-card-copy">
+                    <h3>${badge.title}</h3>
+                    <p>${badge.description}</p>
+                  </div>
                   <div class="badge-progress">
-                    <div class="badge-progress-track">
-                      <div style="width:${earned ? 100 : percent}%"></div>
-                    </div>
-                    <small>
-                      ${earned ? 'دستاورد دریافت شد' : `${progress} / ${badge.target}`}
-                    </small>
+                    <div class="badge-progress-label"><small>${earned ? 'نشان دریافت شد' : 'میزان پیشرفت'}</small><strong>${earned ? '100' : percent}٪</strong></div>
+                    <div class="badge-progress-track"><div style="width:${earned ? 100 : percent}%"></div></div>
+                    <small class="badge-progress-count">${earned ? '✓ تکمیل‌شده' : `${progress} از ${badge.target}`}</small>
                   </div>
-                </div>
+                </article>
               `;
             }).join('')}
           </div>
