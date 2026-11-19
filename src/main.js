@@ -28,12 +28,13 @@ const defaultState = {
   notes: '',
   earned: [],
   focusSessions: 0,
-  profile: { displayName: 'ماجراجوی My Life', gender: 'boy', bio: 'در مسیر نسخه بهتر خودم', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {} },
+  profile: { displayName: 'ماجراجوی My Life', gender: 'boy', bio: 'در مسیر نسخه بهتر خودم', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {}, genderInitialized: true },
   gems: 120, streak: 0, longestStreak: 0, lastActiveDate: null,
   totalTasksCompleted: 0, totalHabitsCompleted: 0, xpByDate: {}, createdAt: today()
 };
 
 
+const waterTarget = () => state.settings?.waterTarget || 8;
 const isRecord = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const isDateKey = value => {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -62,7 +63,7 @@ function normalizeState(raw) {
 
   next.profile = { ...defaultState.profile, ...(isRecord(source.profile) ? source.profile : {}) };
   if (!['boy', 'girl', 'neutral'].includes(next.profile.gender)) next.profile.gender = 'boy';
-  if (!asBoolean(next.profile.genderInitialized)) {
+  if (isRecord(source.profile) && !asBoolean(source.profile.genderInitialized)) {
     next.profile.gender = 'boy';
     next.profile.hairStyle = 'short';
     next.profile.genderInitialized = true;
@@ -109,7 +110,7 @@ function normalizeState(raw) {
   next.waterRewardDate = isDateKey(source.waterRewardDate) ? source.waterRewardDate : null;
   next.xp = asNumber(source.xp);
   next.gems = asNumber(source.gems, 120);
-  next.water = Math.round(asNumber(source.water, 0, 8));
+  next.water = Math.round(asNumber(source.water, 0, 24));
   next.focusSessions = Math.round(asNumber(source.focusSessions));
   next.streak = Math.round(asNumber(source.streak));
   next.longestStreak = Math.round(asNumber(source.longestStreak));
@@ -222,11 +223,21 @@ function recordActiveDay() {
     state.longestStreak = Math.max(state.longestStreak, state.streak);
   }
 }
+function refreshStreak() {
+  if (!state.lastActiveDate) return;
+  const gap = Math.round((new Date(today() + 'T00:00:00') - new Date(state.lastActiveDate + 'T00:00:00')) / 86400000);
+  if (gap > 1 && state.streak !== 0) {
+    state.streak = 0;
+    save();
+  }
+}
 function addXP(amount) {
+  const levelBefore = getLevel();
   state.xp += amount;
   state.xpByDate[today()] = Number(state.xpByDate[today()] || 0) + amount;
   recordActiveDay();
   checkBadges();
+  if (getLevel() > levelBefore) showToast(`🎉 به سطح ${getLevel()} رسیدی!`);
 }
 function getLevel() {
   return Math.floor(state.xp / 100) + 1;
@@ -251,6 +262,21 @@ function getHabitPercent() {
 
 const validViews = ['dashboard', 'planner', 'growth', 'profile', 'focus', 'journal', 'settings'];
 let activeView = validViews.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'dashboard';
+
+window.addEventListener('hashchange', () => {
+  const view = location.hash.slice(1);
+  if (validViews.includes(view) && view !== activeView) {
+    activeView = view;
+    render();
+  }
+});
+
+function getOverallPercent() {
+  const parts = [];
+  if (state.tasks.length) parts.push(getTaskPercent());
+  if (state.habits.length) parts.push(getHabitPercent());
+  return parts.length ? Math.round(parts.reduce((a, b) => a + b, 0) / parts.length) : 0;
+}
 
 function render() {
   const completedTasks = state.tasks.filter(t => t.done).length;
@@ -352,7 +378,7 @@ function render() {
                     <circle cx="60" cy="60" r="48" class="chart-progress"/>
                   </svg>
                   <div class="growth-percent">
-                    <strong>${Math.round((taskPercent + habitPercent) / 2)}%</strong>
+                    <strong>${getOverallPercent()}%</strong>
                     <small>پیشرفت</small>
                   </div>
                 </div>
@@ -419,9 +445,9 @@ function render() {
           <div class="stat-card">
             <div class="stat-icon cyan">💧</div>
             <span>آب نوشیده‌شده</span>
-            <strong>${state.water}<small> / 8 لیوان</small></strong>
+            <strong>${state.water}<small> / ${waterTarget()} لیوان</small></strong>
             <div class="stat-progress">
-              <div style="width:${Math.min(state.water / 8 * 100, 100)}%"></div>
+              <div style="width:${Math.min(state.water / waterTarget() * 100, 100)}%"></div>
             </div>
           </div>
         </section>
@@ -430,7 +456,7 @@ function render() {
         <section class="daily-path-panel">
           <div class="daily-path-heading">
             <div><span class="eyebrow">YOUR DAILY JOURNEY</span><h2>مسیر امروزت</h2><p>هر قدم کوچیک، تو رو جلوتر می‌بره.</p></div>
-            <span class="daily-path-progress">${Math.round((taskPercent + habitPercent) / 2)}٪</span>
+            <span class="daily-path-progress">${getOverallPercent()}٪</span>
           </div>
           <div class="daily-path-steps">
             <a href="#planner" data-view="planner" class="daily-path-step ${completedTasks > 0 ? 'step-started' : ''}">
@@ -508,17 +534,30 @@ function render() {
 
             <div class="habit-list">
               ${state.habits.map(habit => `
-                <button
-                  class="habit-item ${habit.done ? 'habit-done' : ''}"
-                  data-action="habit-toggle"
-                  data-id="${habit.id}"
-                >
-                  <span class="habit-icon">${escapeHTML(habit.icon)}</span>
-                  <span class="habit-title">${escapeHTML(habit.title)}</span>
-                  <span class="habit-status">${habit.done ? '✓' : '+'}</span>
-                </button>
+                <div class="habit-row" style="display:flex;gap:8px;align-items:center">
+                  <button
+                    class="habit-item ${habit.done ? 'habit-done' : ''}"
+                    style="flex:1"
+                    data-action="habit-toggle"
+                    data-id="${habit.id}"
+                  >
+                    <span class="habit-icon">${escapeHTML(habit.icon)}</span>
+                    <span class="habit-title">${escapeHTML(habit.title)}</span>
+                    <span class="habit-status">${habit.done ? '✓' : '+'}</span>
+                  </button>
+                  <button
+                    class="delete-button"
+                    data-action="habit-delete"
+                    data-id="${habit.id}"
+                    aria-label="حذف عادت"
+                  >×</button>
+                </div>
               `).join('')}
             </div>
+            <form id="habit-form" class="add-form">
+              <input id="habit-input" placeholder="عادت جدید..." maxlength="80" required>
+              <button type="submit">+</button>
+            </form>
 
             <div class="habit-summary">
               <div class="progress-track">
@@ -635,13 +674,13 @@ function render() {
             </div>
 
             <div class="water-number">
-              ${state.water}<small> / 8</small>
+              ${state.water}<small> / ${waterTarget()}</small>
             </div>
 
             <p>لیوان آب امروز</p>
 
             <div class="water-glasses">
-              ${Array.from({ length: 8 }, (_, i) => `
+              ${Array.from({ length: waterTarget() }, (_, i) => `
                 <span class="${i < state.water ? 'filled' : ''}">♧</span>
               `).join('')}
             </div>
@@ -708,9 +747,20 @@ function bindEvents() {
       countedComplete: false
     });
 
+    input.value = '';
     save();
     render();
     showToast('وظیفه جدید اضافه شد ✨');
+  });
+
+  $('#habit-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const title = $('#habit-input').value.trim();
+    if (!title) return;
+    state.habits.push({ id: Date.now(), title: title.slice(0, 80), icon: '✦', done: false, lastRewardDate: null });
+    save();
+    render();
+    showToast('عادت جدید اضافه شد ✨');
   });
 
   document.querySelectorAll('[data-action]').forEach(button => {
@@ -726,6 +776,10 @@ function bindEvents() {
           if (!task.countedComplete) { state.totalTasksCompleted++; task.countedComplete = true; }
           if (!task.rewardClaimed) { addXP(10); state.gems += 2; task.rewardClaimed = true; showToast('۱۰ XP و ۲ کریستال گرفتی!'); }
         }
+      }
+
+      if (button.dataset.action === 'habit-delete') {
+        state.habits = state.habits.filter(h => h.id !== id);
       }
 
       if (button.dataset.action === 'task-delete') {
@@ -768,14 +822,14 @@ function bindEvents() {
   });
 
   $('#water-add').addEventListener('click', () => {
-    if (state.water >= 8) {
+    if (state.water >= waterTarget()) {
       showToast('هدف روزانه آب تکمیل شده است 💧');
       return;
     }
 
     state.water++;
     addXP(2);
-    if (state.water >= 8 && state.waterRewardDate !== today()) {
+    if (state.water >= waterTarget() && state.waterRewardDate !== today()) {
       state.gems += 3;
       state.waterRewardDate = today();
       showToast('هدف آب امروز کامل شد؛ ۳ کریستال گرفتی! 💎');
@@ -862,35 +916,39 @@ function updateClock() {
 setInterval(() => {
   if (today() !== state.date) {
     resetDailyData();
+    refreshStreak();
     save();
     render();
     showToast('روز جدیدی آغاز شد! ✨');
   } else {
+    refreshStreak();
     updateClock();
   }
 }, 30000);
 
 checkBadges();
+refreshStreak();
 save();
 render();
 
 
 // My Life Plus — incremental feature layer (keeps existing data and workflows).
 const originalRender = render;
-const plusDefaults = { goals: [], journal: {}, theme: 'light', waterTarget: 8 };
+const plusDefaults = { theme: 'light', waterTarget: 8 };
 state.goals = Array.isArray(state.goals) ? state.goals : [];
 state.journal = state.journal && typeof state.journal === 'object' ? state.journal : {};
 if (!state.journal[state.date] && state.notes) state.journal[state.date] = state.notes;
 state.settings = { ...plusDefaults, ...(state.settings || {}) };
 
 function plusEscape(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return escapeHTML(value ?? '');
 }
 function plusSave() {
   save();
 }
 
 const avatarCategories = [
+ {id:'gender',label:'جنسیت',icon:'⚲'},
  {id:'skin',label:'رنگ پوست',icon:'◉'},
  {id:'faceShape',label:'فرم صورت',icon:'◒'},
  {id:'hairStyle',label:'مدل مو',icon:'⌁'},
@@ -908,6 +966,7 @@ const avatarCategories = [
 ];
 let activeAvatarCategory = 'skin';
 const avatarChoices = {
+ gender:[{value:'boy',label:'پسر',icon:'♂'},{value:'girl',label:'دختر',icon:'♀'},{value:'neutral',label:'خنثی',icon:'◌'}],
  skin:[['#f8d9c2','خیلی روشن'],['#efc49f','روشن'],['#d99b72','گندمی'],['#bd805d','کاراملی'],['#925c43','قهوه‌ای'],['#684638','تیره']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
  faceShape:[{value:'soft',label:'بیضی',icon:'◯'},{value:'round',label:'گرد',icon:'●'},{value:'square',label:'چهارگوش',icon:'▢'},{value:'heart',label:'قلبی',icon:'♡'}],
  hairStyle:[{value:'short',label:'کوتاه',icon:'⌁'},{value:'wave',label:'موج‌دار',icon:'〰'},{value:'curly',label:'فر',icon:'❋'},{value:'long',label:'بلند',icon:'〰'},{value:'bob',label:'مصری',icon:'⌒'},{value:'ponytail',label:'دم‌اسبی',icon:'↗'},{value:'bun',label:'جمع‌شده',icon:'◉',cost:45},{value:'afro',label:'فر حجیم',icon:'✿',cost:55}],
@@ -1082,7 +1141,11 @@ function mountProfile(main) {
  });
 }
 function plusRender() {
+  const draftTask = document.getElementById('task-input')?.value ?? '';
+  const draftHabit = document.getElementById('habit-input')?.value ?? '';
   originalRender();
+  if (draftTask) document.getElementById('task-input').value = draftTask;
+  if (draftHabit) document.getElementById('habit-input').value = draftHabit;
   document.documentElement.dataset.theme = state.settings.theme;
   const main = document.querySelector('.main-content');
   if (!main) return;
@@ -1104,7 +1167,7 @@ function plusRender() {
     '</div>' +
     '<div class="panel plus-panel plus-backup">' +
       '<div class="plus-heading"><div><span class="eyebrow">YOUR DATA, YOUR CONTROL</span><h2>مدیریت اطلاعات</h2><p>از اطلاعاتت نسخه پشتیبان بگیر یا آن را بازیابی کن.</p></div></div>' +
-      '<div class="plus-actions"><button id="plus-export">↓ دریافت نسخه پشتیبان</button><label class="plus-import">↑ بازیابی نسخه پشتیبان<input id="plus-import-file" type="file" accept="application/json"></label><button id="plus-theme">' + (state.settings.theme === 'dark' ? '☀ حالت روشن' : '☾ حالت تاریک') + '</button></div>' +
+      '<div class="plus-actions"><button id="plus-export">↓ دریافت نسخه پشتیبان</button><label class="plus-import">↑ بازیابی نسخه پشتیبان<input id="plus-import-file" type="file" accept="application/json"></label></div>' +
       '<small class="plus-note">پیشنهاد: هر چند وقت یک‌بار از اطلاعاتت خروجی بگیر. پاک‌کردن داده‌های مرورگر می‌تواند اطلاعات محلی را حذف کند.</small>' +
     '</div>';
   const goalsPanel = section.querySelector('#plus-goals');
@@ -1116,6 +1179,21 @@ function plusRender() {
   goalsWrap.className = journalWrap.className = backupWrap.className = 'plus-grid';
   goalsWrap.appendChild(goalsPanel);
   journalWrap.appendChild(journalPanel);
+
+  const pastEntries = Object.keys(state.journal)
+    .filter(k => isDateKey(k) && k !== state.date && String(state.journal[k] || '').trim())
+    .sort().reverse().slice(0, 30);
+  const historyPanel = document.createElement('div');
+  historyPanel.className = 'panel plus-panel';
+  historyPanel.id = 'plus-journal-history';
+  historyPanel.innerHTML =
+    '<div class="plus-heading"><div><span class="eyebrow">PAST DAYS</span><h2>روزهای قبل</h2><p>یادداشت‌های گذشته‌ات، از جدید به قدیم.</p></div></div>' +
+    (pastEntries.length
+      ? pastEntries.map(k => '<div class="plus-goal"><span><strong>' +
+          plusEscape(new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(k + 'T00:00:00'))) +
+          '</strong><br>' + plusEscape(state.journal[k]) + '</span></div>').join('')
+      : '<div class="plus-empty">هنوز یادداشتی برای روزهای قبل نداری.</div>');
+  journalWrap.appendChild(historyPanel);
   backupWrap.appendChild(backupPanel);
   main.querySelector('[data-page="growth"]').appendChild(goalsWrap);
   main.querySelector('[data-page="journal"]').appendChild(journalWrap);
@@ -1171,9 +1249,31 @@ function plusRender() {
     };
     reader.readAsText(file);
   });
+  const settingsWrap = document.createElement('div');
+  settingsWrap.className = 'plus-grid';
+  settingsWrap.innerHTML =
+    '<div class="panel plus-panel" id="plus-settings">' +
+      '<div class="plus-heading"><div><span class="eyebrow">PREFERENCES</span><h2>ظاهر و هدف‌ها</h2><p>ظاهر برنامه و هدف آب روزانه‌ات را تنظیم کن.</p></div></div>' +
+      '<div class="plus-actions"><button id="plus-theme">' + (state.settings.theme === 'dark' ? '☀ حالت روشن' : '☾ حالت تاریک') + '</button></div>' +
+      '<form id="plus-water-form" class="plus-form"><input id="plus-water-target" type="number" min="1" max="24" value="' + waterTarget() + '" aria-label="هدف آب روزانه"><button>ذخیره هدف آب</button></form>' +
+      '<small class="plus-note">هدف آب بین ۱ تا ۲۴ لیوان قابل تنظیم است.</small>' +
+    '</div>';
+  main.querySelector('[data-page="settings"]').appendChild(settingsWrap);
+
   document.getElementById('plus-theme').addEventListener('click', () => {
     state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
     plusSave(); plusRender();
+  });
+  document.getElementById('plus-water-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const value = Math.round(Number(document.getElementById('plus-water-target').value));
+    if (!Number.isFinite(value) || value < 1 || value > 24) {
+      showToast('هدف آب باید بین ۱ تا ۲۴ لیوان باشد');
+      return;
+    }
+    state.settings.waterTarget = value;
+    plusSave(); plusRender();
+    showToast('هدف آب ذخیره شد 💧');
   });
 }
 render = function() { plusRender(); };

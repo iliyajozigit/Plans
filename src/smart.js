@@ -119,6 +119,7 @@ async function loadWeather(city) {
 }
 
 let weatherRequestId = 0;
+const smartCache = { open: false, weatherHTML: '', coachAnswer: '' };
 
 function mountSmartHub() {
   const dashboard = document.querySelector('[data-page="dashboard"]');
@@ -153,8 +154,11 @@ function mountSmartHub() {
   `;
 
   dashboard.appendChild(hub);
-  let weatherLoaded = false;
+  hub.open = smartCache.open;
+  hub.querySelector('#smart-coach-answer').textContent = smartCache.coachAnswer;
+  let weatherLoaded = !!smartCache.weatherHTML;
   const weatherResult = hub.querySelector('#smart-weather-result');
+  if (smartCache.weatherHTML) weatherResult.innerHTML = smartCache.weatherHTML;
   const refreshWeather = async city => {
     const requestId = ++weatherRequestId;
     weatherResult.innerHTML = '<span class="smart-loading"></span><span>در حال دریافت...</span>';
@@ -166,6 +170,7 @@ function mountSmartHub() {
         <div class="weather-main"><span>${weatherIcon(c.weather_code)}</span><strong>${Math.round(c.temperature_2m)}°</strong><small>${safeText(weatherText(c.weather_code))}</small></div>
         <div class="weather-place">${safeText(data.place.name)}، ${safeText(data.place.country || '')}</div>
         <div class="weather-details"><span>حس‌شده <b>${Math.round(c.apparent_temperature)}°</b></span><span>بیشینه <b>${Math.round(d.temperature_2m_max[0])}°</b></span><span>کمینه <b>${Math.round(d.temperature_2m_min[0])}°</b></span></div>`;
+      smartCache.weatherHTML = weatherResult.innerHTML;
       const saved = readPrefs(); saved.city = city;
       localStorage.setItem(SMART_PREFS_KEY, JSON.stringify(saved));
     } catch {
@@ -175,6 +180,7 @@ function mountSmartHub() {
   };
 
   hub.addEventListener('toggle', () => {
+    smartCache.open = hub.open;
     if (hub.open && !weatherLoaded) {
       weatherLoaded = true;
       refreshWeather(prefs.city);
@@ -190,7 +196,8 @@ function mountSmartHub() {
     const input = hub.querySelector('#smart-coach-question');
     const question = input.value.trim();
     if (!question) return;
-    hub.querySelector('#smart-coach-answer').textContent = answerCoach(question, getSmartState());
+    smartCache.coachAnswer = answerCoach(question, getSmartState());
+    hub.querySelector('#smart-coach-answer').textContent = smartCache.coachAnswer;
     input.value = '';
   });
 }
