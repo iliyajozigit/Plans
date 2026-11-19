@@ -1189,7 +1189,7 @@ function plusRender() {
   historyPanel.innerHTML =
     '<div class="plus-heading"><div><span class="eyebrow">PAST DAYS</span><h2>روزهای قبل</h2><p>یادداشت‌های گذشته‌ات، از جدید به قدیم.</p></div></div>' +
     (pastEntries.length
-      ? pastEntries.map(k => '<div class="plus-goal"><span><strong>' +
+      ? pastEntries.map(k => '<div class="plus-entry"><span><strong>' +
           plusEscape(new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(k + 'T00:00:00'))) +
           '</strong><br>' + plusEscape(state.journal[k]) + '</span></div>').join('')
       : '<div class="plus-empty">هنوز یادداشتی برای روزهای قبل نداری.</div>');

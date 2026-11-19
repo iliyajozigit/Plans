@@ -536,3 +536,8 @@ html[data-theme="dark"] .simple-avatar-choice small{background:#51452b;color:#f4
  .simple-avatar-name-form button{padding:10px 11px}
 }
 @media(prefers-reduced-motion:reduce){.simple-avatar-choice{transition:none}}
+
+/* Fix: keep the avatar editor inside the viewport (tabs row scrolls inside itself). */
+.simple-avatar-page, .simple-avatar-editor, .simple-avatar-tabs, .simple-avatar-options { min-width: 0; max-width: 100%; }
+.plus-entry { padding: 12px 14px; border-bottom: 1px solid var(--line); line-height: 1.8; }
+.plus-entry strong { color: var(--violet); }
