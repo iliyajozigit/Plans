@@ -722,3 +722,50 @@ html[data-theme="dark"] .navigation{background:rgba(20,36,27,.70)!important}
 html[data-theme="dark"] .navigation .nav-item{color:#edf5ee!important}
 html[data-theme="dark"] .navigation .nav-item.active{background:rgba(255,255,255,.16)!important;color:#fff!important}
 @media(prefers-reduced-motion:reduce){.nature-scene *{animation:none!important}}
+
+
+/* === SAKURA GARDEN BACKGROUND === */
+.sakura-tree{
+  position:fixed;display:block;pointer-events:none;z-index:0;
+  width:clamp(150px,19vw,270px);height:clamp(260px,37vw,470px);
+  bottom:-28px;opacity:.72;
+  transform-origin:bottom center;
+  filter:drop-shadow(0 8px 18px rgba(102,75,82,.08));
+}
+.sakura-tree::before{
+  content:"";position:absolute;left:48%;bottom:0;width:13px;height:74%;
+  border-radius:60% 40% 8px 8px;
+  background:linear-gradient(90deg,rgba(91,70,63,.08),rgba(112,78,69,.58) 42%,rgba(137,97,86,.42) 72%,rgba(91,70,63,.08));
+  transform:rotate(8deg);transform-origin:bottom center;
+  box-shadow:-31px -95px 0 -5px rgba(112,78,69,.35),25px -145px 0 -5px rgba(112,78,69,.32),-4px -205px 0 -6px rgba(112,78,69,.28);
+}
+.sakura-tree::after{
+  content:"";position:absolute;inset:0 0 20% 0;
+  background:
+    radial-gradient(ellipse at 22% 36%,rgba(255,210,224,.92) 0 7%,transparent 7.8%),
+    radial-gradient(ellipse at 37% 22%,rgba(255,190,211,.86) 0 10%,transparent 10.8%),
+    radial-gradient(ellipse at 56% 18%,rgba(255,220,230,.94) 0 9%,transparent 9.8%),
+    radial-gradient(ellipse at 75% 31%,rgba(248,178,205,.84) 0 11%,transparent 11.8%),
+    radial-gradient(ellipse at 83% 49%,rgba(255,211,226,.9) 0 8%,transparent 8.8%),
+    radial-gradient(ellipse at 60% 48%,rgba(255,193,215,.88) 0 13%,transparent 13.8%),
+    radial-gradient(ellipse at 35% 52%,rgba(255,220,232,.9) 0 12%,transparent 12.8%),
+    radial-gradient(ellipse at 49% 67%,rgba(247,177,204,.82) 0 9%,transparent 9.8%),
+    radial-gradient(ellipse at 16% 61%,rgba(255,204,222,.86) 0 7%,transparent 7.8%);
+  filter:blur(.3px);
+  animation:sakuraSway 8s ease-in-out infinite alternate;
+}
+.sakura-left{left:-48px;transform:scale(.94);opacity:.66}
+.sakura-right{right:-55px;transform:scaleX(-1) scale(.88);opacity:.62;animation:sakuraTreeSway 11s ease-in-out infinite alternate}
+.sakura-far{left:38%;bottom:-92px;transform:scale(.62);opacity:.34;filter:blur(1px);z-index:0}
+@keyframes sakuraSway{from{transform:rotate(-1.5deg) translateY(0)}to{transform:rotate(1.5deg) translateY(-5px)}}
+@keyframes sakuraTreeSway{from{translate:0 0}to{translate:0 -7px}}
+html[data-theme="dark"] .sakura-tree{opacity:.48;filter:drop-shadow(0 8px 20px rgba(0,0,0,.18))}
+html[data-theme="dark"] .sakura-tree::before{
+  background:linear-gradient(90deg,rgba(80,63,61,.05),rgba(130,91,88,.62) 42%,rgba(153,111,105,.45) 72%,rgba(80,63,61,.05));
+}
+@media(max-width:760px){
+  .sakura-left{left:-82px;bottom:-42px;transform:scale(.67);opacity:.52}
+  .sakura-right{right:-88px;bottom:-42px;transform:scaleX(-1) scale(.63);opacity:.5}
+  .sakura-far{left:25%;bottom:-112px;transform:scale(.48);opacity:.25}
+}
+@media(prefers-reduced-motion:reduce){.sakura-tree::after,.sakura-right{animation:none!important}}
