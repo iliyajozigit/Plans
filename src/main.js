@@ -503,7 +503,7 @@ function render() {
                     <span class="badge-lock">${earned ? '✓' : '🔒'}</span>
                   </div>
                   <div class="badge-emblem-wrap">
-                    <div class="badge-emblem"><span>${badge.icon}</span></div>
+                    <div class="badge-emblem">${badgeArt(badge.id)}</div>
                   </div>
                   <div class="badge-card-copy">
                     <h3>${badge.title}</h3>
@@ -805,25 +805,74 @@ function plusSave() {
 }
 
 const avatarCategories = [
-  {id:'skin',label:'پوست',icon:'◉'},{id:'hairStyle',label:'مدل مو',icon:'✂'},
-  {id:'hairColor',label:'رنگ مو',icon:'🎨'},{id:'eyeColor',label:'چشم‌ها',icon:'◉'},
-  {id:'outfitStyle',label:'لباس',icon:'👕'},{id:'outfitColor',label:'رنگ لباس',icon:'🧵'},
-  {id:'accessory',label:'اکسسوری',icon:'◇'},{id:'background',label:'پس‌زمینه',icon:'🌈'}
+  {id:'skin',label:'پوست',icon:'◉'},{id:'hairStyle',label:'مدل مو',icon:'⌁'},
+  {id:'hairColor',label:'رنگ مو',icon:'●'},{id:'eyeColor',label:'چشم‌ها',icon:'◎'},
+  {id:'outfitStyle',label:'لباس',icon:'▱'},{id:'outfitColor',label:'رنگ لباس',icon:'◌'},
+  {id:'accessory',label:'اکسسوری',icon:'◇'},{id:'background',label:'پس‌زمینه',icon:'▧'}
 ];
 let activeAvatarCategory = 'skin';
+let activeShopCategory = 'all';
 const avatarChoices = {
  skin:[['#f4d0b1','روشن'],['#e8b58d','گندمی روشن'],['#d99b72','گندمی'],['#b97855','کاراملی'],['#8c573f','قهوه‌ای'],['#633e35','تیره']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
- hairStyle:[['short','کوتاه','✂️'],['wave','موج‌دار','〰️'],['curly','فر','🌀'],['long','بلند','💇']].map(x=>({value:x[0],label:x[1],icon:x[2]})),
+ hairStyle:[['short','کوتاه','⌁'],['wave','موج‌دار','〰'],['curly','فر','◌'],['long','بلند','〰'],['bob','مصری','⌒'],['ponytail','دم‌اسبی','↗']].map(x=>({value:x[0],label:x[1],icon:x[2]})),
  hairColor:[['#302321','مشکی'],['#49312f','قهوه‌ای'],['#87513a','فندقی'],['#d6a04d','بلوند'],['#a65e91','یاسی'],['#6376c9','آبی']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
  eyeColor:[['#4b8177','سبزآبی'],['#5574aa','آبی'],['#694b37','قهوه‌ای'],['#747b8d','خاکستری']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
- outfitStyle:[{value:'tee',label:'تی‌شرت',icon:'👕'},{value:'hoodie',label:'هودی',icon:'🧥'},{value:'jacket',label:'کت',icon:'🧥',cost:55},{value:'star',label:'ستاره‌ای',icon:'🌟',cost:85},{value:'galaxy',label:'کهکشانی',icon:'🌌',cost:120}],
+ outfitStyle:[{value:'tee',label:'تی‌شرت',icon:'▱'},{value:'hoodie',label:'هودی',icon:'▰'},{value:'jacket',label:'کت شهری',icon:'▥',cost:55},{value:'star',label:'ستاره‌ای',icon:'✦',cost:85},{value:'galaxy',label:'کهکشانی',icon:'✧',cost:120},{value:'varsity',label:'دانشگاهی',icon:'▤',cost:95},{value:'artist',label:'هنری',icon:'◈',cost:75},{value:'raincoat',label:'بارانی',icon:'▧',cost:65}],
  outfitColor:[['#7666df','بنفش'],['#4caa83','سبز'],['#e77d9f','صورتی'],['#4f83bd','آبی'],['#e59b4e','نارنجی'],['#38465d','سرمه‌ای']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
- accessory:[{value:'none',label:'بدون اکسسوری',icon:'—'},{value:'glasses',label:'عینک کلاسیک',icon:'👓'},{value:'round',label:'عینک گرد',icon:'🕶️'},{value:'headphones',label:'هدفون',icon:'🎧',cost:35},{value:'flower',label:'گل ساکورا',icon:'🌸',cost:45},{value:'crown',label:'تاج افتخار',icon:'👑',cost:90}],
- background:[{value:'blossom',label:'شکوفه',icon:'🌸'},{value:'meadow',label:'چمنزار',icon:'🌿'},{value:'ocean',label:'اقیانوس',icon:'🌊'},{value:'sunset',label:'غروب',icon:'🌅'},{value:'lavender',label:'اسطوخودوس',icon:'💜',cost:40},{value:'galaxy',label:'کهکشان',icon:'🌌',cost:75}]
+ accessory:[{value:'none',label:'بدون اکسسوری',icon:'—'},{value:'glasses',label:'عینک کلاسیک',icon:'▱'},{value:'round',label:'عینک گرد',icon:'◉'},{value:'headphones',label:'هدفون',icon:'◖',cost:35},{value:'flower',label:'گل ساکورا',icon:'✿',cost:45},{value:'crown',label:'تاج افتخار',icon:'♛',cost:90},{value:'cap',label:'کلاه کپ',icon:'⌂',cost:50},{value:'bow',label:'پاپیون',icon:'⋈',cost:40},{value:'scarf',label:'شال گردن',icon:'∿',cost:55}],
+ background:[{value:'blossom',label:'شکوفه',icon:'✿'},{value:'meadow',label:'چمنزار',icon:'❧'},{value:'ocean',label:'اقیانوس',icon:'≈'},{value:'sunset',label:'غروب',icon:'◒'},{value:'lavender',label:'اسطوخودوس',icon:'◌',cost:40},{value:'galaxy',label:'کهکشان',icon:'✧',cost:75},{value:'mint',label:'نعنایی',icon:'◉',cost:35},{value:'peach',label:'هلویی',icon:'◒',cost:35},{value:'forest',label:'جنگل',icon:'♧',cost:60}]
 };
 function avatarMarkup(size) {
  const p=state.profile;
- return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+plusEscape(p.background)+'"><span class="ml-avatar-petal petal-a"></span><span class="ml-avatar-petal petal-b"></span><div class="ml-avatar-person" data-hair="'+plusEscape(p.hairStyle)+'" data-outfit="'+plusEscape(p.outfitStyle)+'" data-accessory="'+plusEscape(p.accessory)+'" style="--skin:'+plusEscape(p.skin)+';--hair:'+plusEscape(p.hairColor)+';--eyes:'+plusEscape(p.eyeColor)+';--shirt:'+plusEscape(p.outfitColor)+'"><div class="ml-avatar-hair"></div><div class="ml-avatar-head"><i class="ml-eye left"></i><i class="ml-eye right"></i><i class="ml-smile"></i><i class="ml-glasses"></i><i class="ml-hair-fringe"></i></div><div class="ml-avatar-neck"></div><div class="ml-avatar-body"><span class="ml-shirt-detail">•</span></div><i class="ml-avatar-arm arm-left"></i><i class="ml-avatar-arm arm-right"></i><span class="ml-avatar-accessory">'+(p.accessory==='flower'?'🌸':p.accessory==='crown'?'👑':p.accessory==='headphones'?'🎧':'')+'</span></div><span class="ml-avatar-base"></span></div>';
+ const hairBack = p.hairStyle==='long'
+  ? '<path d="M42 78 Q34 32 90 25 Q146 31 138 80 L137 151 Q126 165 119 135 L112 81 Z" fill="var(--hair)"/>'
+  : p.hairStyle==='ponytail'
+  ? '<path d="M126 55 Q159 58 151 99 Q145 119 127 110 Z" fill="var(--hair)"/>'
+  : p.hairStyle==='curly'
+  ? '<g fill="var(--hair)"><circle cx="53" cy="54" r="18"/><circle cx="72" cy="35" r="19"/><circle cx="96" cy="31" r="20"/><circle cx="119" cy="43" r="19"/><circle cx="133" cy="64" r="16"/></g>'
+  : '<path d="M43 77 Q34 28 90 25 Q145 29 137 82 L127 112 L53 112 Z" fill="var(--hair)"/>';
+ const fringe = p.hairStyle==='bob'
+  ? '<path d="M48 68 Q45 28 91 27 Q135 28 133 70 Q112 55 91 65 Q69 52 48 68Z" fill="var(--hair)"/>'
+  : p.hairStyle==='curly'
+  ? '<path d="M48 69 Q51 35 77 39 Q90 20 107 40 Q132 35 133 70 Q113 59 91 70 Q68 58 48 69Z" fill="var(--hair)"/>'
+  : '<path d="M48 69 Q49 29 91 29 Q132 30 133 69 Q115 57 103 73 Q90 59 78 75 Q63 59 48 69Z" fill="var(--hair)"/>';
+ const outfit = p.outfitStyle==='jacket'||p.outfitStyle==='varsity'
+  ? '<path d="M54 143 L72 133 L90 149 L108 133 L126 143 L145 210 L35 210 Z" fill="var(--shirt)"/><path d="M72 137 L90 151 L108 137 L103 210 L77 210 Z" fill="#ffffff22"/><path d="M90 151 V207" stroke="#ffffff88" stroke-width="3"/>'+(p.outfitStyle==='varsity'?'<path d="M45 154 L59 149 L68 210 L47 210Z M122 149 L137 154 L133 210 L112 210Z" fill="#f3c75b"/>':'')
+  : p.outfitStyle==='raincoat'
+  ? '<path d="M55 143 L74 132 L90 147 L106 132 L125 143 L145 210 L35 210 Z" fill="var(--shirt)"/><path d="M73 137 L90 151 L107 137" fill="none" stroke="#ffffffaa" stroke-width="5"/>'
+  : '<path d="M54 143 Q69 132 90 137 Q111 132 126 143 L145 210 L35 210 Z" fill="var(--shirt)"/>'+(p.outfitStyle==='hoodie'?'<path d="M71 139 Q90 119 109 139 L104 158 Q90 169 76 158Z" fill="#00000018"/>':'');
+ const accessory = p.accessory==='glasses'
+  ? '<g fill="none" stroke="#35434b" stroke-width="4"><rect x="57" y="78" width="29" height="20" rx="8"/><rect x="94" y="78" width="29" height="20" rx="8"/><path d="M86 86 H94"/></g>'
+  : p.accessory==='round'
+  ? '<g fill="none" stroke="#35434b" stroke-width="4"><circle cx="72" cy="88" r="14"/><circle cx="108" cy="88" r="14"/><path d="M86 86 H94"/></g>'
+  : p.accessory==='flower'
+  ? '<g transform="translate(126 48)" fill="#f4a8c5"><ellipse cy="-9" rx="5" ry="9"/><ellipse cy="9" rx="5" ry="9"/><ellipse cx="-9" rx="9" ry="5"/><ellipse cx="9" rx="9" ry="5"/><circle r="5" fill="#f5c95d"/></g>'
+  : p.accessory==='crown'
+  ? '<path d="M66 37 L76 20 L90 34 L105 19 L115 38 L121 48 L60 48 Z" fill="#f3c64e" stroke="#d69d2d" stroke-width="3"/>'
+  : p.accessory==='headphones'
+  ? '<g fill="none" stroke="#e8a34d" stroke-width="8"><path d="M48 77 Q44 28 90 28 Q136 28 132 77"/><rect x="42" y="70" width="13" height="31" rx="6" fill="#e8a34d" stroke="none"/><rect x="125" y="70" width="13" height="31" rx="6" fill="#e8a34d" stroke="none"/></g>'
+  : p.accessory==='cap'
+  ? '<path d="M45 58 Q52 29 91 32 Q125 33 133 58 L132 66 Q90 55 47 70Z" fill="#4d8f62"/><path d="M91 57 Q122 54 143 68 Q117 78 91 66Z" fill="#36764d"/>'
+  : p.accessory==='bow'
+  ? '<g fill="#e98eae"><path d="M91 43 Q64 22 65 47 Q69 61 91 49Z"/><path d="M91 43 Q118 22 117 47 Q113 61 91 49Z"/><circle cx="91" cy="46" r="5" fill="#f6c75c"/></g>'
+  : p.accessory==='scarf'
+  ? '<path d="M69 132 Q90 145 111 132 L116 151 Q90 164 64 151Z" fill="#e7a34e"/><path d="M103 146 L117 146 L112 184 L98 184Z" fill="#e7a34e"/>'
+  : '';
+ return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+plusEscape(p.background)+'"><svg class="ml-avatar-person" viewBox="0 0 180 220" role="img" aria-label="آواتار شخصی‌سازی‌شده" style="--skin:'+plusEscape(p.skin)+';--hair:'+plusEscape(p.hairColor)+';--eyes:'+plusEscape(p.eyeColor)+';--shirt:'+plusEscape(p.outfitColor)+'"><ellipse cx="90" cy="211" rx="52" ry="7" fill="#314b3520"/>'+hairBack+'<path d="M45 210 Q47 174 58 148 Q68 134 90 134 Q112 134 122 148 Q133 174 135 210Z" fill="var(--shirt)"/>'+outfit+'<path d="M78 119 L102 119 L104 145 Q90 158 76 145Z" fill="var(--skin)"/><path d="M47 78 Q45 48 62 38 Q75 25 91 28 Q124 26 135 52 Q141 69 133 91 Q127 119 111 128 Q90 145 68 127 Q51 112 47 78Z" fill="var(--skin)"/><ellipse cx="47" cy="87" rx="8" ry="13" fill="var(--skin)"/><ellipse cx="133" cy="87" rx="8" ry="13" fill="var(--skin)"/>'+fringe+'<g fill="var(--eyes)"><ellipse cx="73" cy="88" rx="3.5" ry="5"/><ellipse cx="107" cy="88" rx="3.5" ry="5"/></g><path d="M82 108 Q90 115 98 108" fill="none" stroke="#a95d5b" stroke-width="3" stroke-linecap="round"/><path d="M59 78 Q71 71 82 77 M98 77 Q109 71 121 78" fill="none" stroke="var(--hair)" stroke-width="4" stroke-linecap="round"/>'+accessory+'<path d="M35 210 Q39 171 54 149 L70 143 L90 160 L110 143 L126 149 Q141 171 145 210Z" fill="none" stroke="#00000010" stroke-width="2"/></svg></div>';
+}
+function badgeArt(id) {
+ const art = {
+  'first-task':['#e8f7dc','#55a92a','<path d="M63 25 V79" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><path d="M66 29 L111 39 L66 51Z" fill="currentColor"/><path d="M76 63 L88 75 L111 52" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>'],
+  'task-master':['#e6f1ff','#4c83c5','<rect x="54" y="30" width="72" height="86" rx="12" fill="none" stroke="currentColor" stroke-width="7"/><path d="M73 55 L82 64 L101 44 M73 83 L82 92 L101 72" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>'],
+  'habit-starter':['#e8f7dc','#4b9d48','<path d="M90 112 Q48 85 69 39 Q116 39 111 80 Q108 98 90 112Z" fill="currentColor"/><path d="M90 112 Q89 77 109 56" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>'],
+  'habit-master':['#e4f4dc','#438e42','<path d="M90 112 V63 M90 83 Q52 84 52 52 Q82 44 90 72 Q98 44 128 52 Q128 84 90 83Z" fill="currentColor"/><path d="M75 112 H105" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>'],
+  'water-lover':['#e3f5ff','#399ac7','<path d="M90 25 Q60 68 60 86 Q60 116 90 116 Q120 116 120 86 Q120 68 90 25Z" fill="currentColor"/><path d="M76 88 Q78 103 93 104" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>'],
+  'focus-master':['#fff0df','#d68a36','<circle cx="90" cy="78" r="43" fill="none" stroke="currentColor" stroke-width="8"/><path d="M90 48 V80 L111 91" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>'],
+  'xp-collector':['#fff4d7','#c58b22','<path d="M96 25 L54 82 H83 L76 119 L126 61 H96Z" fill="currentColor"/>'],
+  'legend':['#fce8f0','#c77a9b','<path d="M50 55 L70 69 L90 37 L110 69 L130 55 L119 112 H61Z" fill="currentColor"/><circle cx="90" cy="82" r="8" fill="#fff"/>']
+ };
+ const [bg,ink,shape]=art[id]||art['first-task'];
+ return '<svg viewBox="0 0 180 150" aria-hidden="true" style="--badge-ink:'+ink+'"><rect x="23" y="8" width="134" height="134" rx="38" fill="'+bg+'"/><g color="'+ink+'">'+shape+'</g></svg>';
 }
 function mountProfile(main) {
  const root=main.querySelector('#profile-experience'); if(!root)return;
@@ -840,19 +889,14 @@ function mountProfile(main) {
   const claimed=claims.includes(q.id),ready=q.progress>=q.target;
   return '<article class="clean-quest '+(claimed?'is-claimed':'')+'"><span class="clean-quest-icon">'+q.icon+'</span><div class="clean-quest-copy"><strong>'+q.title+'</strong><small>'+q.desc+'</small><div class="clean-progress"><i style="width:'+Math.min(100,q.progress/q.target*100)+'%"></i></div><small>'+Math.min(q.progress,q.target)+' از '+q.target+'</small></div><button data-profile-quest="'+q.id+'" '+(!ready||claimed?'disabled':'')+'>'+(claimed?'دریافت شد':ready?'دریافت پاداش':'در حال انجام')+'</button><span class="clean-quest-reward">+'+q.xp+' XP · 💎 '+q.gems+'</span></article>';
  }).join('');
- const featured=[
-  {cat:'outfitStyle',value:'jacket'},
-  {cat:'accessory',value:'flower'},
-  {cat:'accessory',value:'headphones'},
-  {cat:'background',value:'lavender'},
-  {cat:'accessory',value:'crown'},
-  {cat:'background',value:'galaxy'}
- ];
- const shopHTML=featured.map(entry=>{
-  const item=(avatarChoices[entry.cat]||[]).find(x=>x.value===entry.value);
-  if(!item)return '';
-  const key=entry.cat+':'+entry.value,unlocked=p.unlocked.includes(key),selected=p[entry.cat]===entry.value;
-  return '<article class="clean-shop-item"><span class="clean-shop-icon">'+(item.icon||'•')+'</span><div><strong>'+item.label+'</strong><small>'+(unlocked?(selected?'در حال استفاده':'در کمد تو'):'قابل بازکردن')+'</small></div><button data-shop-key="'+key+'" '+(unlocked?'disabled':'')+'>'+(unlocked?'✓':'💎 '+item.cost)+'</button></article>';
+ const shopItems=Object.entries(avatarChoices).flatMap(([cat,items])=>items.filter(item=>item.cost).map(item=>({cat,item})));
+ const visibleShopItems=shopItems.filter(({cat})=>activeShopCategory==='all'||cat===activeShopCategory);
+ const shopTabs=[['all','همه'],['outfitStyle','لباس'],['accessory','اکسسوری'],['hairStyle','مو'],['background','پس‌زمینه']];
+ const shopTabsHTML=shopTabs.map(([id,label])=>'<button class="shop-filter '+(activeShopCategory===id?'active':'')+'" data-shop-filter="'+id+'">'+label+'</button>').join('');
+ const shopHTML=visibleShopItems.map(({cat,item})=>{
+  const key=cat+':'+item.value,unlocked=p.unlocked.includes(key),selected=p[cat]===item.value;
+  const visual=item.swatch?'<span class="shop-swatch" style="--swatch:'+item.swatch+'"></span>':'<span class="shop-product-symbol">'+(item.icon||'•')+'</span>';
+  return '<article class="shop-product '+(unlocked?'is-owned':'')+'"><div class="shop-product-art">'+visual+'</div><div class="shop-product-copy"><strong>'+item.label+'</strong><small>'+(unlocked?(selected?'روی آواتار توست':'در کمد تو'):'آیتم قابل جمع‌آوری')+'</small></div><button data-shop-key="'+key+'" class="'+(unlocked?'owned':'')+'">'+(unlocked?(selected?'فعال':'استفاده'):'◆ '+item.cost)+'</button></article>';
  }).join('');
  const tabs=avatarCategories.map(c=>'<button class="avatar-tab '+(activeAvatarCategory===c.id?'active':'')+'" data-avatar-tab="'+c.id+'"><span>'+c.icon+'</span>'+c.label+'</button>').join('');
  const options=(avatarChoices[activeAvatarCategory]||[]).map(item=>{
@@ -862,29 +906,31 @@ function mountProfile(main) {
  }).join('');
  const badgeHTML=badges.map(b=>{
   const has=state.earned.includes(b.id);
-  return '<div class="profile-badge '+(has?'earned':'locked')+'"><span>'+b.icon+'</span><strong>'+b.title+'</strong><small>'+(has?'دریافت‌شده':b.description)+'</small></div>';
+  return '<div class="profile-badge '+(has?'earned':'locked')+'"><span class="profile-badge-art">'+badgeArt(b.id)+'</span><strong>'+b.title+'</strong><small>'+(has?'دریافت‌شده':b.description)+'</small></div>';
  }).join('');
  root.innerHTML =
- '<section class="clean-profile-hero"><div class="clean-profile-copy"><span class="clean-kicker">MY LIFE PROFILE</span><div class="clean-name-row"><h2>'+plusEscape(p.displayName)+'</h2><span>سطح '+level+'</span></div><p>قدم‌های کوچک تو، مسیر بزرگت را می‌سازند.</p><div class="clean-xp-label"><strong>'+state.xp.toLocaleString('fa-IR')+' XP</strong><small>'+xpInLevel+' از ۱۰۰ تا سطح بعدی</small></div><div class="clean-xp-track"><i style="width:'+xpInLevel+'%"></i></div><div class="clean-wallet-row"><span>💎 '+state.gems.toLocaleString('fa-IR')+' کریستال</span><span>🔥 '+state.streak.toLocaleString('fa-IR')+' روز پیاپی</span></div></div>'+avatarMarkup('large')+'</section>'+
+ '<section class="clean-profile-hero"><div class="clean-profile-copy"><span class="clean-kicker">MY LIFE PROFILE</span><div class="clean-name-row"><h2>'+plusEscape(p.displayName)+'</h2><span>سطح '+level+'</span></div><p>قدم‌های کوچک تو، مسیر بزرگت را می‌سازند.</p><div class="clean-xp-label"><strong>'+state.xp.toLocaleString('fa-IR')+' XP</strong><small>'+xpInLevel+' از ۱۰۰ تا سطح بعدی</small></div><div class="clean-xp-track"><i style="width:'+xpInLevel+'%"></i></div><div class="clean-wallet-row"><span>◆ '+state.gems.toLocaleString('fa-IR')+' کریستال</span><span>🔥 '+state.streak.toLocaleString('fa-IR')+' روز پیاپی</span></div></div>'+avatarMarkup('large')+'</section>'+
  '<div class="clean-stat-strip"><div><span>⭐</span><strong>'+state.xp.toLocaleString('fa-IR')+'</strong><small>کل XP</small></div><div><span>🔥</span><strong>'+state.longestStreak.toLocaleString('fa-IR')+'</strong><small>بهترین استریک</small></div><div><span>🏅</span><strong>'+earned+' / '+badges.length+'</strong><small>نشان‌ها</small></div><div><span>📆</span><strong>'+todayXP.toLocaleString('fa-IR')+'</strong><small>XP امروز</small></div></div>'+
- '<section class="clean-section"><div class="clean-section-head"><div><span class="clean-kicker">DAILY QUESTS</span><h3>مأموریت‌های امروز</h3><p>با انجام کارهای روزانه، XP و کریستال بگیر.</p></div><span class="clean-section-mark">🎁</span></div><div class="clean-quest-list">'+questHTML+'</div></section>'+
- '<section class="clean-section"><div class="clean-section-head"><div><span class="clean-kicker">CRYSTAL SHOP</span><h3>فروشگاه کریستال</h3><p>با کریستال‌هایی که جمع می‌کنی، ظاهر شخصیتت را باز کن.</p></div><span class="clean-shop-balance">💎 '+state.gems.toLocaleString('fa-IR')+'</span></div><div class="clean-shop-grid">'+shopHTML+'</div></section>'+
- '<details class="clean-details"><summary><span>🎨</span><div><strong>شخصی‌سازی شخصیت</strong><small>رنگ، مدل مو، لباس و اکسسوری</small></div><b>+</b></summary><div class="clean-details-body"><div class="avatar-studio-layout"><div class="avatar-preview-column">'+avatarMarkup('preview')+'<strong>'+plusEscape(p.displayName)+'</strong></div><div class="avatar-editor"><div class="avatar-tabs">'+tabs+'</div><div class="avatar-options">'+options+'</div></div></div><form id="profile-name-form" class="profile-name-form"><label>نام نمایشی</label><input name="displayName" maxlength="32" value="'+plusEscape(p.displayName)+'" placeholder="اسم دلخواهت"><button type="submit">ذخیره</button></form></div></details>'+
+ '<details class="clean-details avatar-editor-details" open><summary><span>◉</span><div><strong>ویرایش آواتار</strong><small>ظاهر شخصیتت را دقیقاً همان‌طور که دوست داری بساز</small></div><b>+</b></summary><div class="clean-details-body"><div class="avatar-studio-layout"><div class="avatar-preview-column">'+avatarMarkup('preview')+'<strong>'+plusEscape(p.displayName)+'</strong><small>پیش‌نمایش زنده</small></div><div class="avatar-editor"><div class="avatar-tabs">'+tabs+'</div><div class="avatar-options">'+options+'</div></div></div><form id="profile-name-form" class="profile-name-form"><label>نام نمایشی</label><input name="displayName" maxlength="32" value="'+plusEscape(p.displayName)+'" placeholder="اسم دلخواهت"><button type="submit">ذخیره نام</button></form></div></details>'+
+ '<section class="clean-section shop-section"><div class="clean-section-head"><div><span class="clean-kicker">MY LIFE COLLECTION</span><h3>فروشگاه ظاهر و لباس</h3><p>آیتم‌ها را باز کن، به کمدت اضافه کن و هر وقت خواستی بپوش.</p></div><span class="clean-shop-balance">◆ '+state.gems.toLocaleString('fa-IR')+'</span></div><div class="shop-filters">'+shopTabsHTML+'</div><div class="clean-shop-grid">'+(shopHTML||'<p class="shop-empty">برای این دسته فعلاً آیتمی وجود ندارد.</p>')+'</div></section>'+
+ '<section class="clean-section"><div class="clean-section-head"><div><span class="clean-kicker">DAILY QUESTS</span><h3>مأموریت‌های امروز</h3><p>با انجام کارهای روزانه، XP و کریستال بگیر.</p></div><span class="clean-section-mark">▣</span></div><div class="clean-quest-list">'+questHTML+'</div></section>'+
+ 
+ 
  '<details class="clean-details"><summary><span>🏆</span><div><strong>نشان‌های من</strong><small>'+earned+' نشان از '+badges.length+' نشان دریافت شده</small></div><b>+</b></summary><div class="clean-details-body"><div class="profile-badge-grid">'+badgeHTML+'</div></div></details>'+
  '<div class="clean-week-note">این هفته <strong>'+weekXP.toLocaleString('fa-IR')+' XP</strong> جمع کرده‌ای · '+state.totalTasksCompleted.toLocaleString('fa-IR')+' وظیفه و '+state.totalHabitsCompleted.toLocaleString('fa-IR')+' عادت کامل‌شده</div>';
  root.querySelectorAll('[data-avatar-tab]').forEach(btn=>btn.addEventListener('click',()=>{activeAvatarCategory=btn.dataset.avatarTab;mountProfile(main);}));
  root.querySelectorAll('[data-avatar-choice]').forEach(btn=>btn.addEventListener('click',()=>{
   const cat=btn.dataset.avatarChoice,val=btn.dataset.avatarValue,cost=Number(btn.dataset.avatarCost||0),key=cat+':'+val;
-  if(cost&&!p.unlocked.includes(key)){showToast('این آیتم را از فروشگاه با کریستال باز کن.');return;}
+  if(cost&&!p.unlocked.includes(key)){const shop=root.querySelector('.shop-section');if(shop){shop.scrollIntoView({behavior:'smooth',block:'center'});shop.classList.add('shop-nudge');setTimeout(()=>shop.classList.remove('shop-nudge'),700);}showToast('این آیتم را از فروشگاه باز کن.');return;}
   p[cat]=val;plusSave();mountProfile(main);
  }));
+ root.querySelectorAll('[data-shop-filter]').forEach(btn=>btn.addEventListener('click',()=>{activeShopCategory=btn.dataset.shopFilter;mountProfile(main);}));
  root.querySelectorAll('[data-shop-key]').forEach(btn=>btn.addEventListener('click',()=>{
   const key=btn.dataset.shopKey,[cat,val]=key.split(':');
-  const item=(avatarChoices[cat]||[]).find(x=>x.value===val);
-  if(!item||p.unlocked.includes(key))return;
-  const cost=Number(item.cost||0);
-  if(state.gems<cost){showToast('کریستال کافی نداری؛ مأموریت‌ها را کامل کن.');return;}
-  state.gems-=cost;p.unlocked.push(key);plusSave();mountProfile(main);showToast('آیتم به کمدت اضافه شد!');
+  const item=(avatarChoices[cat]||[]).find(x=>x.value===val);if(!item)return;
+  if(p.unlocked.includes(key)){p[cat]=val;plusSave();mountProfile(main);showToast('آیتم روی آواتارت قرار گرفت.');return;}
+  const cost=Number(item.cost||0);if(state.gems<cost){showToast('کریستال کافی نداری؛ مأموریت‌ها را کامل کن.');return;}
+  state.gems-=cost;p.unlocked.push(key);p[cat]=val;plusSave();mountProfile(main);showToast('آیتم باز شد و روی آواتارت قرار گرفت!');
  }));
  root.querySelector('#profile-name-form')?.addEventListener('submit',e=>{
   e.preventDefault();const val=new FormData(e.currentTarget).get('displayName').trim();
