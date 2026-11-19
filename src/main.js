@@ -35,7 +35,13 @@ const defaultState = {
 
 
 const isRecord = value => value !== null && typeof value === 'object' && !Array.isArray(value);
-const isDateKey = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value + 'T00:00:00'));
+const isDateKey = value => {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+};
+const asBoolean = value => value === true || value === 1 || value === 'true';
 const asNumber = (value, fallback = 0, max = Number.MAX_SAFE_INTEGER) => {
   const number = Number(value);
   return Number.isFinite(number) ? Math.min(Math.max(number, 0), max) : fallback;
