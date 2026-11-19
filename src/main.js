@@ -927,21 +927,21 @@ function plusSave() {
 }
 
 const avatarCategories = [
- {id:'gender',label:'جنسیت',icon:'⚲'},
- {id:'skin',label:'رنگ پوست',icon:'◉'},
- {id:'faceShape',label:'فرم صورت',icon:'◒'},
- {id:'hairStyle',label:'مدل مو',icon:'⌁'},
- {id:'hairColor',label:'رنگ مو',icon:'●'},
- {id:'eyeStyle',label:'فرم چشم',icon:'◎'},
- {id:'eyeColor',label:'رنگ چشم',icon:'◉'},
- {id:'browStyle',label:'ابرو',icon:'⌒'},
- {id:'expression',label:'حالت چهره',icon:'☺'},
- {id:'mouthStyle',label:'دهان',icon:'ᴗ'},
- {id:'faceDetail',label:'جزئیات صورت',icon:'✧'},
- {id:'outfitStyle',label:'لباس',icon:'▱'},
- {id:'outfitColor',label:'رنگ لباس',icon:'◌'},
- {id:'accessory',label:'اکسسوری',icon:'◇'},
- {id:'background',label:'پس‌زمینه',icon:'▧'}
+ {id:'gender',label:'جنسیت',icon:'👤'},
+ {id:'skin',label:'رنگ پوست',icon:'🎨'},
+ {id:'faceShape',label:'فرم صورت',icon:'🙂'},
+ {id:'hairStyle',label:'مدل مو',icon:'💇'},
+ {id:'hairColor',label:'رنگ مو',icon:'🖌️'},
+ {id:'eyeStyle',label:'فرم چشم',icon:'👁️'},
+ {id:'eyeColor',label:'رنگ چشم',icon:'🔵'},
+ {id:'browStyle',label:'ابرو',icon:'〰️'},
+ {id:'expression',label:'حالت چهره',icon:'😊'},
+ {id:'mouthStyle',label:'دهان',icon:'👄'},
+ {id:'faceDetail',label:'جزئیات صورت',icon:'✨'},
+ {id:'outfitStyle',label:'لباس',icon:'👕'},
+ {id:'outfitColor',label:'رنگ لباس',icon:'🎽'},
+ {id:'accessory',label:'اکسسوری',icon:'🕶️'},
+ {id:'background',label:'پس‌زمینه',icon:'🖼️'}
 ];
 let activeAvatarCategory = 'skin';
 const avatarChoices = {
@@ -961,8 +961,8 @@ const avatarChoices = {
  accessory:[{value:'none',label:'بدون اکسسوری',icon:'—'},{value:'glasses',label:'عینک',icon:'▱'},{value:'round',label:'عینک گرد',icon:'◎'},{value:'headphones',label:'هدفون',icon:'◖',cost:35},{value:'flower',label:'گل',icon:'✿',cost:35},{value:'cap',label:'کلاه',icon:'⌂',cost:45},{value:'bow',label:'پاپیون',icon:'⋈',cost:35}],
  background:[{value:'blossom',label:'سبز روشن',icon:'◉'},{value:'meadow',label:'نعنایی',icon:'◉'},{value:'ocean',label:'آبی',icon:'◉'},{value:'sunset',label:'هلویی',icon:'◉'},{value:'lavender',label:'یاسی',icon:'◉'}]
 };
-function avatarMarkup(size) {
- const p=state.profile||{};
+function avatarMarkup(size, override) {
+ const p={...(state.profile||{}),...(override||{})};
  const safe=(key,fallback)=>((avatarChoices[key]||[]).some(x=>x.value===p[key])?p[key]:fallback);
  const skin=safe('skin','#d99b72'), hair=safe('hairColor','#49312f');
  const eyes=safe('eyeColor','#49362d'), shirt=safe('outfitColor','#4caa83');
@@ -1068,46 +1068,110 @@ function badgeArt(id) {
  const [bg,ink,shape]=art[id]||art['first-task'];
  return '<svg viewBox="0 0 180 150" aria-hidden="true" style="--badge-ink:'+ink+'"><rect x="23" y="8" width="134" height="134" rx="38" fill="'+bg+'"/><g color="'+ink+'">'+shape+'</g></svg>';
 }
+let activeProfileTab = 'character';
+let activeShopCat = 'hairStyle';
+const avatarGroups = [
+ {id:'look',label:'ظاهر',icon:'🙂',cats:['gender','skin','faceShape','eyeStyle','eyeColor','browStyle','expression','mouthStyle','faceDetail']},
+ {id:'hair',label:'مو',icon:'💇',cats:['hairStyle','hairColor']},
+ {id:'style',label:'استایل',icon:'👕',cats:['outfitStyle','outfitColor','accessory','background']}
+];
+function catInfo(id){return avatarCategories.find(c=>c.id===id)||{label:id,icon:'✦'};}
+function applyAvatarChoice(cat,val,main){
+ const p=state.profile;
+ const key=cat+':'+val;
+ const item=(avatarChoices[cat]||[]).find(x=>x.value===val);
+ if(!item)return;
+ if(item.cost&&!p.unlocked.includes(key)){
+  const cost=Number(item.cost);
+  if(state.gems<cost){showToast('کریستال کافی نداری. با انجام تسک و عادت کریستال جمع کن.');return;}
+  state.gems-=cost;
+  p.unlocked.push(key);
+  showToast('🎉 «'+item.label+'» به کمدت اضافه شد!');
+ }
+ p[cat]=val;
+ plusSave();
+ render();
+}
+function characterMarkup(p){
+ const group=avatarGroups.find(g=>g.cats.includes(activeAvatarCategory))||avatarGroups[0];
+ const groups=avatarGroups.map(g=>'<button type="button" class="look-group '+(g.id===group.id?'active':'')+'" data-avatar-group="'+g.id+'"><span>'+g.icon+'</span>'+g.label+'</button>').join('');
+ const cats=group.cats.map(id=>{const c=catInfo(id);return '<button type="button" class="look-cat '+(activeAvatarCategory===id?'active':'')+'" data-avatar-tab="'+id+'">'+c.icon+' '+c.label+'</button>';}).join('');
+ const choices=(avatarChoices[activeAvatarCategory]||[]).map(item=>{
+  const key=activeAvatarCategory+':'+item.value;
+  const owned=!item.cost||p.unlocked.includes(key);
+  const selected=p[activeAvatarCategory]===item.value;
+  const visual=activeAvatarCategory==='gender'
+   ? '<span class="look-symbol">'+(item.icon||'✦')+'</span>'
+   : avatarMarkup('mini',{[activeAvatarCategory]:item.value});
+  return '<button type="button" class="look-choice '+(selected?'selected':'')+(owned?'':' locked')+'" data-avatar-choice="'+activeAvatarCategory+'" data-avatar-value="'+item.value+'" aria-pressed="'+selected+'">'+
+   (selected?'<span class="look-check" aria-hidden="true">✓</span>':'')+
+   '<span class="look-visual">'+visual+'</span><span class="look-name">'+item.label+'</span>'+
+   (owned?'':'<small class="price">💎 '+item.cost+'</small>')+
+   '</button>';
+ }).join('');
+ return '<div class="look-layout">'+
+  '<aside class="look-stage-card">'+avatarMarkup('large')+'<div class="look-name-big">'+plusEscape(p.displayName||'شخصیت من')+'</div>'+
+   '<form id="simple-avatar-name" class="look-name-form"><input id="simple-avatar-name-input" name="displayName" maxlength="32" value="'+plusEscape(p.displayName||'')+'" placeholder="اسم شخصیتت"><button type="submit">ذخیره</button></form>'+
+  '</aside>'+
+  '<section class="look-editor">'+
+   '<div class="look-groups" role="tablist">'+groups+'</div>'+
+   '<div class="look-cats">'+cats+'</div>'+
+   '<div class="look-options">'+(choices||'<p class="simple-avatar-empty">موردی برای نمایش وجود ندارد.</p>')+'</div>'+
+  '</section>'+
+ '</div>';
+}
+function shopMarkup(p,gems){
+ const premium=[];
+ Object.keys(avatarChoices).forEach(cat=>avatarChoices[cat].forEach(item=>{if(item.cost)premium.push({cat,item});}));
+ const cats=[...new Set(premium.map(x=>x.cat))];
+ const current=cats.includes(activeShopCat)?activeShopCat:cats[0];
+ const pills=cats.map(c=>{const info=catInfo(c);return '<button type="button" class="look-cat '+(c===current?'active':'')+'" data-shop-cat="'+c+'">'+info.icon+' '+info.label+'</button>';}).join('');
+ const items=premium.filter(x=>x.cat===current).map(({cat,item})=>{
+  const key=cat+':'+item.value;
+  const owned=p.unlocked.includes(key);
+  const equipped=p[cat]===item.value;
+  const action=equipped
+   ? '<span class="shop-badge">✓ در حال استفاده</span>'
+   : owned
+    ? '<button type="button" class="shop-action equip" data-shop-item="'+cat+'" data-shop-value="'+item.value+'">پوشیدن</button>'
+    : '<button type="button" class="shop-action buy '+(state.gems<item.cost?'short':'')+'" data-shop-item="'+cat+'" data-shop-value="'+item.value+'">💎 '+item.cost+' خرید</button>';
+  return '<article class="shop-card '+(equipped?'equipped':'')+'"><div class="shop-visual">'+avatarMarkup('mini',{[cat]:item.value})+'</div><h4>'+item.label+'</h4><small>'+catInfo(cat).label+(owned&&!equipped?' · در کمدت':'')+'</small>'+action+'</article>';
+ }).join('');
+ return '<section class="shop-hero"><div><span class="eyebrow">SHOP</span><h3>فروشگاه شخصیت</h3><p>با انجام تسک‌ها و عادت‌ها و جلسات تمرکز کریستال جمع کن و ظاهرت را هر طور دوست داری بساز.</p></div>'+gems+'</section>'+
+  '<div class="shop-cats">'+pills+'</div>'+
+  '<div class="shop-grid">'+items+'</div>';
+}
 function mountProfile(main) {
  const root=main.querySelector('#profile-experience');
  if(!root)return;
  const p=state.profile;
- const categories=avatarCategories.map(c=>
-  '<button type="button" class="simple-avatar-tab '+(activeAvatarCategory===c.id?'active':'')+'" data-avatar-tab="'+c.id+'"><span>'+c.icon+'</span>'+c.label+'</button>'
- ).join('');
- const choices=(avatarChoices[activeAvatarCategory]||[]).map(item=>{
-  const key=activeAvatarCategory+':'+item.value;
-  const locked=!!item.cost&&!p.unlocked.includes(key);
-  const selected=p[activeAvatarCategory]===item.value;
-  const visual=item.swatch
-   ? '<span class="simple-avatar-swatch" style="--swatch:'+item.swatch+'"></span>'
-   : '<span class="simple-avatar-symbol">'+(item.icon||'✦')+'</span>';
-  return '<button type="button" class="simple-avatar-choice '+(selected?'selected ':'')+(locked?'locked':'')+'" data-avatar-choice="'+activeAvatarCategory+'" data-avatar-value="'+item.value+'">'+visual+'<span class="simple-avatar-choice-name">'+item.label+'</span>'+(locked?'<small>💎 '+item.cost+'</small>':'')+'</button>';
- }).join('');
- root.innerHTML=
-  '<section class="simple-avatar-page">'+
-   '<header class="simple-avatar-header"><div><span class="simple-avatar-eyebrow">MY LIFE</span><h2>شخصیت من</h2><p>ظاهر شخصیتت رو بساز و تغییر بده.</p></div><div class="simple-avatar-wallet"><span>💎 '+state.gems.toLocaleString('fa-IR')+'</span></div></header>'+
-   '<section class="simple-avatar-preview"><div class="simple-avatar-preview-glow"></div>'+avatarMarkup('large')+'<div class="simple-avatar-name">'+plusEscape(p.displayName||'شخصیت من')+'</div></section>'+
-   '<section class="simple-avatar-editor"><div class="simple-avatar-editor-title"><h3>شخصی‌سازی</h3><span>انتخاب کن تا فوراً ببینی</span></div><div class="simple-avatar-tabs">'+categories+'</div><div class="simple-avatar-options">'+(choices||'<p class="simple-avatar-empty">موردی برای نمایش وجود ندارد.</p>')+'</div></section>'+
-   '<form id="simple-avatar-name" class="simple-avatar-name-form"><label for="simple-avatar-name-input">نام شخصیت</label><input id="simple-avatar-name-input" name="displayName" maxlength="32" value="'+plusEscape(p.displayName||'')+'" placeholder="اسم دلخواهت"><button type="submit">ذخیره</button></form>'+
-  '</section>';
+ const gems='<div class="gem-balance"><span aria-hidden="true">💎</span><strong>'+state.gems.toLocaleString('fa-IR')+'</strong><small>کریستال</small></div>';
+ const tabs='<div class="profile-tabs" role="tablist">'+
+  '<button type="button" role="tab" aria-selected="'+(activeProfileTab==='character')+'" class="profile-tab '+(activeProfileTab==='character'?'active':'')+'" data-profile-tab="character">🧑 شخصیت من</button>'+
+  '<button type="button" role="tab" aria-selected="'+(activeProfileTab==='shop')+'" class="profile-tab '+(activeProfileTab==='shop'?'active':'')+'" data-profile-tab="shop">🛍 فروشگاه</button>'+
+  '</div>';
+ root.innerHTML = tabs + (activeProfileTab==='shop' ? shopMarkup(p,gems) : (gems ? '<div class="look-top">'+gems+'</div>' : '') + characterMarkup(p));
+ root.querySelectorAll('[data-profile-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+  activeProfileTab=btn.dataset.profileTab;
+  mountProfile(main);
+ }));
+ root.querySelectorAll('[data-avatar-group]').forEach(btn=>btn.addEventListener('click',()=>{
+  const g=avatarGroups.find(x=>x.id===btn.dataset.avatarGroup);
+  if(g){activeAvatarCategory=g.cats[0];mountProfile(main);}
+ }));
  root.querySelectorAll('[data-avatar-tab]').forEach(btn=>btn.addEventListener('click',()=>{
   activeAvatarCategory=btn.dataset.avatarTab;
   mountProfile(main);
  }));
  root.querySelectorAll('[data-avatar-choice]').forEach(btn=>btn.addEventListener('click',()=>{
-  const cat=btn.dataset.avatarChoice,val=btn.dataset.avatarValue,key=cat+':'+val;
-  const item=(avatarChoices[cat]||[]).find(x=>x.value===val);
-  if(!item)return;
-  if(item.cost&&!p.unlocked.includes(key)){
-   const cost=Number(item.cost);
-   if(state.gems<cost){showToast('کریستال کافی نداری.');return;}
-   state.gems-=cost;
-   p.unlocked.push(key);
-  }
-  p[cat]=val;
-  plusSave();
+  applyAvatarChoice(btn.dataset.avatarChoice,btn.dataset.avatarValue,main);
+ }));
+ root.querySelectorAll('[data-shop-cat]').forEach(btn=>btn.addEventListener('click',()=>{
+  activeShopCat=btn.dataset.shopCat;
   mountProfile(main);
+ }));
+ root.querySelectorAll('[data-shop-item]').forEach(btn=>btn.addEventListener('click',()=>{
+  applyAvatarChoice(btn.dataset.shopItem,btn.dataset.shopValue,main);
  }));
  root.querySelector('#simple-avatar-name')?.addEventListener('submit',e=>{
   e.preventDefault();
@@ -1115,7 +1179,7 @@ function mountProfile(main) {
   if(!val)return;
   p.displayName=val;
   plusSave();
-  mountProfile(main);
+  render();
   showToast('اسم شخصیت ذخیره شد.');
  });
 }
