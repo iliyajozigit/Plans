@@ -248,7 +248,7 @@ function render() {
 
           <div class="topbar-right">
             <div class="level-pill">⭐ سطح ${getLevel()}</div><div class="level-pill gem-wallet">💎 ${state.gems.toLocaleString('fa-IR')}</div>
-            <button class="avatar profile-shortcut" data-view="profile" aria-label="رفتن به پروفایل">✦</button>
+            <button class="avatar profile-shortcut" data-view="profile" aria-label="رفتن به پروفایل"><span class="profile-shortcut-mark" aria-hidden="true"><i></i><b></b><em></em></span></button>
           </div>
         </header>
 
