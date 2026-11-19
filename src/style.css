@@ -1582,3 +1582,55 @@ html[data-theme="dark"] .coach-insight{background:#34304d;border-color:#46405e}
 html[data-theme="dark"] .avatar.profile-shortcut{background:linear-gradient(145deg,#344d2c,#263c24);border-color:#496c3d;border-bottom-color:#36532e}
 html[data-theme="dark"] .profile-shortcut-mark i{background:#344d2c;border-color:#a5df83}
 html[data-theme="dark"] .profile-shortcut-mark b{border-color:#a5df83;background:linear-gradient(90deg,#639d48 0 48%,#344d2c 48% 100%)}
+
+
+/* Minimal pass: remove repeated labels and keep secondary tools out of the way. */
+.page-intro{display:none!important}
+.eyebrow,.hero-label,.clean-kicker,.smart-kicker{display:none!important}
+.sidebar-footer,.footer,.clean-week-note,.clean-stat-strip{display:none!important}
+.daily-path-heading p,.clean-section-head p{display:none!important}
+.daily-path-panel{margin-top:14px}
+.daily-path-heading{margin-bottom:10px}
+.daily-path-steps{gap:7px}
+.daily-path-step{padding:9px 10px}
+.hero-card{margin-bottom:0}
+.stats-grid{margin-top:13px;margin-bottom:13px}
+.smart-hub.smart-tools-details{
+  margin:15px 0 0;padding:0;background:#fff;border:2px solid #e5e5e5;
+  border-bottom-width:4px;border-radius:15px;overflow:hidden
+}
+.smart-tools-summary{
+  min-height:54px;display:flex;align-items:center;gap:10px;padding:11px 14px;
+  cursor:pointer;list-style:none;color:#3c3c3c;font-size:12px;font-weight:900
+}
+.smart-tools-summary::-webkit-details-marker{display:none}
+.smart-tools-summary small{margin-right:auto;color:#999;font-size:9px;font-weight:600}
+.smart-tools-summary>b{width:23px;height:23px;display:grid;place-items:center;border-radius:8px;background:#efffe6;color:#429d08;font-size:16px;transition:transform .18s}
+.smart-tools-details[open] .smart-tools-summary>b{transform:rotate(45deg)}
+.smart-tools-details .smart-grid{padding:0 12px 12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.smart-tools-details .smart-card{padding:12px;border:1px solid #eee;border-radius:12px;box-shadow:none}
+.smart-tools-details .smart-card-top{margin-bottom:8px}
+.smart-tools-details .smart-card h3{font-size:11px}
+.smart-tools-details .coach-insight{padding:9px}
+.smart-tools-details .coach-insight p{font-size:9px;line-height:1.7}
+.smart-tools-details .smart-coach-answer{font-size:9px}
+.smart-tools-details .weather-details{gap:6px}
+.smart-tools-details .weather-details span{font-size:8px}
+.clean-section-head{margin-bottom:10px}
+.clean-quest-copy small:first-of-type{display:none}
+.clean-quest{padding:10px}
+.clean-shop-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.clean-shop-item{min-width:0}
+.badge-hero p,.badge-filter-heading small{display:none!important}
+.badge-overview{margin:10px 0}
+@media(max-width:760px){
+ .smart-tools-summary{min-height:47px;padding:9px 11px;font-size:10px}
+ .smart-tools-summary small{font-size:8px}
+ .smart-tools-details .smart-grid{grid-template-columns:1fr;padding:0 8px 9px}
+ .clean-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .daily-path-step{padding:8px 7px}
+}
+html[data-theme="dark"] .smart-hub.smart-tools-details{background:#24243a;border-color:#38384e}
+html[data-theme="dark"] .smart-tools-summary{color:#f0eff8}
+html[data-theme="dark"] .smart-tools-summary small{color:#aaa}
+html[data-theme="dark"] .smart-tools-summary>b{background:#344d2c;color:#a5df83}
