@@ -27,7 +27,7 @@ const defaultState = {
   notes: '',
   earned: [],
   focusSessions: 0,
-  profile: { displayName: 'ماجراجوی My Life', bio: 'در مسیر نسخه بهتر خودم ✨', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {} },
+  profile: { displayName: 'ماجراجوی My Life', bio: 'در مسیر نسخه بهتر خودم', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {} },
   gems: 120, streak: 0, longestStreak: 0, lastActiveDate: null,
   totalTasksCompleted: 0, totalHabitsCompleted: 0, xpByDate: {}, createdAt: today()
 };
@@ -68,7 +68,7 @@ const badges = [
   { id: 'habit-starter', title: 'شروع عادت‌ها', description: 'اولین عادت را انجام بده', icon: '🌱', color: 'green', target: 1, type: 'habits' },
   { id: 'habit-master', title: 'معمار عادت‌ها', description: '۴ عادت را در یک روز کامل کن', icon: '🌳', color: 'emerald', target: 4, type: 'dailyHabits' },
   { id: 'water-lover', title: 'قطره‌های سلامتی', description: '۸ لیوان آب ثبت کن', icon: '💎', color: 'cyan', target: 8, type: 'water' },
-  { id: 'focus-master', title: 'استاد تمرکز', description: '۵ جلسه تمرکز انجام بده', icon: '🧠', color: 'orange', target: 5, type: 'focus' },
+  { id: 'focus-master', title: 'استاد تمرکز', description: '۵ جلسه تمرکز انجام بده', icon: '⏱️', color: 'orange', target: 5, type: 'focus' },
   { id: 'xp-collector', title: 'شکارچی تجربه', description: '۱۰۰ امتیاز تجربه کسب کن', icon: '⭐', color: 'gold', target: 100, type: 'xp' },
   { id: 'legend', title: 'افسانه My Life', description: 'به ۵۰۰ امتیاز تجربه برس', icon: '👑', color: 'pink', target: 500, type: 'xp' }
 ];
@@ -205,7 +205,7 @@ function render() {
 
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-icon">✦</div>
+          <div class="brand-icon" aria-label="My Life">M</div>
           <div>
             <h2>My Life</h2>
             <span>YOUR DAILY PROGRESS</span>
@@ -242,7 +242,7 @@ function render() {
         <header class="topbar">
           <div>
             <span class="eyebrow">YOUR DAILY PROGRESS</span>
-            <h1>${({dashboard:'روزت رو بساز',planner:'برنامه‌ریزی هوشمند',growth:'مسیر رشد تو',profile:'شخصیت و افتخارات من',focus:'فضای تمرکز',journal:'دفتر شخصی',settings:'تنظیمات'})[activeView]} <span class="wave">✦</span></h1>
+            <h1>${({dashboard:'روزت رو بساز',planner:'برنامه‌ریزی روزانه',growth:'مسیر رشد تو',profile:'شخصیت و افتخارات من',focus:'فضای تمرکز',journal:'دفتر شخصی',settings:'تنظیمات'})[activeView]}</h1>
             <p class="date-text" id="live-date">${formatDate()}</p>
           </div>
 
@@ -471,7 +471,7 @@ function render() {
                 <strong>${Math.round(state.earned.length / badges.length * 100)}٪ تکمیل‌شده</strong>
               </div>
             </div>
-            <div class="badge-trophy" aria-hidden="true"><span>🏆</span><i>✦</i></div>
+            <div class="badge-trophy" aria-hidden="true"><span>🏆</span></div>
           </div>
           <div class="badge-overview">
             <div class="badge-overview-item"><span class="badge-overview-icon">🏅</span><div><strong>${state.earned.length}</strong><small>نشان دریافت‌شده</small></div></div>
@@ -504,7 +504,6 @@ function render() {
                   </div>
                   <div class="badge-emblem-wrap">
                     <div class="badge-emblem"><span>${badge.icon}</span></div>
-                    <span class="badge-emblem-spark">✦</span>
                   </div>
                   <div class="badge-card-copy">
                     <h3>${badge.title}</h3>
@@ -612,7 +611,7 @@ function bindEvents() {
       document.querySelectorAll('[data-page]').forEach(page => page.classList.toggle('active', page.dataset.page === activeView));
       const titles = { dashboard: 'روزت رو بساز', planner: 'برنامه‌ریزی هوشمند', growth: 'مسیر رشد تو', profile: 'شخصیت و افتخارات من', focus: 'فضای تمرکز', journal: 'دفتر شخصی', settings: 'تنظیمات' };
       const heading = $('.topbar h1');
-      if (heading) heading.innerHTML = `${titles[activeView]} <span class="wave">✦</span>`;
+      if (heading) heading.innerHTML = `${titles[activeView]}`;
       history.replaceState(null, '', `#${activeView}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
@@ -753,7 +752,7 @@ function toggleTimer() {
       state.gems += 3;
       save();
 
-      showToast('جلسه تمرکزت با موفقیت تمام شد! 🧠');
+      showToast('جلسه تمرکزت با موفقیت تمام شد!');
       timerSeconds = 25 * 60;
       render();
     }
@@ -809,7 +808,7 @@ const avatarCategories = [
   {id:'skin',label:'پوست',icon:'◉'},{id:'hairStyle',label:'مدل مو',icon:'✂'},
   {id:'hairColor',label:'رنگ مو',icon:'🎨'},{id:'eyeColor',label:'چشم‌ها',icon:'◉'},
   {id:'outfitStyle',label:'لباس',icon:'👕'},{id:'outfitColor',label:'رنگ لباس',icon:'🧵'},
-  {id:'accessory',label:'اکسسوری',icon:'✦'},{id:'background',label:'پس‌زمینه',icon:'🌈'}
+  {id:'accessory',label:'اکسسوری',icon:'◇'},{id:'background',label:'پس‌زمینه',icon:'🌈'}
 ];
 let activeAvatarCategory = 'skin';
 const avatarChoices = {
@@ -824,7 +823,7 @@ const avatarChoices = {
 };
 function avatarMarkup(size) {
  const p=state.profile;
- return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+plusEscape(p.background)+'"><span class="ml-avatar-spark spark-a">✦</span><span class="ml-avatar-spark spark-b">✧</span><div class="ml-avatar-person" data-hair="'+plusEscape(p.hairStyle)+'" data-outfit="'+plusEscape(p.outfitStyle)+'" data-accessory="'+plusEscape(p.accessory)+'" style="--skin:'+plusEscape(p.skin)+';--hair:'+plusEscape(p.hairColor)+';--eyes:'+plusEscape(p.eyeColor)+';--shirt:'+plusEscape(p.outfitColor)+'"><div class="ml-avatar-hair"></div><div class="ml-avatar-head"><i class="ml-eye left"></i><i class="ml-eye right"></i><i class="ml-smile"></i><i class="ml-glasses"></i><i class="ml-hair-fringe"></i></div><div class="ml-avatar-neck"></div><div class="ml-avatar-body"><span class="ml-shirt-detail">✦</span></div><i class="ml-avatar-arm arm-left"></i><i class="ml-avatar-arm arm-right"></i><span class="ml-avatar-accessory">'+(p.accessory==='flower'?'🌸':p.accessory==='crown'?'👑':p.accessory==='headphones'?'🎧':'')+'</span></div><span class="ml-avatar-base"></span></div>';
+ return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+plusEscape(p.background)+'"><span class="ml-avatar-petal petal-a"></span><span class="ml-avatar-petal petal-b"></span><div class="ml-avatar-person" data-hair="'+plusEscape(p.hairStyle)+'" data-outfit="'+plusEscape(p.outfitStyle)+'" data-accessory="'+plusEscape(p.accessory)+'" style="--skin:'+plusEscape(p.skin)+';--hair:'+plusEscape(p.hairColor)+';--eyes:'+plusEscape(p.eyeColor)+';--shirt:'+plusEscape(p.outfitColor)+'"><div class="ml-avatar-hair"></div><div class="ml-avatar-head"><i class="ml-eye left"></i><i class="ml-eye right"></i><i class="ml-smile"></i><i class="ml-glasses"></i><i class="ml-hair-fringe"></i></div><div class="ml-avatar-neck"></div><div class="ml-avatar-body"><span class="ml-shirt-detail">•</span></div><i class="ml-avatar-arm arm-left"></i><i class="ml-avatar-arm arm-right"></i><span class="ml-avatar-accessory">'+(p.accessory==='flower'?'🌸':p.accessory==='crown'?'👑':p.accessory==='headphones'?'🎧':'')+'</span></div><span class="ml-avatar-base"></span></div>';
 }
 function mountProfile(main) {
  const root=main.querySelector('#profile-experience'); if(!root)return;
@@ -853,12 +852,12 @@ function mountProfile(main) {
   const item=(avatarChoices[entry.cat]||[]).find(x=>x.value===entry.value);
   if(!item)return '';
   const key=entry.cat+':'+entry.value,unlocked=p.unlocked.includes(key),selected=p[entry.cat]===entry.value;
-  return '<article class="clean-shop-item"><span class="clean-shop-icon">'+(item.icon||'✦')+'</span><div><strong>'+item.label+'</strong><small>'+(unlocked?(selected?'در حال استفاده':'در کمد تو'):'قابل بازکردن')+'</small></div><button data-shop-key="'+key+'" '+(unlocked?'disabled':'')+'>'+(unlocked?'✓':'💎 '+item.cost)+'</button></article>';
+  return '<article class="clean-shop-item"><span class="clean-shop-icon">'+(item.icon||'•')+'</span><div><strong>'+item.label+'</strong><small>'+(unlocked?(selected?'در حال استفاده':'در کمد تو'):'قابل بازکردن')+'</small></div><button data-shop-key="'+key+'" '+(unlocked?'disabled':'')+'>'+(unlocked?'✓':'💎 '+item.cost)+'</button></article>';
  }).join('');
  const tabs=avatarCategories.map(c=>'<button class="avatar-tab '+(activeAvatarCategory===c.id?'active':'')+'" data-avatar-tab="'+c.id+'"><span>'+c.icon+'</span>'+c.label+'</button>').join('');
  const options=(avatarChoices[activeAvatarCategory]||[]).map(item=>{
   const key=activeAvatarCategory+':'+item.value,unlocked=p.unlocked.includes(key),locked=!!item.cost&&!unlocked,selected=p[activeAvatarCategory]===item.value;
-  const visual=item.swatch?'<span class="avatar-swatch" style="--swatch:'+item.swatch+'"></span>':'<span class="avatar-option-icon">'+(item.icon||'✦')+'</span>';
+  const visual=item.swatch?'<span class="avatar-swatch" style="--swatch:'+item.swatch+'"></span>':'<span class="avatar-option-icon">'+(item.icon||'•')+'</span>';
   return '<button class="avatar-choice '+(selected?'selected ':'')+(locked?'locked':'')+'" data-avatar-choice="'+activeAvatarCategory+'" data-avatar-value="'+item.value+'" data-avatar-cost="'+(item.cost||0)+'">'+visual+'<span>'+item.label+'</span>'+(locked?'<small>🔒 '+item.cost+' 💎</small>':selected?'<small>انتخاب‌شده ✓</small>':'')+'</button>';
  }).join('');
  const badgeHTML=badges.map(b=>{
@@ -909,17 +908,17 @@ function plusRender() {
   section.className = 'plus-grid';
   section.innerHTML =
     '<div class="panel plus-panel" id="plus-goals">' +
-      '<div class="plus-heading"><div><span class="eyebrow">YOUR BIG PICTURE</span><h2>🎯 هدف‌های من</h2><p>هدف‌های مهمت رو ثبت کن و قدم‌به‌قدم جلو برو.</p></div><span class="plus-chip">' + state.goals.filter(g => g.done).length + ' / ' + state.goals.length + ' انجام‌شده</span></div>' +
+      '<div class="plus-heading"><div><span class="eyebrow">YOUR BIG PICTURE</span><h2>هدف‌های من</h2><p>هدف‌های مهمت رو ثبت کن و قدم‌به‌قدم جلو برو.</p></div><span class="plus-chip">' + state.goals.filter(g => g.done).length + ' / ' + state.goals.length + ' انجام‌شده</span></div>' +
       '<form id="plus-goal-form" class="plus-form"><input name="title" maxlength="90" placeholder="مثلاً: یادگیری یک مهارت جدید..." required><button>افزودن هدف +</button></form>' +
-      '<div class="plus-goal-list">' + (state.goals.length ? state.goals.map(g => '<div class="plus-goal ' + (g.done ? 'done' : '') + '"><button data-plus="goal-toggle" data-id="' + g.id + '">' + (g.done ? '✓' : '○') + '</button><span>' + plusEscape(g.title) + '</span><button class="remove" data-plus="goal-delete" data-id="' + g.id + '">×</button></div>').join('') : '<div class="plus-empty">هنوز هدفی ثبت نکردی؛ اولین هدفت رو اضافه کن ✨</div>') + '</div>' +
+      '<div class="plus-goal-list">' + (state.goals.length ? state.goals.map(g => '<div class="plus-goal ' + (g.done ? 'done' : '') + '"><button data-plus="goal-toggle" data-id="' + g.id + '">' + (g.done ? '✓' : '○') + '</button><span>' + plusEscape(g.title) + '</span><button class="remove" data-plus="goal-delete" data-id="' + g.id + '">×</button></div>').join('') : '<div class="plus-empty">هنوز هدفی ثبت نکردی؛ اولین هدفت رو اضافه کن.</div>') + '</div>' +
     '</div>' +
     '<div class="panel plus-panel" id="plus-journal">' +
-      '<div class="plus-heading"><div><span class="eyebrow">DAILY REFLECTION</span><h2>📔 ژورنال روزانه</h2><p>اتفاق‌ها، ایده‌ها و چیزهایی که یاد گرفتی.</p></div><span class="plus-chip">ذخیره خودکار</span></div>' +
+      '<div class="plus-heading"><div><span class="eyebrow">DAILY REFLECTION</span><h2>ژورنال روزانه</h2><p>اتفاق‌ها، ایده‌ها و چیزهایی که یاد گرفتی.</p></div><span class="plus-chip">ذخیره خودکار</span></div>' +
       '<textarea id="plus-journal-input" placeholder="امروز چه چیزی برات ارزشمند بود؟">' + plusEscape(state.journal[state.date] || '') + '</textarea>' +
       '<div class="plus-journal-foot"><span id="plus-journal-status">اطلاعات فقط روی همین دستگاه ذخیره می‌شود.</span><span id="plus-journal-count">' + (state.journal[state.date] || '').length + ' کاراکتر</span></div>' +
     '</div>' +
     '<div class="panel plus-panel plus-backup">' +
-      '<div class="plus-heading"><div><span class="eyebrow">YOUR DATA, YOUR CONTROL</span><h2>🛡️ مدیریت اطلاعات</h2><p>از اطلاعاتت نسخه پشتیبان بگیر یا آن را بازیابی کن.</p></div></div>' +
+      '<div class="plus-heading"><div><span class="eyebrow">YOUR DATA, YOUR CONTROL</span><h2>مدیریت اطلاعات</h2><p>از اطلاعاتت نسخه پشتیبان بگیر یا آن را بازیابی کن.</p></div></div>' +
       '<div class="plus-actions"><button id="plus-export">↓ دریافت نسخه پشتیبان</button><label class="plus-import">↑ بازیابی نسخه پشتیبان<input id="plus-import-file" type="file" accept="application/json"></label><button id="plus-theme">' + (state.settings.theme === 'dark' ? '☀ حالت روشن' : '☾ حالت تاریک') + '</button></div>' +
       '<small class="plus-note">پیشنهاد: هر چند وقت یک‌بار از اطلاعاتت خروجی بگیر. پاک‌کردن داده‌های مرورگر می‌تواند اطلاعات محلی را حذف کند.</small>' +
     '</div>';
