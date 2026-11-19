@@ -27,7 +27,7 @@ const defaultState = {
   notes: '',
   earned: [],
   focusSessions: 0,
-  profile: { displayName: 'ماجراجوی My Life', bio: 'در مسیر نسخه بهتر خودم', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {} },
+  profile: { displayName: 'ماجراجوی My Life', gender: 'boy', bio: 'در مسیر نسخه بهتر خودم', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {} },
   gems: 120, streak: 0, longestStreak: 0, lastActiveDate: null,
   totalTasksCompleted: 0, totalHabitsCompleted: 0, xpByDate: {}, createdAt: today()
 };
@@ -43,6 +43,8 @@ function loadState() {
 
 let state = loadState();
 state.profile = { ...defaultState.profile, ...(state.profile || {}) };
+if (!['boy','girl','neutral'].includes(state.profile.gender)) state.profile.gender = 'boy';
+if (!state.profile.genderInitialized) { state.profile.gender = 'boy'; state.profile.hairStyle = 'short'; state.profile.genderInitialized = true; }
 state.profile.unlocked = Array.isArray(state.profile.unlocked) ? state.profile.unlocked : [];
 state.profile.questClaims = state.profile.questClaims && typeof state.profile.questClaims === 'object' ? state.profile.questClaims : {};
 state.gems = Number.isFinite(Number(state.gems)) ? Number(state.gems) : 120;
@@ -934,13 +936,18 @@ function mountProfile(main) {
  root.innerHTML =
  '<section class="clean-profile-hero redesign-profile-hero"><div class="clean-profile-copy"><span class="clean-kicker">MY LIFE · PROFILE</span><div class="clean-name-row"><h2>'+plusEscape(p.displayName)+'</h2><span>سطح '+level+'</span></div><p>شخصیتت را بساز؛ مسیرت را ادامه بده.</p><div class="clean-xp-label"><strong>'+state.xp.toLocaleString('fa-IR')+' XP</strong><small>'+xpInLevel+' از ۱۰۰ تا سطح بعدی</small></div><div class="clean-xp-track"><i style="width:'+xpInLevel+'%"></i></div><div class="clean-wallet-row"><span>◆ '+state.gems.toLocaleString('fa-IR')+' کریستال</span><span>🔥 '+state.streak.toLocaleString('fa-IR')+' روز پیاپی</span></div></div><div class="profile-hero-character">'+avatarMarkup('large')+'</div></section>' +
  '<div class="clean-stat-strip redesign-stat-strip"><div><span>⭐</span><strong>'+state.xp.toLocaleString('fa-IR')+'</strong><small>کل XP</small></div><div><span>🔥</span><strong>'+state.longestStreak.toLocaleString('fa-IR')+'</strong><small>بهترین استریک</small></div><div><span>🏅</span><strong>'+earned+' / '+badges.length+'</strong><small>نشان‌ها</small></div><div><span>📆</span><strong>'+todayXP.toLocaleString('fa-IR')+'</strong><small>XP امروز</small></div></div>' +
- '<section class="clean-section avatar-workshop"><div class="clean-section-head"><div><span class="clean-kicker">AVATAR STUDIO</span><h3>شخصیت من</h3><p>از مدل مو تا لباس، همه‌چیز را خودت انتخاب کن.</p></div><span class="studio-spark">✦</span></div><div class="avatar-studio-layout"><div class="avatar-preview-column"><div class="avatar-preview-frame">'+avatarMarkup('preview')+'</div><strong>'+plusEscape(p.displayName)+'</strong><small>پیش‌نمایش زنده</small></div><div class="avatar-editor"><div class="avatar-tabs">'+tabs+'</div><div class="avatar-options">'+options+'</div></div></div><form id="profile-name-form" class="profile-name-form"><label>نام نمایشی</label><input name="displayName" maxlength="32" value="'+plusEscape(p.displayName)+'" placeholder="اسم دلخواهت"><button type="submit">ذخیره نام</button></form></section>' +
+ '<section class="clean-section avatar-workshop"><div class="clean-section-head"><div><span class="clean-kicker">AVATAR STUDIO</span><h3>شخصیت من</h3><p>از مدل مو تا لباس، همه‌چیز را خودت انتخاب کن.</p></div><span class="studio-spark">✦</span></div><div class="avatar-studio-layout"><div class="avatar-preview-column"><div class="avatar-preview-frame">'+avatarMarkup('preview')+'</div><strong>'+plusEscape(p.displayName)+'</strong><small>پیش‌نمایش زنده</small></div><div class="avatar-editor"><div class="avatar-gender-picker" role="group" aria-label="انتخاب جنسیت آواتار"><span class="avatar-gender-label">ظاهر شخصیت</span><div class="avatar-gender-options"><button type="button" class="avatar-gender-option '+(p.gender==='boy'?'active':'')+'" data-avatar-gender="boy">♂ پسر</button><button type="button" class="avatar-gender-option '+(p.gender==='girl'?'active':'')+'" data-avatar-gender="girl">♀ دختر</button><button type="button" class="avatar-gender-option '+(p.gender==='neutral'?'active':'')+'" data-avatar-gender="neutral">◈ خنثی</button></div></div><div class="avatar-tabs">'+tabs+'</div><div class="avatar-options">'+options+'</div></div></div><form id="profile-name-form" class="profile-name-form"><label>نام نمایشی</label><input name="displayName" maxlength="32" value="'+plusEscape(p.displayName)+'" placeholder="اسم دلخواهت"><button type="submit">ذخیره نام</button></form></section>' +
  '<section class="clean-section shop-section"><div class="clean-section-head"><div><span class="clean-kicker">MY LIFE COLLECTION</span><h3>فروشگاه آیتم‌ها</h3><p>با کریستال‌ها، ظاهر تازه‌ای برای شخصیتت جمع کن.</p></div><span class="clean-shop-balance">◆ '+state.gems.toLocaleString('fa-IR')+'</span></div><div class="shop-filters">'+shopTabsHTML+'</div><div class="clean-shop-grid">'+(shopHTML||'<p class="shop-empty">برای این دسته فعلاً آیتمی وجود ندارد.</p>')+'</div></section>' +
  '<section class="clean-section quest-section"><div class="clean-section-head"><div><span class="clean-kicker">DAILY QUESTS</span><h3>مأموریت‌های امروز</h3><p>با قدم‌های کوچک، پاداش‌های تازه بگیر.</p></div><span class="clean-section-mark">✦</span></div><div class="clean-quest-list">'+questHTML+'</div></section>' +
  '<section class="clean-section badge-section"><div class="clean-section-head"><div><span class="clean-kicker">ACHIEVEMENTS</span><h3>نشان‌های من</h3><p>'+earned+' نشان از '+badges.length+' نشان به دست آمده.</p></div><span class="clean-section-mark">🏅</span></div><div class="profile-badge-grid">'+badgeHTML+'</div></section>' +
  '<div class="clean-week-note">این هفته <strong>'+weekXP.toLocaleString('fa-IR')+' XP</strong> جمع کرده‌ای · '+state.totalTasksCompleted.toLocaleString('fa-IR')+' وظیفه و '+state.totalHabitsCompleted.toLocaleString('fa-IR')+' عادت کامل‌شده</div>';
 
  root.querySelectorAll('[data-avatar-tab]').forEach(btn=>btn.addEventListener('click',()=>{activeAvatarCategory=btn.dataset.avatarTab;mountProfile(main);}));
+ root.querySelectorAll('[data-avatar-gender]').forEach(btn=>btn.addEventListener('click',()=>{
+  const gender=btn.dataset.avatarGender;if(!['boy','girl','neutral'].includes(gender))return;
+  p.gender=gender;p.genderInitialized=true;p.hairStyle=gender==='boy'?'short':gender==='girl'?'long':'wave';
+  plusSave();mountProfile(main);showToast('ظاهر شخصیت ذخیره شد. حالا می‌توانی جزئیاتش را تغییر بدهی.');
+ }));
  root.querySelectorAll('[data-avatar-choice]').forEach(btn=>btn.addEventListener('click',()=>{
   const cat=btn.dataset.avatarChoice,val=btn.dataset.avatarValue,cost=Number(btn.dataset.avatarCost||0),key=cat+':'+val;
   if(cost&&!p.unlocked.includes(key)){const shop=root.querySelector('.shop-section');if(shop){shop.scrollIntoView({behavior:'smooth',block:'center'});shop.classList.add('shop-nudge');setTimeout(()=>shop.classList.remove('shop-nudge'),700);}showToast('این آیتم را از فروشگاه باز کن.');return;}
