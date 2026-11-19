@@ -466,11 +466,7 @@ body::before, body::after{content:none!important;display:none!important}#app{pos
   z-index:1;flex:none!important;
 }.ml-avatar-person *{vector-effect:non-scaling-stroke}.ml-avatar-stage.large{min-width:0}
 @media(prefers-reduced-motion:reduce){.ml-avatar-stage svg.ml-avatar-person{animation:none!important}
-}border-color .18s, border-color .16s, clear, mobile-first */
-#profile-experience{display:grid;gap:18px}
-@media(max-width:620px){#profile-experience{gap:13px}
-}
-/* Character creator — single source of truth */
+}/* Character creator — single source of truth */
 #profile-experience{display:block;max-width:760px;margin:0 auto}
 .simple-avatar-page{display:grid;gap:18px;color:var(--text,#263528)}
 .simple-avatar-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
