@@ -1787,3 +1787,218 @@ html[data-theme="dark"] .profile-badge strong{color:#eee}
 @media(prefers-reduced-motion:reduce){
  .ml-avatar-stage svg.ml-avatar-person{animation:none!important}
 }
+
+
+/* Character Studio redesign — one cohesive, playful visual system. */
+.clean-profile-hero.redesign-profile-hero{
+  display:grid!important;grid-template-columns:minmax(0,1fr) 178px;align-items:center;
+  gap:22px;padding:24px 28px;min-height:220px;border:2px solid #e4efdf;
+  border-bottom:5px solid #d8e9cf;border-radius:24px;
+  background:linear-gradient(112deg,#fff 0%,#f5fbea 58%,#e8f8df 100%);
+  box-shadow:0 8px 22px rgba(57,100,42,.06);overflow:hidden
+}
+.redesign-profile-hero .clean-profile-copy{min-width:0}
+.redesign-profile-hero .clean-kicker{font-size:10px;letter-spacing:1.4px;color:#64a83e;font-weight:900}
+.redesign-profile-hero .clean-name-row{display:flex;align-items:center;gap:10px;margin:8px 0 3px}
+.redesign-profile-hero .clean-name-row h2{font-size:25px;font-weight:900;color:#29472f}
+.redesign-profile-hero .clean-name-row>span{padding:5px 10px;border-radius:999px;background:#e6f6dc;color:#4c9c2b;font-size:10px;font-weight:900}
+.redesign-profile-hero .clean-profile-copy>p{display:block!important;color:#788a78;font-size:12px;margin:0 0 14px}
+.redesign-profile-hero .clean-xp-label{display:flex;justify-content:space-between;gap:12px;color:#48624b}
+.redesign-profile-hero .clean-xp-label strong{font-size:13px}
+.redesign-profile-hero .clean-xp-label small{font-size:10px;color:#8a9a89}
+.redesign-profile-hero .clean-xp-track{height:11px;margin:7px 0 13px;background:#e2ecdD;border-radius:999px;overflow:hidden}
+.redesign-profile-hero .clean-xp-track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#9be45b,#58cc02);box-shadow:inset 0 -2px #3fa40055}
+.redesign-profile-hero .clean-wallet-row{display:flex;gap:8px;flex-wrap:wrap}
+.redesign-profile-hero .clean-wallet-row span{padding:7px 11px;border:1px solid #e4efdf;border-radius:11px;background:#fff;color:#55734f;font-size:10px;font-weight:800}
+.profile-hero-character{display:grid;place-items:center;min-width:0}
+.profile-hero-character .ml-avatar-stage.large{width:158px;height:178px;flex:0 0 158px;border:4px solid #fff;border-radius:24px;background:#f8dce9;box-shadow:0 5px 0 #d9e9d1,0 12px 25px #47733a18}
+.redesign-stat-strip{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:13px 0 17px}
+.redesign-stat-strip>div{display:grid;grid-template-columns:28px 1fr;align-items:center;column-gap:8px;padding:12px 14px;border:1.5px solid #e7eee3;border-bottom:4px solid #e1ebdc;border-radius:16px;background:#fff}
+.redesign-stat-strip>div>span{grid-row:span 2;width:28px;height:28px;display:grid;place-items:center;border-radius:10px;background:#f0f8e9;font-size:15px}
+.redesign-stat-strip strong{font-size:15px;color:#35563a}
+.redesign-stat-strip small{font-size:9px;color:#8a9989}
+.clean-section.avatar-workshop,.clean-section.shop-section,.clean-section.quest-section,.clean-section.badge-section{
+  margin:0 0 14px;padding:20px 21px;border:1.5px solid #e7eee3;border-bottom:4px solid #e1ebdc;
+  border-radius:21px;background:#fff;box-shadow:0 5px 16px rgba(45,79,38,.035)
+}
+.avatar-workshop .clean-section-head,.shop-section .clean-section-head,.quest-section .clean-section-head,.badge-section .clean-section-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px
+}
+.avatar-workshop .clean-section-head p,.shop-section .clean-section-head p,.quest-section .clean-section-head p,.badge-section .clean-section-head p{
+  display:block!important;margin-top:4px;color:#8a9989;font-size:10px
+}
+.avatar-workshop .clean-section-head h3,.shop-section .clean-section-head h3,.quest-section .clean-section-head h3,.badge-section .clean-section-head h3{
+  margin:3px 0;color:#2f4b34;font-size:18px;font-weight:900
+}
+.studio-spark{width:36px;height:36px;display:grid;place-items:center;border-radius:13px;background:#eff9e8;color:#65b13d;font-size:21px}
+.avatar-studio-layout{display:grid;grid-template-columns:220px minmax(0,1fr);align-items:stretch;gap:20px}
+.avatar-preview-column{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  padding:15px 12px;border:1.5px solid #e8f0e4;border-radius:19px;
+  background:linear-gradient(160deg,#f8fbed,#f0f8ed)
+}
+.avatar-preview-frame{width:190px;height:224px;max-width:100%;display:grid;place-items:center}
+.avatar-preview-frame .ml-avatar-stage.preview{width:100%;height:100%;border:4px solid #fff;border-radius:22px;box-shadow:0 5px 0 #dcebd4,0 9px 18px #507b3c16}
+.avatar-preview-column>strong{font-size:13px;color:#3e6343}
+.avatar-preview-column>small{font-size:9px;color:#8c9b8b}
+.avatar-editor{min-width:0;padding:13px;border:1.5px solid #edf1e9;border-radius:18px;background:#fff}
+.avatar-tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 11px;scrollbar-width:thin}
+.avatar-tab{
+  flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:9px 12px;
+  border:1.5px solid #edf1e9;border-radius:12px;background:#f8faf6;color:#718071;
+  font-size:10px;font-weight:900;transition:background .18s,border-color .18s,transform .18s
+}
+.avatar-tab span{font-size:14px;color:#78ad5b}
+.avatar-tab.active{background:#eaf8e2;border-color:#b9e3a5;color:#438e25;box-shadow:inset 0 -3px #58cc02}
+.avatar-tab:hover{transform:translateY(-1px)}
+.avatar-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;max-height:320px;overflow:auto;padding:3px 2px 7px}
+.avatar-choice{
+  min-width:0;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  padding:8px 5px;border:1.5px solid #e9eee5;border-bottom-width:3px;border-radius:14px;
+  background:#fff;color:#566957;font-size:10px;font-weight:800;transition:transform .16s,border-color .16s,background .16s
+}
+.avatar-choice:hover{transform:translateY(-2px);border-color:#b6dfa0}
+.avatar-choice.selected{border-color:#83ce5b;border-bottom-color:#58a92a;background:#f1fae9;color:#438e25}
+.avatar-choice.locked{background:#fafbf9;color:#9ba69a}
+.avatar-choice small{font-size:8px;color:#8e9c8d}
+.avatar-swatch{width:29px;height:29px;border:3px solid #fff;border-radius:50%;background:var(--swatch);box-shadow:0 0 0 1.5px #dce7d8}
+.avatar-option-icon{height:29px;display:grid;place-items:center;font-size:21px;color:#66a948}
+.profile-name-form{display:flex;align-items:center;gap:9px;margin-top:14px;padding-top:13px;border-top:1px solid #edf1e9}
+.profile-name-form label{white-space:nowrap;color:#637863;font-size:10px;font-weight:900}
+.profile-name-form input{min-width:0;flex:1;padding:10px 12px;border:1.5px solid #e4ebe0;border-radius:11px;background:#fbfdf9;color:#344b37;font-size:11px;outline:none}
+.profile-name-form input:focus{border-color:#91cf72;box-shadow:0 0 0 3px #e9f7e1}
+.profile-name-form button{padding:10px 14px;border:0;border-radius:11px;background:#58cc02;color:#fff;font-size:10px;font-weight:900;box-shadow:0 3px 0 #449f00}
+.shop-section{padding-top:19px}
+.clean-shop-balance{padding:8px 12px;border:1px solid #f1e3b5;border-radius:12px;background:#fff8df;color:#ad8123;font-size:11px;font-weight:900;white-space:nowrap}
+.shop-filters{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 13px;scrollbar-width:none}
+.shop-filter{flex:0 0 auto;padding:8px 13px;border:1.5px solid #e8eee4;border-radius:999px;background:#fff;color:#788879;font-size:10px;font-weight:900}
+.shop-filter.active{border-color:#b9e3a5;background:#eaf8e2;color:#438e25}
+.clean-shop-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.shop-product{
+  min-width:0;min-height:126px;display:grid;grid-template-columns:52px minmax(0,1fr);
+  grid-template-rows:1fr auto;align-items:center;gap:6px 10px;padding:12px;
+  border:1.5px solid #e9eee5;border-bottom:4px solid #e1ebdc;border-radius:16px;background:#fff;
+  transition:transform .18s,border-color .18s,box-shadow .18s
+}
+.shop-product:hover{transform:translateY(-2px);border-color:#c8e5ba;box-shadow:0 7px 16px #47733a10}
+.shop-product.is-selected{border-color:#a6d98b;background:#f8fcf4}
+.shop-product-art{grid-row:span 2;width:52px;height:52px;display:grid;place-items:center;border-radius:16px;background:#eff8e9}
+.shop-product-art[data-kind="hairStyle"]{background:#f9edf4}
+.shop-product-art[data-kind="accessory"]{background:#fff4dc}
+.shop-product-art[data-kind="background"]{background:#eaf5fb}
+.shop-swatch{width:30px;height:30px;border:3px solid #fff;border-radius:50%;background:var(--swatch);box-shadow:0 0 0 1px #dce7d8}
+.shop-product-symbol{font-size:25px;color:#65a847}
+.shop-product-copy{min-width:0;display:flex;flex-direction:column;gap:2px}
+.shop-product-copy strong{overflow:hidden;color:#3e5840;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.shop-product-copy small{color:#94a092;font-size:8px}
+.shop-product>button{grid-column:2;justify-self:stretch;padding:7px 8px;border:0;border-radius:9px;background:#58cc02;color:#fff;font-size:9px;font-weight:900;box-shadow:0 2px 0 #449f00}
+.shop-product>button.owned{background:#edf7e8;color:#4e8f34;box-shadow:none}
+.shop-product.is-owned .shop-product-art{background:#eff8e9}
+.shop-empty{grid-column:1/-1;padding:18px;text-align:center;color:#8c9a8b;font-size:11px}
+.quest-section .clean-quest-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.quest-section .clean-quest{min-width:0;display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;padding:12px;border:1.5px solid #e9eee5;border-bottom:4px solid #e1ebdc;border-radius:15px;background:#fff}
+.quest-section .clean-quest-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#eff8e9;color:#5b9f3d}
+.quest-section .clean-quest-copy{min-width:0}
+.quest-section .clean-quest-copy strong{font-size:10px;color:#49634a}
+.quest-section .clean-quest-copy small{font-size:8px;color:#94a092}
+.quest-section .clean-quest-copy .clean-progress{height:7px;margin:6px 0;background:#edf2e9;border-radius:99px;overflow:hidden}
+.quest-section .clean-quest-copy .clean-progress i{display:block;height:100%;border-radius:99px;background:#58cc02}
+.quest-section .clean-quest>button{grid-column:1/-1;width:100%;padding:7px;border:0;border-radius:9px;background:#58cc02;color:#fff;font-size:9px;font-weight:900}
+.quest-section .clean-quest>button:disabled{background:#f0f3ed;color:#9aa697}
+.quest-section .clean-quest-reward{grid-column:1/-1;color:#9b843e;font-size:8px}
+.profile-badge-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding-top:2px}
+.profile-badge{
+  min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:13px 9px;border:1.5px solid #e9eee5;border-bottom:4px solid #e1ebdc;border-radius:16px;background:#fff;text-align:center
+}
+.profile-badge-art{width:68px!important;height:68px!important;display:grid;place-items:center;border-radius:20px;background:#f5f9f1}
+.profile-badge-art svg{width:100%;height:100%;display:block}
+.profile-badge strong{color:#49634a;font-size:10px}
+.profile-badge small{color:#8e9b8c;font-size:8px;line-height:1.5}
+.profile-badge.locked .profile-badge-art{filter:grayscale(.85);opacity:.55}
+.profile-badge.earned{border-color:#cfe8c2;background:#fbfef8}
+.profile-badge.earned .profile-badge-art{animation:badgePop .45s ease both}
+.clean-week-note{margin:0 0 18px;padding:12px 15px;border-radius:13px;background:#f0f7eb;color:#788b75;font-size:10px;text-align:center}
+.clean-week-note strong{color:#4c8f31}
+.ml-avatar-stage{position:relative;isolation:isolate;overflow:hidden}
+.ml-avatar-stage svg.ml-avatar-person{
+  display:block!important;position:relative!important;width:100%!important;height:100%!important;
+  max-width:100%!important;margin:0!important;transform:none!important;animation:none!important;
+  overflow:visible!important;z-index:1;flex:none!important
+}
+.ml-avatar-stage .ml-avatar-spark{z-index:2;pointer-events:none;color:#fff;font-size:17px;text-shadow:0 1px 4px #805d7a44}
+.avatar-preview-frame .ml-avatar-stage.preview{width:100%;height:100%;min-width:0}
+html[data-theme="dark"] .clean-profile-hero.redesign-profile-hero{background:linear-gradient(112deg,#262f28,#293b2b);border-color:#3b523a}
+html[data-theme="dark"] .redesign-profile-hero .clean-name-row h2,
+html[data-theme="dark"] .redesign-profile-hero .clean-xp-label{color:#edf6e9}
+html[data-theme="dark"] .redesign-profile-hero .clean-wallet-row span{background:#303d31;border-color:#465641;color:#d0e8c7}
+html[data-theme="dark"] .redesign-stat-strip>div,
+html[data-theme="dark"] .clean-section.avatar-workshop,
+html[data-theme="dark"] .clean-section.shop-section,
+html[data-theme="dark"] .clean-section.quest-section,
+html[data-theme="dark"] .clean-section.badge-section,
+html[data-theme="dark"] .avatar-editor,
+html[data-theme="dark"] .avatar-preview-column,
+html[data-theme="dark"] .shop-product,
+html[data-theme="dark"] .profile-badge{background:#252b27;border-color:#3c4a3b}
+html[data-theme="dark"] .redesign-stat-strip strong,
+html[data-theme="dark"] .avatar-workshop .clean-section-head h3,
+html[data-theme="dark"] .shop-section .clean-section-head h3,
+html[data-theme="dark"] .quest-section .clean-section-head h3,
+html[data-theme="dark"] .badge-section .clean-section-head h3,
+html[data-theme="dark"] .avatar-preview-column>strong,
+html[data-theme="dark"] .shop-product-copy strong,
+html[data-theme="dark"] .profile-badge strong{color:#e7f1e3}
+html[data-theme="dark"] .avatar-choice,
+html[data-theme="dark"] .shop-filter,
+html[data-theme="dark"] .profile-name-form input{background:#2d352e;border-color:#465343;color:#dbe8d6}
+html[data-theme="dark"] .avatar-tab{background:#2d352e;border-color:#465343;color:#c6d3c1}
+html[data-theme="dark"] .avatar-tab.active,
+html[data-theme="dark"] .shop-filter.active{background:#354b30;border-color:#628d4d;color:#c5efae}
+@media(max-width:900px){
+ .clean-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .avatar-studio-layout{grid-template-columns:190px minmax(0,1fr);gap:12px}
+ .avatar-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .quest-section .clean-quest-list{grid-template-columns:1fr}
+ .profile-badge-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:680px){
+ .clean-profile-hero.redesign-profile-hero{grid-template-columns:minmax(0,1fr) 112px;gap:8px;padding:16px 13px;min-height:158px;border-radius:18px}
+ .profile-hero-character .ml-avatar-stage.large{width:106px;height:126px;flex-basis:106px;border-radius:16px}
+ .redesign-profile-hero .clean-name-row h2{font-size:18px}
+ .redesign-profile-hero .clean-name-row>span{font-size:8px;padding:4px 7px}
+ .redesign-profile-hero .clean-profile-copy>p{font-size:9px;margin-bottom:8px}
+ .redesign-profile-hero .clean-kicker{font-size:7px}
+ .redesign-profile-hero .clean-xp-label strong{font-size:10px}
+ .redesign-profile-hero .clean-xp-label small{font-size:8px}
+ .redesign-profile-hero .clean-wallet-row span{font-size:8px;padding:5px 7px}
+ .redesign-stat-strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .redesign-stat-strip>div{padding:9px}
+ .clean-section.avatar-workshop,.clean-section.shop-section,.clean-section.quest-section,.clean-section.badge-section{padding:14px 11px;border-radius:16px}
+ .avatar-workshop .clean-section-head h3,.shop-section .clean-section-head h3,.quest-section .clean-section-head h3,.badge-section .clean-section-head h3{font-size:14px}
+ .avatar-workshop .clean-section-head p,.shop-section .clean-section-head p,.quest-section .clean-section-head p,.badge-section .clean-section-head p{font-size:8px}
+ .avatar-studio-layout{grid-template-columns:1fr;gap:11px}
+ .avatar-preview-column{padding:10px}
+ .avatar-preview-frame{width:158px;height:184px}
+ .avatar-editor{padding:9px}
+ .avatar-options{grid-template-columns:repeat(3,minmax(0,1fr));max-height:255px;gap:7px}
+ .avatar-choice{min-height:68px;font-size:9px}
+ .profile-name-form{flex-wrap:wrap}
+ .profile-name-form label{width:100%}
+ .profile-name-form input{flex:1 1 55%}
+ .profile-name-form button{flex:0 0 auto}
+ .clean-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px}
+ .shop-product{grid-template-columns:38px minmax(0,1fr);min-height:112px;padding:8px;gap:5px}
+ .shop-product-art{width:38px;height:38px;border-radius:12px}
+ .shop-swatch{width:24px;height:24px}
+ .shop-product-symbol{font-size:20px}
+ .shop-product-copy strong{font-size:9px}
+ .shop-product-copy small{font-size:7px}
+ .shop-product>button{font-size:8px;padding:6px}
+ .profile-badge-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .profile-badge{padding:10px 6px}
+ .profile-badge-art{width:56px!important;height:56px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .avatar-tab,.avatar-choice,.shop-product,.profile-badge.earned .profile-badge-art{animation:none!important;transition:none!important}
+}
