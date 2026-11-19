@@ -1550,3 +1550,35 @@ html[data-theme="dark"] .clean-shop-item strong,
 html[data-theme="dark"] .profile-badge strong{color:#eee}
 html[data-theme="dark"] .clean-wallet-row span{background:#292940;border-color:#3b3b53;color:#ddd}
 html[data-theme="dark"] .coach-insight{background:#34304d;border-color:#46405e}
+
+
+/* MY LIFE — bespoke profile shortcut mark */
+.avatar.profile-shortcut{
+  width:42px;height:42px;padding:0;display:grid;place-items:center;
+  border:2px solid #d9efcb;border-bottom:4px solid #b9df9f;
+  border-radius:15px;background:linear-gradient(145deg,#f5ffeF 0%,#e3f8d7 100%);
+  color:#398f13;box-shadow:0 2px 0 #e7f1e1;cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.avatar.profile-shortcut:hover{transform:translateY(-2px) rotate(-3deg);border-color:#a9dc8e;box-shadow:0 4px 0 #dcebd4}
+.profile-shortcut-mark{position:relative;width:25px;height:25px;display:block}
+.profile-shortcut-mark i{
+  position:absolute;z-index:2;top:1px;left:9px;width:8px;height:8px;
+  border:2px solid #429e18;border-radius:50%;background:#f8fff4;
+}
+.profile-shortcut-mark b{
+  position:absolute;left:3px;bottom:1px;width:20px;height:12px;
+  border:2px solid #429e18;border-bottom:0;border-radius:13px 13px 5px 5px;
+  background:linear-gradient(90deg,#b8e99e 0 48%,#e8f9df 48% 100%);
+}
+.profile-shortcut-mark em{
+  position:absolute;right:-1px;top:0;width:7px;height:7px;border:2px solid #fff;
+  border-radius:50%;background:#ffbd35;box-shadow:0 0 0 1px #e8a51f;
+}
+@media(max-width:760px){
+ .avatar.profile-shortcut{width:36px;height:36px;border-radius:13px}
+ .profile-shortcut-mark{transform:scale(.9)}
+}
+html[data-theme="dark"] .avatar.profile-shortcut{background:linear-gradient(145deg,#344d2c,#263c24);border-color:#496c3d;border-bottom-color:#36532e}
+html[data-theme="dark"] .profile-shortcut-mark i{background:#344d2c;border-color:#a5df83}
+html[data-theme="dark"] .profile-shortcut-mark b{border-color:#a5df83;background:linear-gradient(90deg,#639d48 0 48%,#344d2c 48% 100%)}
