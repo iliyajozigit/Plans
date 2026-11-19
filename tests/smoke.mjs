@@ -54,6 +54,20 @@ try {
   await page.click('#plus-water-form button');
   check('out-of-range water target rejected', (await readState(page)).settings?.waterTarget === 10);
 
+  await page.goto(`${BASE}#profile`, { waitUntil: 'networkidle' });
+  await page.evaluate(() => { const st = JSON.parse(localStorage.getItem('myLifeState')); st.gems = 500; localStorage.setItem('myLifeState', JSON.stringify(st)); });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.click('[data-profile-tab=shop]');
+  await page.locator('[data-shop-item]').first().click();
+  check('shop purchase deducts gems and equips', (await readState(page)).gems < 500 && (await readState(page)).profile?.unlocked?.length === 1);
+  check('purchase shows celebration', await page.locator('.confetti-layer').count() === 1);
+  await page.click('[data-profile-tab=character]');
+  await page.locator('.look-stage-card .ml-avatar-stage').click();
+  check('tapping character shows hearts', await page.locator('.av-heart').count() >= 1);
+  await page.waitForTimeout(1300);
+  await page.reload({ waitUntil: 'networkidle' });
+  check('owned shop item persists', (await readState(page)).profile?.unlocked?.length === 1);
+
   await page.reload({ waitUntil: 'networkidle' });
   check('state persists across reload', (await readState(page)).settings?.waterTarget === 10);
   await page.close();

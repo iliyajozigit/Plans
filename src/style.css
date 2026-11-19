@@ -703,7 +703,7 @@ html[data-theme="dark"] .look-cat.active { background: #e6f2e0; border-color: #e
 .shop-card.equipped { border-color: var(--green); background: var(--green-soft); }
 .shop-card h4 { font-size: 15px; }
 .shop-card small { color: var(--muted); font-size: 12px; }
-.shop-visual { width: 128px; }
+.shop-visual { width: 100%; }
 .shop-action { width: 100%; min-height: 44px; border: 0; border-radius: 14px; font: inherit; font-weight: 900; color: #fff; cursor: pointer; background: var(--blue); box-shadow: 0 4px 0 #1686c0; }
 .shop-action.equip { background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
 .shop-action.short { background: var(--muted); box-shadow: 0 4px 0 rgba(0,0,0,.2); }
@@ -718,4 +718,35 @@ html[data-theme="dark"] .shop-badge { color: #bff59a; }
   .look-options, .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .shop-hero { padding: 18px; }
   .shop-hero h3 { font-size: 20px; }
+}
+
+/* ===== Living character & shop polish (v3) ===== */
+.ml-avatar-person { animation: av-bob 4.2s ease-in-out infinite; }
+.look-visual .ml-avatar-person, .shop-visual .ml-avatar-person { animation: none; }
+.av-eyes { transform-box: fill-box; transform-origin: center; animation: av-blink 5.5s infinite; }
+.look-visual .av-eyes, .shop-visual .av-eyes { animation: none; }
+@keyframes av-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes av-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.08); } }
+.ml-avatar-stage { cursor: default; }
+.look-stage-card .ml-avatar-stage { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ml-avatar-stage.cheer .ml-avatar-person { animation: av-cheer .6s ease; }
+@keyframes av-cheer { 0% { transform: scale(1); } 30% { transform: translateY(-16px) scale(1.06) rotate(-3deg); } 60% { transform: translateY(0) scale(.98) rotate(2deg); } 100% { transform: scale(1); } }
+.av-heart { position: absolute; font-size: 22px; pointer-events: none; animation: av-float 1.1s ease-out forwards; z-index: 2; }
+@keyframes av-float { 0% { transform: translate(0, 0) scale(.6); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(var(--dx), -110px) scale(1.1); opacity: 0; } }
+.confetti-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 9999; }
+.confetti { position: absolute; top: -24px; width: 9px; height: 14px; border-radius: 3px; animation: confetti-fall var(--t, 1.6s) ease-in forwards; }
+@keyframes confetti-fall { 0% { transform: translate(0, 0) rotate(0); } 100% { transform: translate(var(--x, 0), 110vh) rotate(720deg); } }
+.rarity { position: absolute; top: 10px; right: 10px; font-size: 11px; font-weight: 900; padding: 3px 9px; border-radius: 999px; z-index: 1; }
+.shop-card { position: relative; }
+.r-common { background: #e8f7dc; color: #2f7d1f; }
+.r-rare { background: #dff1ff; color: #1767a0; }
+.r-epic { background: #f1e4ff; color: #7a3fb0; }
+html[data-theme="dark"] .r-common { background: #20411a; color: #bff59a; }
+html[data-theme="dark"] .r-rare { background: #15344a; color: #9fd8ff; }
+html[data-theme="dark"] .r-epic { background: #3a2452; color: #e0c2ff; }
+.shop-tally { margin-top: 12px; display: inline-block; font-weight: 900; font-size: 13px; background: rgba(255,255,255,.22); padding: 6px 12px; border-radius: 999px; color: #fff; }
+.shop-card .shop-visual { margin-top: 8px; }
+@media (prefers-reduced-motion: reduce) {
+  .ml-avatar-person, .av-eyes, .av-heart, .confetti, .ml-avatar-stage.cheer .ml-avatar-person { animation: none !important; }
+  .confetti-layer { display: none; }
 }
