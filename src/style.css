@@ -750,3 +750,45 @@ html[data-theme="dark"] .r-epic { background: #3a2452; color: #e0c2ff; }
   .ml-avatar-person, .av-eyes, .av-heart, .confetti, .ml-avatar-stage.cheer .ml-avatar-person { animation: none !important; }
   .confetti-layer { display: none; }
 }
+
+/* ===== Organised profile & shop (v4) ===== */
+.profile-page .page-intro p, .profile-page .page-intro .eyebrow { display: none; }
+.profile-page .page-intro { margin-bottom: 14px; }
+.profile-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.profile-bar .profile-tabs { flex: 1 1 320px; margin: 0; }
+.profile-bar .gem-balance { flex: 0 0 auto; }
+.look-stage-card { border-radius: 26px; }
+.look-groups { background: var(--card-muted); border: 2px solid var(--line); border-radius: 18px; padding: 5px; gap: 6px; }
+.look-group { background: transparent; border-color: transparent; border-bottom-width: 0; box-shadow: none; min-height: 44px; }
+.look-group.active { background: var(--card); border-color: var(--line); box-shadow: 0 3px 0 var(--line-strong); color: var(--green-ink); }
+html[data-theme="dark"] .look-group.active { color: #bff59a; }
+.look-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 4px; }
+.look-head h3 { font-size: 17px; }
+.look-head span { font-size: 12px; font-weight: 800; color: var(--muted); }
+.look-cats { padding-bottom: 2px; }
+.look-choice { padding: 8px 8px 12px; }
+.look-check { top: 8px; left: 8px; }
+.shop-head { margin-top: 18px; }
+.shop-cats { margin: 12px 0 14px; }
+.shop-hero { align-items: center; padding: 20px 22px; }
+.shop-hero h3 { margin: 0; }
+.shop-hero p { margin-top: 2px; font-size: 13px; }
+.shop-tally { display: grid; justify-items: center; gap: 0; min-width: 84px; padding: 10px 14px; border-radius: 18px; background: rgba(255,255,255,.22); color: #fff; }
+.shop-tally strong { font-size: 22px; line-height: 1.1; color: #fff; }
+.shop-tally small { font-size: 11px; font-weight: 800; color: #fff; opacity: .9; }
+@media (max-width: 900px) {
+  .look-stage-card {
+    display: grid; grid-template-columns: 128px minmax(0, 1fr); grid-template-areas: "av name" "av form";
+    justify-items: stretch; align-items: center; gap: 6px 16px; padding: 14px; text-align: start;
+  }
+  .look-stage-card .ml-avatar-stage { grid-area: av; width: 128px; border-radius: 22px; }
+  .look-name-big { grid-area: name; font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .look-name-form { grid-area: form; }
+  .look-editor { gap: 12px; }
+}
+@media (max-width: 560px) {
+  .profile-bar { gap: 8px; }
+  .profile-bar .gem-balance { padding: 6px 12px; }
+  .shop-tally { min-width: 70px; padding: 8px 10px; }
+  .shop-hero { flex-wrap: nowrap; }
+}

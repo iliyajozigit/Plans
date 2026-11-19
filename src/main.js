@@ -1154,11 +1154,12 @@ function characterMarkup(p){
   '<section class="look-editor">'+
    '<div class="look-groups" role="tablist">'+groups+'</div>'+
    '<div class="look-cats">'+cats+'</div>'+
+   '<div class="look-head"><h3>'+catInfo(activeAvatarCategory).icon+' '+catInfo(activeAvatarCategory).label+'</h3><span>'+(avatarChoices[activeAvatarCategory]||[]).length+' گزینه</span></div>'+
    '<div class="look-options">'+(choices||'<p class="simple-avatar-empty">موردی برای نمایش وجود ندارد.</p>')+'</div>'+
   '</section>'+
  '</div>';
 }
-function shopMarkup(p,gems){
+function shopMarkup(p){
  const premium=[];
  Object.keys(avatarChoices).forEach(cat=>avatarChoices[cat].forEach(item=>{if(item.cost)premium.push({cat,item});}));
  const cats=[...new Set(premium.map(x=>x.cat))];
@@ -1177,8 +1178,9 @@ function shopMarkup(p,gems){
   return '<article class="shop-card '+(equipped?'equipped':'')+'"><span class="rarity r-'+r.id+'">'+r.label+'</span><div class="shop-visual">'+avatarMarkup('mini',{[cat]:item.value})+'</div><h4>'+item.label+'</h4><small>'+catInfo(cat).label+(owned&&!equipped?' · در کمدت':'')+'</small>'+action+'</article>';
  }).join('');
  const ownedCount=premium.filter(x=>p.unlocked.includes(x.cat+':'+x.item.value)).length;
- return '<section class="shop-hero"><div><span class="eyebrow">SHOP</span><h3>فروشگاه شخصیت</h3><p>با انجام تسک‌ها و عادت‌ها و جلسات تمرکز کریستال جمع کن و ظاهرت را هر طور دوست داری بساز.</p><div class="shop-tally">🧥 '+ownedCount+' از '+premium.length+' آیتم در کمدت</div></div>'+gems+'</section>'+
+ return '<section class="shop-hero"><div><span class="eyebrow">SHOP</span><h3>فروشگاه شخصیت</h3><p>کریستال‌هایت را از تسک‌ها، عادت‌ها و جلسات تمرکز بگیر.</p></div><div class="shop-tally"><strong>'+ownedCount+'/'+premium.length+'</strong><small>در کمدت</small></div></section>'+
   '<div class="shop-cats">'+pills+'</div>'+
+  '<div class="look-head shop-head"><h3>همه آیتم‌ها</h3><span>'+(current==='all'?premium.length:premium.filter(x=>x.cat===current).length)+' مورد</span></div>'+
   '<div class="shop-grid">'+items+'</div>';
 }
 function mountProfile(main) {
@@ -1190,7 +1192,7 @@ function mountProfile(main) {
   '<button type="button" role="tab" aria-selected="'+(activeProfileTab==='character')+'" class="profile-tab '+(activeProfileTab==='character'?'active':'')+'" data-profile-tab="character">🧑 شخصیت من</button>'+
   '<button type="button" role="tab" aria-selected="'+(activeProfileTab==='shop')+'" class="profile-tab '+(activeProfileTab==='shop'?'active':'')+'" data-profile-tab="shop">🛍 فروشگاه</button>'+
   '</div>';
- root.innerHTML = tabs + (activeProfileTab==='shop' ? shopMarkup(p,gems) : (gems ? '<div class="look-top">'+gems+'</div>' : '') + characterMarkup(p));
+ root.innerHTML = '<div class="profile-bar">'+tabs+gems+'</div>' + (activeProfileTab==='shop' ? shopMarkup(p) : characterMarkup(p));
  root.querySelectorAll('[data-profile-tab]').forEach(btn=>btn.addEventListener('click',()=>{
   activeProfileTab=btn.dataset.profileTab;
   mountProfile(main);
