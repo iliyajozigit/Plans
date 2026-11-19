@@ -355,17 +355,17 @@ function render() {
         <section class="daily-path-panel">
           <div class="daily-path-heading">
             <div><span class="eyebrow">YOUR DAILY JOURNEY</span><h2>مسیر امروزت</h2><p>هر قدم کوچیک، تو رو جلوتر می‌بره.</p></div>
-            <span class="daily-path-progress">\${Math.round((taskPercent + habitPercent) / 2)}٪</span>
+            <span class="daily-path-progress">${Math.round((taskPercent + habitPercent) / 2)}٪</span>
           </div>
           <div class="daily-path-steps">
-            <a href="#planner" data-view="planner" class="daily-path-step \${completedTasks > 0 ? 'step-started' : ''}">
-              <span class="daily-step-node">✓</span><span><strong>برنامه‌ریزی</strong><small>\${completedTasks} از \${state.tasks.length} وظیفه</small></span><b>←</b>
+            <a href="#planner" data-view="planner" class="daily-path-step ${completedTasks > 0 ? 'step-started' : ''}">
+              <span class="daily-step-node">✓</span><span><strong>برنامه‌ریزی</strong><small>${completedTasks} از ${state.tasks.length} وظیفه</small></span><b>←</b>
             </a>
-            <a href="#planner" data-view="planner" class="daily-path-step \${completedHabits > 0 ? 'step-started' : ''}">
-              <span class="daily-step-node">🌱</span><span><strong>ساخت عادت</strong><small>\${completedHabits} از \${state.habits.length} عادت</small></span><b>←</b>
+            <a href="#planner" data-view="planner" class="daily-path-step ${completedHabits > 0 ? 'step-started' : ''}">
+              <span class="daily-step-node">🌱</span><span><strong>ساخت عادت</strong><small>${completedHabits} از ${state.habits.length} عادت</small></span><b>←</b>
             </a>
-            <a href="#focus" data-view="focus" class="daily-path-step \${state.focusSessions > 0 ? 'step-started' : ''}">
-              <span class="daily-step-node">◷</span><span><strong>تمرکز عمیق</strong><small>\${state.focusSessions} جلسه کامل‌شده</small></span><b>←</b>
+            <a href="#focus" data-view="focus" class="daily-path-step ${state.focusSessions > 0 ? 'step-started' : ''}">
+              <span class="daily-step-node">◷</span><span><strong>تمرکز عمیق</strong><small>${state.focusSessions} جلسه کامل‌شده</small></span><b>←</b>
             </a>
             <a href="#journal" data-view="journal" class="daily-path-step">
               <span class="daily-step-node">✎</span><span><strong>مرور روز</strong><small>ثبت یک یادداشت کوتاه</small></span><b>←</b>
@@ -581,26 +581,7 @@ function render() {
         </section>
 
         <section class="page-view ${activeView === 'journal' ? 'active' : ''}" data-page="journal">
-          <div class="page-intro"><span class="eyebrow">YOUR PRIVATE SPACE</span><h2>دفتر شخصی</h2><p>فکرها و ایده‌هایت را اینجا ثبت کن؛ فقط برای خودت.</p></div>
-        <section class="panel notes-panel" id="notes">
-          <div class="section-heading">
-            <div>
-              <span class="eyebrow">THOUGHTS & IDEAS</span>
-              <h2>دفتر یادداشت من</h2>
-            </div>
-            <span class="notes-icon">✎</span>
-          </div>
-
-          <textarea
-            id="notes-input"
-            placeholder="ایده‌ها، افکار و اتفاقات امروزت رو اینجا بنویس..."
-          >${escapeHTML(state.notes)}</textarea>
-
-          <div class="notes-footer">
-            <span id="save-status">ذخیره خودکار فعال است</span>
-          </div>
-        </section>
-
+          <div class="page-intro"><h2>دفتر شخصی</h2></div>
         </section>
 
         <section class="page-view ${activeView === 'profile' ? 'active' : ''} profile-page" data-page="profile"><div class="page-intro"><span class="eyebrow">YOUR CHARACTER · YOUR JOURNEY</span><h2>شخصیت و افتخارات من</h2><p>ظاهر خودت را بساز، تجربه‌هایت را جمع کن و مسیر پیشرفتت را ببین.</p></div><div id="profile-experience"></div></section>
@@ -729,12 +710,6 @@ function bindEvents() {
     render();
   });
 
-  $('#notes-input').addEventListener('input', e => {
-    state.notes = e.target.value;
-    save();
-    $('#save-status').textContent = 'ذخیره شد ✓';
-  });
-
   $('#timer-start').addEventListener('click', toggleTimer);
   $('#timer-reset').addEventListener('click', resetTimer);
 }
@@ -820,6 +795,7 @@ const originalRender = render;
 const plusDefaults = { goals: [], journal: {}, theme: 'light', waterTarget: 8 };
 state.goals = Array.isArray(state.goals) ? state.goals : [];
 state.journal = state.journal && typeof state.journal === 'object' ? state.journal : {};
+if (!state.journal[state.date] && state.notes) state.journal[state.date] = state.notes;
 state.settings = { ...plusDefaults, ...(state.settings || {}) };
 
 function plusEscape(value) {
@@ -1004,7 +980,18 @@ function plusRender() {
         const imported = JSON.parse(reader.result);
         if (!imported || !Array.isArray(imported.tasks) || !Array.isArray(imported.habits)) throw new Error('invalid');
         if (!confirm('اطلاعات فعلی با نسخه پشتیبان جایگزین شود؟')) return;
-        state = { ...state, ...imported, settings: { ...state.settings, ...(imported.settings || {}) } };
+        state = {
+          ...structuredClone(defaultState), ...state, ...imported,
+          profile: { ...defaultState.profile, ...(state.profile || {}), ...(imported.profile || {}) },
+          settings: { ...plusDefaults, ...(state.settings || {}), ...(imported.settings || {}) },
+          tasks: Array.isArray(imported.tasks) ? imported.tasks : state.tasks,
+          habits: Array.isArray(imported.habits) ? imported.habits : state.habits,
+          earned: Array.isArray(imported.earned) ? imported.earned : state.earned,
+          journal: { ...(state.journal || {}), ...(imported.journal || {}) },
+          xpByDate: { ...(state.xpByDate || {}), ...(imported.xpByDate || {}) }
+        };
+        state.profile.unlocked = Array.isArray(state.profile.unlocked) ? state.profile.unlocked : [];
+        state.profile.questClaims = state.profile.questClaims && typeof state.profile.questClaims === 'object' ? state.profile.questClaims : {};
         plusSave(); plusRender(); showToast('اطلاعات با موفقیت بازیابی شد');
       } catch { showToast('فایل انتخاب‌شده معتبر نیست'); }
     };
