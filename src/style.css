@@ -824,3 +824,80 @@ html[data-theme="dark"] .nature-photo-leaves{
   }
 }
 @media(prefers-reduced-motion:reduce){.nature-photo-sakura{animation:none!important}}
+
+
+/* === PREMIUM SAKURA MOTION LAYER === */
+.nature-scene{perspective:1100px}
+.nature-photo-sakura{
+  animation:sakuraPhotoDrift 36s ease-in-out infinite alternate,sakuraPhotoBreath 18s ease-in-out infinite alternate;
+  will-change:transform,filter;
+}
+.nature-photo-leaves{
+  animation:leafCanopyDrift 26s ease-in-out infinite alternate;
+  will-change:background-position,opacity;
+}
+.nature-glow{will-change:transform,opacity}
+.nature-leaf{will-change:transform}
+.sakura-petals{
+  position:absolute;inset:0;z-index:4;overflow:hidden;pointer-events:none;
+  transform-style:preserve-3d;contain:paint;
+}
+.sakura-petals i{
+  position:absolute;top:-12vh;left:var(--x);display:block;
+  width:var(--w);height:var(--h);border-radius:100% 0 100% 0;
+  background:radial-gradient(ellipse at 28% 24%,rgba(255,255,255,.96) 0 8%,rgba(255,222,234,.94) 26%,rgba(231,139,174,.88) 72%,rgba(192,104,145,.72) 100%);
+  box-shadow:0 2px 9px rgba(117,65,88,.13),inset -2px -2px 4px rgba(160,82,117,.12);
+  opacity:0;filter:blur(var(--blur,0));
+  transform:translate3d(0,-12vh,0) rotateX(0) rotateZ(0);
+  animation:sakuraPetalFall var(--duration) linear var(--delay) infinite;
+  backface-visibility:hidden;
+}
+.sakura-petals i:nth-child(1){--x:3%;--w:10px;--h:16px;--duration:17s;--delay:-12s;--drift:13vw;--spin:640deg}
+.sakura-petals i:nth-child(2){--x:9%;--w:7px;--h:12px;--duration:22s;--delay:-4s;--drift:-9vw;--spin:820deg;--blur:.3px}
+.sakura-petals i:nth-child(3){--x:15%;--w:13px;--h:19px;--duration:19s;--delay:-16s;--drift:17vw;--spin:540deg}
+.sakura-petals i:nth-child(4){--x:21%;--w:8px;--h:13px;--duration:25s;--delay:-8s;--drift:-12vw;--spin:900deg}
+.sakura-petals i:nth-child(5){--x:27%;--w:11px;--h:17px;--duration:20s;--delay:-2s;--drift:11vw;--spin:720deg}
+.sakura-petals i:nth-child(6){--x:33%;--w:7px;--h:11px;--duration:24s;--delay:-19s;--drift:-15vw;--spin:780deg;--blur:.5px}
+.sakura-petals i:nth-child(7){--x:39%;--w:12px;--h:18px;--duration:18s;--delay:-10s;--drift:14vw;--spin:620deg}
+.sakura-petals i:nth-child(8){--x:45%;--w:8px;--h:13px;--duration:23s;--delay:-6s;--drift:-10vw;--spin:860deg}
+.sakura-petals i:nth-child(9){--x:51%;--w:10px;--h:16px;--duration:21s;--delay:-15s;--drift:16vw;--spin:700deg}
+.sakura-petals i:nth-child(10){--x:57%;--w:7px;--h:12px;--duration:26s;--delay:-3s;--drift:-13vw;--spin:940deg;--blur:.4px}
+.sakura-petals i:nth-child(11){--x:63%;--w:13px;--h:19px;--duration:18s;--delay:-13s;--drift:10vw;--spin:580deg}
+.sakura-petals i:nth-child(12){--x:69%;--w:8px;--h:13px;--duration:24s;--delay:-7s;--drift:-16vw;--spin:820deg}
+.sakura-petals i:nth-child(13){--x:75%;--w:11px;--h:17px;--duration:20s;--delay:-18s;--drift:12vw;--spin:740deg}
+.sakura-petals i:nth-child(14){--x:81%;--w:7px;--h:11px;--duration:27s;--delay:-11s;--drift:-11vw;--spin:900deg;--blur:.4px}
+.sakura-petals i:nth-child(15){--x:87%;--w:12px;--h:18px;--duration:19s;--delay:-5s;--drift:15vw;--spin:660deg}
+.sakura-petals i:nth-child(16){--x:93%;--w:8px;--h:13px;--duration:23s;--delay:-17s;--drift:-14vw;--spin:840deg}
+.sakura-petals i:nth-child(17){--x:6%;--w:6px;--h:10px;--duration:29s;--delay:-21s;--drift:20vw;--spin:980deg;--blur:.7px}
+.sakura-petals i:nth-child(18){--x:24%;--w:6px;--h:10px;--duration:28s;--delay:-24s;--drift:-18vw;--spin:920deg;--blur:.8px}
+.sakura-petals i:nth-child(19){--x:48%;--w:6px;--h:10px;--duration:30s;--delay:-9s;--drift:18vw;--spin:1000deg;--blur:.8px}
+.sakura-petals i:nth-child(20){--x:72%;--w:6px;--h:10px;--duration:28s;--delay:-20s;--drift:-20vw;--spin:940deg;--blur:.8px}
+.sakura-petals i:nth-child(21){--x:89%;--w:6px;--h:10px;--duration:31s;--delay:-14s;--drift:17vw;--spin:1040deg;--blur:.8px}
+.sakura-petals i:nth-child(22){--x:97%;--w:6px;--h:10px;--duration:29s;--delay:-26s;--drift:-17vw;--spin:960deg;--blur:.8px}
+@keyframes sakuraPetalFall{
+  0%{opacity:0;transform:translate3d(0,-12vh,0) rotateX(0) rotateZ(0)}
+  8%{opacity:var(--opacity,.82)}
+  28%{transform:translate3d(calc(var(--drift)*.22),24vh,0) rotateX(190deg) rotateZ(calc(var(--spin)*.24))}
+  52%{transform:translate3d(calc(var(--drift)*-.12),53vh,0) rotateX(410deg) rotateZ(calc(var(--spin)*.52))}
+  76%{transform:translate3d(calc(var(--drift)*.62),82vh,0) rotateX(610deg) rotateZ(calc(var(--spin)*.78))}
+  92%{opacity:var(--opacity,.82)}
+  100%{opacity:0;transform:translate3d(var(--drift),116vh,0) rotateX(900deg) rotateZ(var(--spin))}
+}
+@keyframes sakuraPhotoBreath{
+  from{filter:saturate(.92) contrast(.94) brightness(1)}
+  to{filter:saturate(1.08) contrast(.98) brightness(1.035)}
+}
+@keyframes leafCanopyDrift{
+  from{background-position:left -65px top -75px,right -65px bottom -55px}
+  to{background-position:left -42px top -52px,right -82px bottom -34px}
+}
+@media(max-width:760px){
+  .sakura-petals i{transform-origin:center;opacity:.76}
+  .sakura-petals i:nth-child(3n){display:none}
+  .nature-photo-sakura{animation-duration:44s,22s}
+  .nature-photo-leaves{animation-duration:32s}
+}
+@media(prefers-reduced-motion:reduce){
+  .sakura-petals{display:none!important}
+  .nature-photo-sakura,.nature-photo-leaves{animation:none!important}
+}
