@@ -149,6 +149,17 @@ function render() {
 
   $('#app').innerHTML = `
     <div class="app-shell">
+      <div class="nature-scene" aria-hidden="true">
+        <span class="nature-glow glow-one"></span>
+        <span class="nature-glow glow-two"></span>
+        <span class="nature-glow glow-three"></span>
+        <span class="nature-leaf leaf-one"></span><span class="nature-leaf leaf-two"></span>
+        <span class="nature-leaf leaf-three"></span><span class="nature-leaf leaf-four"></span>
+        <span class="nature-leaf leaf-five"></span><span class="nature-leaf leaf-six"></span>
+        <span class="nature-leaf leaf-seven"></span><span class="nature-leaf leaf-eight"></span>
+        <span class="nature-leaf leaf-nine"></span><span class="nature-leaf leaf-ten"></span>
+        <span class="nature-leaf leaf-eleven"></span><span class="nature-leaf leaf-twelve"></span>
+      </div>
 
       <aside class="sidebar">
         <div class="brand">
