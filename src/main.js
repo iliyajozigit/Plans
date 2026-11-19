@@ -150,6 +150,8 @@ function render() {
   $('#app').innerHTML = `
     <div class="app-shell">
       <div class="nature-scene" aria-hidden="true">
+        <span class="nature-photo-sakura"></span>
+        <span class="nature-photo-leaves"></span>
         <span class="nature-glow glow-one"></span>
         <span class="nature-glow glow-two"></span>
         <span class="nature-glow glow-three"></span>
