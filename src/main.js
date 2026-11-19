@@ -807,10 +807,13 @@ function plusSave() {
 }
 
 const avatarCategories = [
-  {id:'skin',label:'پوست',icon:'◉'},{id:'hairStyle',label:'مدل مو',icon:'⌁'},
-  {id:'hairColor',label:'رنگ مو',icon:'●'},{id:'eyeColor',label:'چشم‌ها',icon:'◎'},
-  {id:'outfitStyle',label:'لباس',icon:'▱'},{id:'outfitColor',label:'رنگ لباس',icon:'◌'},
-  {id:'accessory',label:'اکسسوری',icon:'◇'},{id:'expression',label:'حالت چهره',icon:'☺'},{id:'background',label:'پس‌زمینه',icon:'▧'}
+ {id:'skin',label:'پوست',icon:'◉'},
+ {id:'hairStyle',label:'مدل مو',icon:'⌁'},
+ {id:'hairColor',label:'رنگ مو',icon:'●'},
+ {id:'eyeColor',label:'چشم',icon:'◎'},
+ {id:'outfitStyle',label:'لباس',icon:'▱'},
+ {id:'outfitColor',label:'رنگ لباس',icon:'◌'},
+ {id:'accessory',label:'اکسسوری',icon:'◇'}
 ];
 let activeAvatarCategory = 'skin';
 let activeShopCategory = 'all';
@@ -905,79 +908,56 @@ function badgeArt(id) {
 }
 let activeProfileTab = 'creator';
 function mountProfile(main) {
- const root=main.querySelector('#profile-experience'); if(!root)return;
- const p=state.profile, level=getLevel(), xpInLevel=getLevelProgress();
- const doneTasks=state.tasks.filter(t=>t.done).length, doneHabits=state.habits.filter(h=>h.done).length;
- const todayXP=Number(state.xpByDate[today()]||0), weekXP=getRecentXP(7), earned=state.earned.length;
- const claims=p.questClaims[state.date]||[];
- const quests=[
-  {id:'tasks',title:'دو وظیفه را کامل کن',desc:'قدم‌های امروزت را جلو ببر',icon:'✓',progress:doneTasks,target:2,xp:20,gems:10},
-  {id:'habits',title:'دو عادت را انجام بده',desc:'برای استمرار خودت وقت بگذار',icon:'🌱',progress:doneHabits,target:2,xp:15,gems:8},
-  {id:'water',title:'چهار لیوان آب ثبت کن',desc:'یادت نره به خودت رسیدگی کنی',icon:'💧',progress:state.water,target:4,xp:10,gems:5}
- ];
- const shopItems=Object.entries(avatarChoices).flatMap(([cat,items])=>items.filter(item=>item.cost).map(item=>({cat,item})));
- const visibleShopItems=shopItems.filter(({cat})=>activeShopCategory==='all'||cat===activeShopCategory);
- const shopTabs=[['all','همه'],['outfitStyle','لباس'],['accessory','اکسسوری'],['hairStyle','مو'],['background','پس‌زمینه'],['expression','حالت چهره']];
- const tabs=avatarCategories.map(c=>'<button type="button" class="duo-avatar-tab '+(activeAvatarCategory===c.id?'active':'')+'" data-avatar-tab="'+c.id+'"><span>'+c.icon+'</span><b>'+c.label+'</b></button>').join('');
- const options=(avatarChoices[activeAvatarCategory]||[]).map(item=>{
-  const key=activeAvatarCategory+':'+item.value,locked=!!item.cost&&!p.unlocked.includes(key),selected=p[activeAvatarCategory]===item.value;
-  const visual=item.swatch?'<span class="duo-swatch" style="--swatch:'+item.swatch+'"></span>':'<span class="duo-option-symbol">'+(item.icon||'✦')+'</span>';
-  return '<button type="button" class="duo-option '+(selected?'selected ':'')+(locked?'locked':'')+'" data-avatar-choice="'+activeAvatarCategory+'" data-avatar-value="'+item.value+'" data-avatar-cost="'+(item.cost||0)+'">'+visual+'<strong>'+item.label+'</strong>'+(locked?'<small>🔒 '+item.cost+' 💎</small>':selected?'<small>انتخاب شده</small>':'')+'</button>';
+ const root=main.querySelector('#profile-experience');
+ if(!root)return;
+ const p=state.profile, level=getLevel(), progress=getLevelProgress();
+ const categories=avatarCategories.map(c=>
+  '<button type="button" class="simple-avatar-tab '+(activeAvatarCategory===c.id?'active':'')+'" data-avatar-tab="'+c.id+'"><span>'+c.icon+'</span>'+c.label+'</button>'
+ ).join('');
+ const choices=(avatarChoices[activeAvatarCategory]||[]).map(item=>{
+  const key=activeAvatarCategory+':'+item.value;
+  const locked=!!item.cost&&!p.unlocked.includes(key);
+  const selected=p[activeAvatarCategory]===item.value;
+  const visual=item.swatch
+   ? '<span class="simple-avatar-swatch" style="--swatch:'+item.swatch+'"></span>'
+   : '<span class="simple-avatar-symbol">'+(item.icon||'✦')+'</span>';
+  return '<button type="button" class="simple-avatar-choice '+(selected?'selected ':'')+(locked?'locked':'')+'" data-avatar-choice="'+activeAvatarCategory+'" data-avatar-value="'+item.value+'" data-avatar-cost="'+(item.cost||0)+'">'+visual+'<span class="simple-avatar-choice-name">'+item.label+'</span>'+(locked?'<small>💎 '+item.cost+'</small>':'')+'</button>';
  }).join('');
- const shopTabsHTML=shopTabs.map(([id,label])=>'<button type="button" class="duo-shop-filter '+(activeShopCategory===id?'active':'')+'" data-shop-filter="'+id+'">'+label+'</button>').join('');
- const shopHTML=visibleShopItems.map(({cat,item})=>{
-  const key=cat+':'+item.value,unlocked=p.unlocked.includes(key),selected=p[cat]===item.value;
-  const visual=item.swatch?'<span class="duo-shop-swatch" style="--swatch:'+item.swatch+'"></span>':'<span class="duo-shop-symbol">'+(item.icon||'✦')+'</span>';
-  return '<article class="duo-shop-item '+(unlocked?'owned':'')+' '+(selected?'equipped':'')+'"><div class="duo-shop-art">'+visual+'</div><div class="duo-shop-copy"><strong>'+item.label+'</strong><small>'+(unlocked?(selected?'روی شخصیتت':'در کمد تو'):'یک آیتم تازه')+'</small></div><button type="button" data-shop-key="'+key+'">'+(unlocked?(selected?'✓ فعال':'استفاده'):'💎 '+item.cost)+'</button></article>';
- }).join('');
- const questHTML=quests.map(q=>{
-  const claimed=claims.includes(q.id),ready=q.progress>=q.target;
-  return '<article class="duo-quest '+(claimed?'claimed':'')+'"><span class="duo-quest-icon">'+q.icon+'</span><div class="duo-quest-main"><strong>'+q.title+'</strong><small>'+q.desc+'</small><div class="duo-quest-track"><i style="width:'+Math.min(100,q.progress/q.target*100)+'%"></i></div><small>'+Math.min(q.progress,q.target)+' از '+q.target+'</small></div><div class="duo-quest-reward"><b>+'+q.xp+' XP</b><small>💎 '+q.gems+'</small><button type="button" data-profile-quest="'+q.id+'" '+(!ready||claimed?'disabled':'')+'>'+(claimed?'گرفته شد':ready?'دریافت':'ادامه بده')+'</button></div></article>';
- }).join('');
- const badgeHTML=badges.map(b=>{
-  const has=state.earned.includes(b.id);
-  return '<article class="duo-badge '+(has?'earned':'locked')+'"><span class="duo-badge-art">'+badgeArt(b.id)+'</span><strong>'+b.title+'</strong><small>'+(has?'به دست آمده':b.description)+'</small></article>';
- }).join('');
- const tabButton=(id,label,icon)=>'<button type="button" class="duo-profile-nav '+(activeProfileTab===id?'active':'')+'" data-profile-tab="'+id+'"><span>'+icon+'</span>'+label+'</button>';
- let content='';
- if(activeProfileTab==='creator'){
-  content='<section class="duo-builder"><div class="duo-builder-top"><div class="duo-preview-copy"><span class="duo-kicker">AVATAR CREATOR</span><h3>شخصیتت رو بساز!</h3><p>ترکیب‌های مختلف رو امتحان کن؛ هر تغییری همون لحظه ذخیره می‌شه.</p><div class="duo-save-state"><i></i> ذخیره خودکار روشنه</div></div><div class="duo-live-preview"><div class="duo-preview-halo"></div>'+avatarMarkup('preview')+'<span class="duo-preview-name">'+plusEscape(p.displayName)+'</span><span class="duo-preview-level">LV. '+level+'</span></div></div><div class="duo-style-picker"><strong>استایل شروع شخصیت</strong><div><button type="button" data-avatar-gender="boy" class="'+(p.gender==='boy'?'active':'')+'">پسر</button><button type="button" data-avatar-gender="girl" class="'+(p.gender==='girl'?'active':'')+'">دختر</button><button type="button" data-avatar-gender="neutral" class="'+(p.gender==='neutral'?'active':'')+'">خنثی</button></div><small>این انتخاب فقط ظاهر اولیه را پیشنهاد می‌دهد؛ همه‌ی مدل موها و آیتم‌ها برای همه آزادند.</small></div><div class="duo-editor"><div class="duo-editor-heading"><div><span class="duo-kicker">PERSONALIZE</span><h4>جزئیات شخصیت</h4></div><span class="duo-editor-hint">یک دسته رو انتخاب کن</span></div><div class="duo-avatar-tabs">'+tabs+'</div><div class="duo-options-grid">'+(options||'<p>گزینه‌ای برای نمایش وجود ندارد.</p>')+'</div></div><form id="profile-name-form" class="duo-name-form"><label for="duo-display-name">اسم شخصیت</label><input id="duo-display-name" name="displayName" maxlength="32" value="'+plusEscape(p.displayName)+'" placeholder="اسم دلخواهت"><button type="submit">ذخیره اسم</button></form></section>';
- }else if(activeProfileTab==='closet'){
-  content='<section class="duo-closet"><div class="duo-section-title"><div><span class="duo-kicker">YOUR COLLECTION</span><h3>کمد و فروشگاه</h3><p>آیتم‌های بازشده رو بپوش یا با کریستال‌ها آیتم تازه بگیر.</p></div><span class="duo-gem-total">💎 '+state.gems.toLocaleString('fa-IR')+'</span></div><div class="duo-shop-filters">'+shopTabsHTML+'</div><div class="duo-shop-grid">'+(shopHTML||'<p class="duo-empty">در این دسته آیتم تازه‌ای نیست.</p>')+'</div><div class="duo-closet-note">آیتم‌هایی که باز می‌کنی برای همیشه در کمدت می‌مونن.</div></section>';
- }else{
-  content='<section class="duo-missions"><div class="duo-section-title"><div><span class="duo-kicker">DAILY QUESTS</span><h3>مأموریت‌های امروز</h3><p>با کارهای کوچیک، XP و کریستال جمع کن.</p></div><span class="duo-mission-count">'+claims.length+' / '+quests.length+'</span></div><div class="duo-quest-list">'+questHTML+'</div></section><section class="duo-achievements"><div class="duo-section-title"><div><span class="duo-kicker">ACHIEVEMENTS</span><h3>نشان‌های من</h3><p>'+earned+' نشان از '+badges.length+' نشان رو گرفتی.</p></div><span class="duo-mission-count">🏅 '+earned+'</span></div><div class="duo-badge-grid">'+badgeHTML+'</div></section>';
- }
- root.innerHTML='<section class="duo-profile-hero"><div class="duo-profile-intro"><span class="duo-kicker">MY LIFE · YOUR WORLD</span><h2>دنیای شخصیت تو</h2><p>شخصیتت رو بساز، آیتم جمع کن و پیشرفتت رو جشن بگیر.</p><div class="duo-level-line"><strong>سطح '+level+'</strong><span>'+xpInLevel+' / ۱۰۰ XP تا سطح بعدی</span></div><div class="duo-level-track"><i style="width:'+xpInLevel+'%"></i></div><div class="duo-profile-stats"><span>⭐ '+state.xp.toLocaleString('fa-IR')+' XP</span><span>💎 '+state.gems.toLocaleString('fa-IR')+'</span><span>🔥 '+state.streak+' روز</span></div></div><div class="duo-profile-avatar">'+avatarMarkup('large')+'</div></section><nav class="duo-profile-navigation">'+tabButton('creator','شخصیت‌ساز','✦')+tabButton('closet','کمد و فروشگاه','▣')+tabButton('missions','مأموریت‌ها','⚑')+'</nav>'+content+'<div class="duo-profile-footnote"><span>این هفته</span><strong>'+weekXP.toLocaleString('fa-IR')+' XP</strong><span>·</span><span>'+state.totalTasksCompleted.toLocaleString('fa-IR')+' وظیفه و '+state.totalHabitsCompleted.toLocaleString('fa-IR')+' عادت کامل‌شده</span></div>';
- root.querySelectorAll('[data-profile-tab]').forEach(btn=>btn.addEventListener('click',()=>{activeProfileTab=btn.dataset.profileTab;mountProfile(main);}));
- root.querySelectorAll('[data-avatar-tab]').forEach(btn=>btn.addEventListener('click',()=>{activeAvatarCategory=btn.dataset.avatarTab;mountProfile(main);}));
- root.querySelectorAll('[data-avatar-gender]').forEach(btn=>btn.addEventListener('click',()=>{
-  const gender=btn.dataset.avatarGender;if(!['boy','girl','neutral'].includes(gender))return;
-  p.gender=gender;p.genderInitialized=true;
-  if(gender==='boy')p.hairStyle='short';else if(gender==='girl')p.hairStyle='long';else p.hairStyle='wave';
-  plusSave();mountProfile(main);
+ root.innerHTML=
+  '<section class="simple-avatar-page">'+
+   '<header class="simple-avatar-header"><div><span class="simple-avatar-eyebrow">MY LIFE</span><h2>شخصیت من</h2></div><div class="simple-avatar-wallet"><span>⭐ '+state.xp.toLocaleString('fa-IR')+' XP</span><span>💎 '+state.gems.toLocaleString('fa-IR')+'</span></div></header>'+
+   '<div class="simple-avatar-level"><div><strong>سطح '+level+'</strong><span>'+progress+' از ۱۰۰ XP</span></div><div class="simple-avatar-progress"><i style="width:'+progress+'%"></i></div></div>'+
+   '<section class="simple-avatar-preview"><div class="simple-avatar-preview-glow"></div>'+avatarMarkup('large')+'<div class="simple-avatar-name">'+plusEscape(p.displayName||'شخصیت من')+'</div><span class="simple-avatar-hint">شخصیتت رو به سلیقه‌ی خودت بساز!</span></section>'+
+   '<section class="simple-avatar-editor"><div class="simple-avatar-editor-title"><h3>ظاهر شخصیت</h3><span>یک مورد رو انتخاب کن</span></div><div class="simple-avatar-tabs">'+categories+'</div><div class="simple-avatar-options">'+(choices||'<p class="simple-avatar-empty">موردی برای نمایش وجود ندارد.</p>')+'</div></section>'+
+   '<form id="simple-avatar-name" class="simple-avatar-name-form"><label for="simple-avatar-name-input">اسم شخصیت</label><input id="simple-avatar-name-input" name="displayName" maxlength="32" value="'+plusEscape(p.displayName||'')+'" placeholder="اسم دلخواهت"><button type="submit">ذخیره</button></form>'+
+  '</section>';
+ root.querySelectorAll('[data-avatar-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+  activeAvatarCategory=btn.dataset.avatarTab;
+  mountProfile(main);
  }));
  root.querySelectorAll('[data-avatar-choice]').forEach(btn=>btn.addEventListener('click',()=>{
   const cat=btn.dataset.avatarChoice,val=btn.dataset.avatarValue,key=cat+':'+val;
-  if(btn.dataset.avatarCost&&!p.unlocked.includes(key)){activeProfileTab='closet';activeShopCategory=cat;mountProfile(main);showToast('این آیتم در فروشگاه منتظرته.');return;}
-  p[cat]=val;plusSave();mountProfile(main);
+  const item=(avatarChoices[cat]||[]).find(x=>x.value===val);
+  if(!item)return;
+  if(item.cost&&!p.unlocked.includes(key)){
+   const cost=Number(item.cost);
+   if(state.gems<cost){showToast('کریستال کافی نداری.');return;}
+   state.gems-=cost;
+   p.unlocked.push(key);
+  }
+  p[cat]=val;
+  plusSave();
+  mountProfile(main);
  }));
- root.querySelectorAll('[data-shop-filter]').forEach(btn=>btn.addEventListener('click',()=>{activeShopCategory=btn.dataset.shopFilter;mountProfile(main);}));
- root.querySelectorAll('[data-shop-key]').forEach(btn=>btn.addEventListener('click',()=>{
-  const key=btn.dataset.shopKey,[cat,val]=key.split(':');
-  const item=(avatarChoices[cat]||[]).find(x=>x.value===val);if(!item)return;
-  if(p.unlocked.includes(key)){p[cat]=val;plusSave();mountProfile(main);showToast('آیتم روی شخصیتت قرار گرفت.');return;}
-  const cost=Number(item.cost||0);if(state.gems<cost){showToast('کریستال کافی نداری؛ مأموریت‌ها رو کامل کن.');return;}
-  state.gems-=cost;p.unlocked.push(key);p[cat]=val;plusSave();mountProfile(main);showToast('آیتم باز شد و به کمدت اضافه شد!');
- }));
- root.querySelector('#profile-name-form')?.addEventListener('submit',e=>{
-  e.preventDefault();const val=new FormData(e.currentTarget).get('displayName').trim();
-  if(!val)return;p.displayName=val;plusSave();mountProfile(main);showToast('اسم شخصیت ذخیره شد.');
+ root.querySelector('#simple-avatar-name')?.addEventListener('submit',e=>{
+  e.preventDefault();
+  const val=new FormData(e.currentTarget).get('displayName').trim();
+  if(!val)return;
+  p.displayName=val;
+  plusSave();
+  mountProfile(main);
+  showToast('اسم شخصیت ذخیره شد.');
  });
- root.querySelectorAll('[data-profile-quest]').forEach(btn=>btn.addEventListener('click',()=>{
-  const q=quests.find(x=>x.id===btn.dataset.profileQuest);
-  if(!q||q.progress<q.target||claims.includes(q.id))return;
-  p.questClaims[state.date]=claims.concat(q.id);state.gems+=q.gems;addXP(q.xp);plusSave();mountProfile(main);showToast('پاداش مأموریت دریافت شد!');
- }));
 }
 function plusRender() {
   originalRender();
