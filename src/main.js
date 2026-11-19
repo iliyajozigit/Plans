@@ -286,24 +286,6 @@ function render() {
 
   $('#app').innerHTML = `
     <div class="app-shell">
-      <div class="nature-scene" aria-hidden="true">
-        <div class="sakura-petals" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i></div>
-        <span class="nature-photo-sakura"></span>
-        <span class="nature-photo-leaves"></span>
-        <span class="nature-glow glow-one"></span>
-        <span class="nature-glow glow-two"></span>
-        <span class="nature-glow glow-three"></span>
-        <span class="nature-leaf leaf-one"></span><span class="nature-leaf leaf-two"></span>
-        <span class="nature-leaf leaf-three"></span><span class="nature-leaf leaf-four"></span>
-        <span class="nature-leaf leaf-five"></span><span class="nature-leaf leaf-six"></span>
-        <span class="nature-leaf leaf-seven"></span><span class="nature-leaf leaf-eight"></span>
-        <span class="nature-leaf leaf-nine"></span><span class="nature-leaf leaf-ten"></span>
-        <span class="nature-leaf leaf-eleven"></span><span class="nature-leaf leaf-twelve"></span>
-        <span class="sakura-tree sakura-left" aria-hidden="true"></span>
-        <span class="sakura-tree sakura-right" aria-hidden="true"></span>
-        <span class="sakura-tree sakura-far" aria-hidden="true"></span>
-      </div>
-
       <aside class="sidebar">
         <div class="brand">
           <div class="brand-icon" aria-label="My Life">M</div>
@@ -375,7 +357,7 @@ function render() {
                 <div class="growth-chart">
                   <svg viewBox="0 0 120 120">
                     <circle cx="60" cy="60" r="48" class="chart-bg"/>
-                    <circle cx="60" cy="60" r="48" class="chart-progress"/>
+                    <circle cx="60" cy="60" r="48" class="chart-progress" style="stroke-dasharray:301.6;stroke-dashoffset:${301.6 * (1 - getOverallPercent() / 100)}"/>
                   </svg>
                   <div class="growth-percent">
                     <strong>${getOverallPercent()}%</strong>
@@ -408,9 +390,6 @@ function render() {
               </div>
             </div>
 
-            <div class="hero-bloom" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b></b></div>
-            <div class="hero-orbit orbit-one" aria-hidden="true"><i></i></div>
-            <div class="hero-orbit orbit-two" aria-hidden="true"><i></i></div>
           </div>
         </section>
 
