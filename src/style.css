@@ -1634,3 +1634,25 @@ html[data-theme="dark"] .smart-hub.smart-tools-details{background:#24243a;border
 html[data-theme="dark"] .smart-tools-summary{color:#f0eff8}
 html[data-theme="dark"] .smart-tools-summary small{color:#aaa}
 html[data-theme="dark"] .smart-tools-summary>b{background:#344d2c;color:#a5df83}
+
+
+/* Quiet identity pass: replace sparkle-like branding with a simple monogram and soft botanical details. */
+.brand-icon{
+  display:grid!important;place-items:center!important;
+  width:34px!important;height:34px!important;border-radius:11px!important;
+  background:#eaf6e3!important;color:#4b9632!important;
+  font-family:'Nunito',sans-serif!important;font-size:18px!important;
+  font-weight:1000!important;letter-spacing:-1px!important;
+  box-shadow:none!important;
+}
+.wave{display:none!important}
+.ml-avatar-petal{
+  position:absolute;z-index:5;width:7px;height:10px;
+  border-radius:100% 0 100% 0;background:#f2b9ca;
+  opacity:.78;transform:rotate(35deg);
+}
+.ml-avatar-petal.petal-a{top:20px;right:25px}
+.ml-avatar-petal.petal-b{bottom:43px;left:22px;transform:rotate(75deg);width:5px;height:8px}
+.ml-shirt-detail{font-size:9px!important;opacity:.65}
+.smart-tools-summary>b{font-weight:500!important}
+html[data-theme="dark"] .brand-icon{background:#30452b!important;color:#b5df9d!important}
