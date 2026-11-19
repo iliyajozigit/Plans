@@ -216,15 +216,6 @@ function addXP(amount) {
   recordActiveDay();
   checkBadges();
 }
-function getRecentXP(days = 7) {
-  let total = 0;
-  for (let offset = 0; offset < days; offset++) {
-    const date = new Date(); date.setDate(date.getDate() - offset);
-    total += Number(state.xpByDate[dateKey(date)] || 0);
-  }
-  return total;
-}
-
 function getLevel() {
   return Math.floor(state.xp / 100) + 1;
 }
@@ -788,54 +779,65 @@ function bindEvents() {
 let timerSeconds = 25 * 60;
 let timerInterval = null;
 let timerRunning = false;
+let timerEndAt = null;
 
 function updateTimerDisplay() {
   const timer = $('#timer');
   if (!timer) return;
 
+  if (timerRunning && timerEndAt !== null) {
+    timerSeconds = Math.max(0, Math.ceil((timerEndAt - Date.now()) / 1000));
+  }
   const minutes = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
   const seconds = String(timerSeconds % 60).padStart(2, '0');
-
   timer.textContent = `${minutes}:${seconds}`;
+}
+
+function finishTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timerEndAt = null;
+  timerRunning = false;
+  timerSeconds = 0;
+
+  state.focusSessions++;
+  addXP(25);
+  state.gems += 3;
+  save();
+  showToast('جلسه تمرکزت با موفقیت تمام شد!');
+  timerSeconds = 25 * 60;
+  render();
 }
 
 function toggleTimer() {
   if (timerRunning) {
+    timerSeconds = Math.max(0, Math.ceil((timerEndAt - Date.now()) / 1000));
     clearInterval(timerInterval);
+    timerInterval = null;
+    timerEndAt = null;
     timerRunning = false;
+    updateTimerDisplay();
     $('#timer-start').textContent = 'ادامه';
     return;
   }
 
+  if (timerSeconds <= 0) timerSeconds = 25 * 60;
   timerRunning = true;
+  timerEndAt = Date.now() + timerSeconds * 1000;
   $('#timer-start').textContent = 'توقف';
 
   timerInterval = setInterval(() => {
-    timerSeconds--;
     updateTimerDisplay();
-
-    if (timerSeconds <= 0) {
-      clearInterval(timerInterval);
-      timerRunning = false;
-      timerSeconds = 0;
-
-      state.focusSessions++;
-      addXP(25);
-      state.gems += 3;
-      save();
-
-      showToast('جلسه تمرکزت با موفقیت تمام شد!');
-      timerSeconds = 25 * 60;
-      render();
-    }
-  }, 1000);
+    if (timerSeconds <= 0) finishTimer();
+  }, 250);
 }
 
 function resetTimer() {
   clearInterval(timerInterval);
+  timerInterval = null;
+  timerEndAt = null;
   timerRunning = false;
   timerSeconds = 25 * 60;
-
   updateTimerDisplay();
   $('#timer-start').textContent = 'شروع';
 }
