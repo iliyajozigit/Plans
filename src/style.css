@@ -901,3 +901,140 @@ html[data-theme="dark"] .nature-photo-leaves{
   .sakura-petals{display:none!important}
   .nature-photo-sakura,.nature-photo-leaves{animation:none!important}
 }
+
+
+/* === SAKURA PETAL STORM: DENSE, LAYERED AND NATURAL === */
+.sakura-petals i.petal-extra{display:block}
+.sakura-petals i:nth-child(23){--x:11%;--w:6px;--h:8px;--duration:13s;--delay:0s;--drift:-20vw;--spin:560deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(24){--x:48%;--w:13px;--h:21px;--duration:24s;--delay:-7s;--drift:-3vw;--spin:657deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(25){--x:85%;--w:11px;--h:16px;--duration:22s;--delay:-14s;--drift:14vw;--spin:754deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(26){--x:21%;--w:9px;--h:15px;--duration:20s;--delay:-1s;--drift:-10vw;--spin:851deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(27){--x:58%;--w:7px;--h:11px;--duration:18s;--delay:-10s;--drift:7vw;--spin:948deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(28){--x:95%;--w:14px;--h:19px;--duration:16s;--delay:-3s;--drift:-17vw;--spin:1045deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(29){--x:31%;--w:12px;--h:19px;--duration:14s;--delay:0s;--drift:0vw;--spin:1142deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(30){--x:68%;--w:10px;--h:14px;--duration:25s;--delay:-24s;--drift:17vw;--spin:639deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(31){--x:4%;--w:8px;--h:14px;--duration:23s;--delay:-10s;--drift:-7vw;--spin:736deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(32){--x:41%;--w:6px;--h:9px;--duration:21s;--delay:0s;--drift:10vw;--spin:833deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(33){--x:78%;--w:13px;--h:18px;--duration:19s;--delay:-13s;--drift:-14vw;--spin:930deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(34){--x:14%;--w:11px;--h:18px;--duration:17s;--delay:-9s;--drift:3vw;--spin:1027deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(35){--x:51%;--w:9px;--h:13px;--duration:15s;--delay:-9s;--drift:20vw;--spin:1124deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(36){--x:88%;--w:7px;--h:12px;--duration:13s;--delay:0s;--drift:-4vw;--spin:621deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(37){--x:24%;--w:14px;--h:21px;--duration:24s;--delay:-2s;--drift:13vw;--spin:718deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(38){--x:61%;--w:12px;--h:16px;--duration:22s;--delay:-17s;--drift:-11vw;--spin:815deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(39){--x:98%;--w:10px;--h:16px;--duration:20s;--delay:-12s;--drift:6vw;--spin:912deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(40){--x:34%;--w:8px;--h:12px;--duration:18s;--delay:-11s;--drift:-18vw;--spin:1009deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(41){--x:71%;--w:6px;--h:10px;--duration:16s;--delay:-14s;--drift:-1vw;--spin:1106deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(42){--x:7%;--w:13px;--h:20px;--duration:14s;--delay:-7s;--drift:16vw;--spin:603deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(43){--x:44%;--w:11px;--h:15px;--duration:25s;--delay:-15s;--drift:-8vw;--spin:700deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(44){--x:81%;--w:9px;--h:15px;--duration:23s;--delay:-9s;--drift:9vw;--spin:797deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(45){--x:17%;--w:7px;--h:10px;--duration:21s;--delay:-7s;--drift:-15vw;--spin:894deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(46){--x:54%;--w:14px;--h:24px;--duration:19s;--delay:-9s;--drift:2vw;--spin:991deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(47){--x:91%;--w:12px;--h:18px;--duration:17s;--delay:-15s;--drift:19vw;--spin:1088deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(48){--x:27%;--w:10px;--h:14px;--duration:15s;--delay:-10s;--drift:-5vw;--spin:585deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(49){--x:64%;--w:8px;--h:13px;--duration:13s;--delay:0s;--drift:12vw;--spin:682deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(50){--x:0%;--w:6px;--h:9px;--duration:24s;--delay:-21s;--drift:-12vw;--spin:779deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(51){--x:37%;--w:13px;--h:22px;--duration:22s;--delay:-20s;--drift:5vw;--spin:876deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(52){--x:74%;--w:11px;--h:17px;--duration:20s;--delay:-3s;--drift:-19vw;--spin:973deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(53){--x:10%;--w:9px;--h:12px;--duration:18s;--delay:-12s;--drift:-2vw;--spin:1070deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(54){--x:47%;--w:7px;--h:11px;--duration:16s;--delay:-9s;--drift:15vw;--spin:567deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(55){--x:84%;--w:14px;--h:20px;--duration:14s;--delay:0s;--drift:-9vw;--spin:664deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(56){--x:20%;--w:12px;--h:21px;--duration:25s;--delay:-6s;--drift:8vw;--spin:761deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(57){--x:57%;--w:10px;--h:15px;--duration:23s;--delay:-8s;--drift:-16vw;--spin:858deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(58){--x:94%;--w:8px;--h:11px;--duration:21s;--delay:-14s;--drift:1vw;--spin:955deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(59){--x:30%;--w:6px;--h:10px;--duration:19s;--delay:-5s;--drift:18vw;--spin:1052deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(60){--x:67%;--w:13px;--h:19px;--duration:17s;--delay:-4s;--drift:-6vw;--spin:1149deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(61){--x:3%;--w:11px;--h:19px;--duration:15s;--delay:-11s;--drift:11vw;--spin:646deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(62){--x:40%;--w:9px;--h:14px;--duration:13s;--delay:0s;--drift:-13vw;--spin:743deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(63){--x:77%;--w:7px;--h:9px;--duration:24s;--delay:-16s;--drift:4vw;--spin:840deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(64){--x:13%;--w:14px;--h:23px;--duration:22s;--delay:-1s;--drift:-20vw;--spin:937deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(65){--x:50%;--w:12px;--h:17px;--duration:20s;--delay:-14s;--drift:-3vw;--spin:1034deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(66){--x:87%;--w:10px;--h:17px;--duration:18s;--delay:-13s;--drift:14vw;--spin:1131deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(67){--x:23%;--w:8px;--h:12px;--duration:16s;--delay:-4s;--drift:-10vw;--spin:628deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(68){--x:60%;--w:6px;--h:8px;--duration:14s;--delay:-7s;--drift:7vw;--spin:725deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(69){--x:97%;--w:13px;--h:21px;--duration:25s;--delay:-22s;--drift:-17vw;--spin:822deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(70){--x:33%;--w:11px;--h:16px;--duration:23s;--delay:-7s;--drift:0vw;--spin:919deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(71){--x:70%;--w:9px;--h:15px;--duration:21s;--delay:0s;--drift:17vw;--spin:1016deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(72){--x:6%;--w:7px;--h:11px;--duration:19s;--delay:-1s;--drift:-7vw;--spin:1113deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(73){--x:43%;--w:14px;--h:19px;--duration:17s;--delay:-10s;--drift:10vw;--spin:610deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(74){--x:80%;--w:12px;--h:19px;--duration:15s;--delay:-12s;--drift:-14vw;--spin:707deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(75){--x:16%;--w:10px;--h:14px;--duration:13s;--delay:0s;--drift:3vw;--spin:804deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(76){--x:53%;--w:8px;--h:14px;--duration:24s;--delay:-11s;--drift:20vw;--spin:901deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(77){--x:90%;--w:6px;--h:9px;--duration:22s;--delay:-4s;--drift:-4vw;--spin:998deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(78){--x:26%;--w:13px;--h:18px;--duration:20s;--delay:-5s;--drift:13vw;--spin:1095deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(79){--x:63%;--w:11px;--h:18px;--duration:18s;--delay:-14s;--drift:-11vw;--spin:592deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(80){--x:100%;--w:9px;--h:13px;--duration:16s;--delay:-15s;--drift:6vw;--spin:689deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(81){--x:36%;--w:7px;--h:12px;--duration:14s;--delay:0s;--drift:-18vw;--spin:786deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(82){--x:73%;--w:14px;--h:21px;--duration:25s;--delay:-13s;--drift:-1vw;--spin:883deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(83){--x:9%;--w:12px;--h:16px;--duration:23s;--delay:-6s;--drift:16vw;--spin:980deg;--blur:.65px;--opacity:0.58}
+.sakura-petals i:nth-child(84){--x:46%;--w:10px;--h:16px;--duration:21s;--delay:-7s;--drift:-8vw;--spin:1077deg;--blur:0;--opacity:0.65}
+.sakura-petals i:nth-child(85){--x:83%;--w:8px;--h:12px;--duration:19s;--delay:-16s;--drift:9vw;--spin:574deg;--blur:0;--opacity:0.73}
+.sakura-petals i:nth-child(86){--x:19%;--w:6px;--h:10px;--duration:17s;--delay:-16s;--drift:-15vw;--spin:671deg;--blur:0;--opacity:0.80}
+.sakura-petals i:nth-child(87){--x:56%;--w:13px;--h:20px;--duration:15s;--delay:-13s;--drift:2vw;--spin:768deg;--blur:0;--opacity:0.88}
+.sakura-petals i:nth-child(88){--x:93%;--w:11px;--h:15px;--duration:13s;--delay:0s;--drift:19vw;--spin:865deg;--blur:.65px;--opacity:0.58}
+
+.sakura-petals i{animation-timing-function:linear}
+@keyframes sakuraPetalGust{
+  0%,100%{transform:translateX(0) rotate(0)}
+  50%{transform:translateX(18px) rotate(12deg)}
+}
+
+/* === HERO: FLOATING SAKURA BLOOM + ORBITING LIGHT === */
+.hero-art{overflow:visible;isolation:isolate}
+.growth-card{position:relative;z-index:2;animation:heroCardLevitate 5.8s ease-in-out infinite,heroCardGlow 8s ease-in-out infinite}
+.growth-card::before{
+  content:"";position:absolute;inset:-2px;border-radius:inherit;padding:1px;
+  background:linear-gradient(125deg,rgba(255,255,255,.75),rgba(255,205,224,.12),rgba(207,255,221,.52),rgba(255,255,255,.12));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
+  background-size:220% 220%;animation:heroBorderShimmer 7s linear infinite;
+}
+.growth-chart::before,.growth-chart::after{
+  content:"";position:absolute;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(255,255,255,.22);
+}
+.growth-chart::before{inset:-8px;animation:chartHalo 4.5s ease-out infinite}
+.growth-chart::after{inset:-15px;border-color:rgba(255,220,235,.18);animation:chartHalo 4.5s ease-out 1.5s infinite}
+.chart-progress{filter:drop-shadow(0 0 5px rgba(215,255,217,.5))}
+.hero-bloom{
+  position:absolute;z-index:4;right:-10px;top:-25px;width:76px;height:76px;
+  display:grid;place-items:center;animation:bloomDrift 7s ease-in-out infinite;
+  filter:drop-shadow(0 8px 13px rgba(93,62,92,.18));
+}
+.hero-bloom i{
+  position:absolute;width:22px;height:34px;border-radius:90% 12% 90% 12%;
+  transform-origin:50% 100%;
+  background:linear-gradient(145deg,#fff7fb 0%,#ffc8dc 48%,#e98fb3 100%);
+  border:1px solid rgba(255,255,255,.65);
+}
+.hero-bloom i:nth-child(1){transform:translateY(-12px) rotate(0deg)}
+.hero-bloom i:nth-child(2){transform:translate(11px,-4px) rotate(72deg)}
+.hero-bloom i:nth-child(3){transform:translate(7px,10px) rotate(144deg)}
+.hero-bloom i:nth-child(4){transform:translate(-7px,10px) rotate(216deg)}
+.hero-bloom i:nth-child(5){transform:translate(-11px,-4px) rotate(288deg)}
+.hero-bloom b{position:relative;z-index:1;width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff9d8,#f4bd68 70%);box-shadow:0 0 14px #ffe4a7}
+.hero-orbit{
+  position:absolute;z-index:1;border:1px solid rgba(255,255,255,.34);
+  border-radius:50%;pointer-events:none;
+}
+.hero-orbit i{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff4cf;box-shadow:0 0 13px 4px rgba(255,235,190,.48)}
+.orbit-one{width:330px;height:150px;left:-15px;top:37px;transform:rotate(-22deg);animation:orbitSpin 13s linear infinite}
+.orbit-one i{left:12%;top:8%}
+.orbit-two{width:285px;height:190px;left:5px;top:15px;transform:rotate(34deg);border-color:rgba(255,219,235,.25);animation:orbitSpin 17s linear infinite reverse}
+.orbit-two i{right:8%;bottom:15%;width:6px;height:6px;background:#ffd4e5}
+@keyframes heroCardLevitate{0%,100%{transform:translateY(0) rotate(-.5deg)}50%{transform:translateY(-10px) rotate(.6deg)}}
+@keyframes heroCardGlow{0%,100%{box-shadow:0 18px 42px rgba(64,54,165,.17)}50%{box-shadow:0 24px 54px rgba(116,91,205,.28),0 0 28px rgba(255,220,237,.16)}}
+@keyframes heroBorderShimmer{to{background-position:220% 0}}
+@keyframes chartHalo{0%{transform:scale(.86);opacity:.55}80%,100%{transform:scale(1.22);opacity:0}}
+@keyframes bloomDrift{0%,100%{transform:translate3d(0,0,0) rotate(-10deg) scale(.94)}50%{transform:translate3d(8px,-13px,0) rotate(14deg) scale(1.08)}}
+@keyframes orbitSpin{to{rotate:360deg}}
+@media(max-width:760px){
+  .sakura-petals i.petal-extra{display:block}
+  .sakura-petals i:nth-child(4n){display:none}
+  .hero-bloom{right:7px;top:-18px;transform:scale(.76)}
+  .hero-orbit{opacity:.65}
+  .orbit-one{width:270px;height:125px;left:-2px}
+  .orbit-two{width:240px;height:160px;left:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-bloom,.hero-orbit,.growth-card,.growth-card::before,.growth-chart::before,.growth-chart::after{animation:none!important}
+}
