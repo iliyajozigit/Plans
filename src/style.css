@@ -769,3 +769,58 @@ html[data-theme="dark"] .sakura-tree::before{
   .sakura-far{left:25%;bottom:-112px;transform:scale(.48);opacity:.25}
 }
 @media(prefers-reduced-motion:reduce){.sakura-tree::after,.sakura-right{animation:none!important}}
+
+
+/* === REAL PHOTOGRAPHIC NATURE BACKGROUND === */
+/* Use real Unsplash photographs instead of CSS-drawn leaf/tree silhouettes. */
+.nature-scene{
+  background:
+    linear-gradient(180deg,rgba(245,249,239,.18),rgba(245,249,239,.36)),
+    #e9f0e4!important;
+}
+.nature-photo-sakura{
+  position:absolute;inset:0;display:block;
+  background-image:
+    linear-gradient(90deg,rgba(244,248,239,.18),rgba(244,248,239,.04) 48%,rgba(244,248,239,.18)),
+    url("https://images.unsplash.com/photo-1556066138-cfac27159329?auto=format&fit=crop&w=2400&q=85");
+  background-size:cover;background-position:center 43%;background-repeat:no-repeat;
+  opacity:.48;filter:saturate(.92) contrast(.94);
+  transform:scale(1.025);animation:sakuraPhotoDrift 36s ease-in-out infinite alternate;
+}
+.nature-photo-leaves{
+  position:absolute;inset:0;display:block;pointer-events:none;
+  background-image:
+    url("https://images.unsplash.com/photo-1654151349471-fd48f65aa917?auto=format&fit=crop&w=900&q=82"),
+    url("https://images.unsplash.com/photo-1654151349471-fd48f65aa917?auto=format&fit=crop&w=700&q=78");
+  background-size:clamp(210px,29vw,420px) auto,clamp(170px,23vw,330px) auto;
+  background-position:left -65px top -75px,right -65px bottom -55px;
+  background-repeat:no-repeat;
+  opacity:.34;filter:saturate(.88) blur(.15px);
+  -webkit-mask-image:linear-gradient(135deg,#000 0%,rgba(0,0,0,.85) 17%,transparent 47%,transparent 55%,rgba(0,0,0,.8) 83%,#000 100%);
+  mask-image:linear-gradient(135deg,#000 0%,rgba(0,0,0,.85) 17%,transparent 47%,transparent 55%,rgba(0,0,0,.8) 83%,#000 100%);
+}
+.nature-glow,.nature-leaf,.sakura-tree{display:none!important}
+@keyframes sakuraPhotoDrift{
+  from{transform:scale(1.025) translate3d(0,0,0)}
+  to{transform:scale(1.075) translate3d(-.6%,.3%,0)}
+}
+html[data-theme="dark"] .nature-scene{
+  background:#17231d!important;
+}
+html[data-theme="dark"] .nature-photo-sakura{
+  opacity:.27;filter:saturate(.78) brightness(.68) contrast(.95);
+}
+html[data-theme="dark"] .nature-photo-leaves{
+  opacity:.22;filter:saturate(.72) brightness(.68);
+}
+@media(max-width:760px){
+  .nature-photo-sakura{
+    background-position:52% center;opacity:.40;
+  }
+  .nature-photo-leaves{
+    background-size:220px auto,185px auto;
+    background-position:left -95px top -28px,right -95px bottom -45px;
+    opacity:.27;
+  }
+}
+@media(prefers-reduced-motion:reduce){.nature-photo-sakura{animation:none!important}}
