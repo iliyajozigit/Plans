@@ -3,7 +3,8 @@ import './style.css';
 import './smart.js';
 
 const $ = (selector) => document.querySelector(selector);
-const today = () => new Date().toLocaleDateString('en-CA');
+const dateKey = (date = new Date()) => date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+const today = () => dateKey();
 
 const formatDate = () =>
   new Intl.DateTimeFormat('fa-IR', {
@@ -32,28 +33,91 @@ const defaultState = {
   totalTasksCompleted: 0, totalHabitsCompleted: 0, xpByDate: {}, createdAt: today()
 };
 
+
+const isRecord = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+const isDateKey = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value + 'T00:00:00'));
+const asNumber = (value, fallback = 0, max = Number.MAX_SAFE_INTEGER) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.min(Math.max(number, 0), max) : fallback;
+};
+
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem('myLifeState'));
-    return saved ? { ...structuredClone(defaultState), ...saved } : structuredClone(defaultState);
+    return isRecord(saved) ? saved : structuredClone(defaultState);
   } catch {
     return structuredClone(defaultState);
   }
 }
 
-let state = loadState();
-state.profile = { ...defaultState.profile, ...(state.profile || {}) };
-if (!['boy','girl','neutral'].includes(state.profile.gender)) state.profile.gender = 'boy';
-if (!state.profile.genderInitialized) { state.profile.gender = 'boy'; state.profile.hairStyle = 'short'; state.profile.genderInitialized = true; }
-state.profile.unlocked = Array.isArray(state.profile.unlocked) ? state.profile.unlocked : [];
-state.profile.questClaims = state.profile.questClaims && typeof state.profile.questClaims === 'object' ? state.profile.questClaims : {};
-state.gems = Number.isFinite(Number(state.gems)) ? Number(state.gems) : 120;
-state.streak = Number(state.streak || 0); state.longestStreak = Number(state.longestStreak || 0);
-state.xpByDate = state.xpByDate && typeof state.xpByDate === 'object' ? state.xpByDate : {};
-state.totalTasksCompleted = Number(state.totalTasksCompleted || 0); state.totalHabitsCompleted = Number(state.totalHabitsCompleted || 0);
-state.tasks = state.tasks.map(task => ({ ...task, rewardClaimed: task.rewardClaimed ?? !!task.done, countedComplete: task.countedComplete ?? !!task.done }));
-state.habits = state.habits.map(habit => ({ ...habit, lastRewardDate: habit.lastRewardDate ?? (habit.done ? state.date : null) }));
-state.waterRewardDate = state.waterRewardDate || null;
+function normalizeState(raw) {
+  const source = isRecord(raw) ? raw : {};
+  const next = { ...structuredClone(defaultState), ...source };
+
+  next.profile = { ...defaultState.profile, ...(isRecord(source.profile) ? source.profile : {}) };
+  if (!['boy', 'girl', 'neutral'].includes(next.profile.gender)) next.profile.gender = 'boy';
+  if (!next.profile.genderInitialized) {
+    next.profile.gender = 'boy';
+    next.profile.hairStyle = 'short';
+    next.profile.genderInitialized = true;
+  }
+  next.profile.displayName = String(next.profile.displayName ?? '').slice(0, 32);
+  next.profile.bio = String(next.profile.bio ?? '');
+  next.profile.unlocked = Array.isArray(next.profile.unlocked) ? next.profile.unlocked.filter(item => typeof item === 'string') : [];
+  next.profile.questClaims = isRecord(next.profile.questClaims) ? next.profile.questClaims : {};
+
+  next.tasks = (Array.isArray(source.tasks) ? source.tasks : []).filter(isRecord).map((task, index) => ({
+    ...task,
+    id: Number.isSafeInteger(Number(task.id)) ? Number(task.id) : Date.now() + index,
+    title: String(task.title ?? '').slice(0, 100),
+    done: Boolean(task.done),
+    rewardClaimed: Boolean(task.rewardClaimed ?? task.done),
+    countedComplete: Boolean(task.countedComplete ?? task.done)
+  }));
+  next.habits = (Array.isArray(source.habits) ? source.habits : structuredClone(defaultState.habits))
+    .filter(isRecord).map((habit, index) => ({
+      ...habit,
+      id: Number.isSafeInteger(Number(habit.id)) ? Number(habit.id) : index + 1,
+      title: String(habit.title ?? '').slice(0, 80),
+      icon: String(habit.icon ?? '•').slice(0, 8),
+      done: Boolean(habit.done),
+      lastRewardDate: isDateKey(habit.lastRewardDate) ? habit.lastRewardDate : null
+    }));
+  next.goals = (Array.isArray(source.goals) ? source.goals : []).filter(isRecord).map((goal, index) => ({
+    ...goal,
+    id: Number.isSafeInteger(Number(goal.id)) ? Number(goal.id) : Date.now() + index,
+    title: String(goal.title ?? '').slice(0, 90),
+    done: Boolean(goal.done)
+  }));
+
+  next.journal = isRecord(source.journal)
+    ? Object.fromEntries(Object.entries(source.journal).filter(([, value]) => typeof value === 'string'))
+    : {};
+  next.settings = { theme: 'light', waterTarget: 8, ...(isRecord(source.settings) ? source.settings : {}) };
+  next.settings.theme = next.settings.theme === 'dark' ? 'dark' : 'light';
+  next.settings.waterTarget = Math.round(asNumber(next.settings.waterTarget, 8, 24)) || 8;
+
+  next.date = isDateKey(source.date) ? source.date : today();
+  next.createdAt = isDateKey(source.createdAt) ? source.createdAt : today();
+  next.lastActiveDate = isDateKey(source.lastActiveDate) ? source.lastActiveDate : null;
+  next.waterRewardDate = isDateKey(source.waterRewardDate) ? source.waterRewardDate : null;
+  next.xp = asNumber(source.xp);
+  next.gems = asNumber(source.gems, 120);
+  next.water = Math.round(asNumber(source.water, 0, 8));
+  next.focusSessions = Math.round(asNumber(source.focusSessions));
+  next.streak = Math.round(asNumber(source.streak));
+  next.longestStreak = Math.round(asNumber(source.longestStreak));
+  next.totalTasksCompleted = Math.round(asNumber(source.totalTasksCompleted));
+  next.totalHabitsCompleted = Math.round(asNumber(source.totalHabitsCompleted));
+  next.notes = String(source.notes ?? '');
+  next.earned = Array.isArray(source.earned) ? source.earned.filter(item => typeof item === 'string') : [];
+  next.xpByDate = isRecord(source.xpByDate)
+    ? Object.fromEntries(Object.entries(source.xpByDate).filter(([key, value]) => isDateKey(key) && Number.isFinite(Number(value))).map(([key, value]) => [key, asNumber(value)]))
+    : {};
+  return next;
+}
+
+let state = normalizeState(loadState());
 
 function resetDailyData() {
   state.date = today();
@@ -76,7 +140,13 @@ const badges = [
 ];
 
 function save() {
-  localStorage.setItem('myLifeState', JSON.stringify(state));
+  try {
+    localStorage.setItem('myLifeState', JSON.stringify(state));
+    return true;
+  } catch (error) {
+    console.warn('My Life could not save local data:', error);
+    return false;
+  }
 }
 
 function escapeHTML(value) {
@@ -150,7 +220,7 @@ function getRecentXP(days = 7) {
   let total = 0;
   for (let offset = 0; offset < days; offset++) {
     const date = new Date(); date.setDate(date.getDate() - offset);
-    total += Number(state.xpByDate[date.toLocaleDateString('en-CA')] || 0);
+    total += Number(state.xpByDate[dateKey(date)] || 0);
   }
   return total;
 }
@@ -543,7 +613,7 @@ function render() {
             </p>
 
             <div class="timer-controls">
-              <button id="timer-start" class="primary-button">شروع</button>
+              <button id="timer-start" class="primary-button">${timerRunning ? "توقف" : timerSeconds < 25 * 60 ? "ادامه" : "شروع"}</button>
               <button id="timer-reset" class="secondary-button">بازنشانی</button>
             </div>
 
@@ -803,7 +873,7 @@ function plusEscape(value) {
   return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 function plusSave() {
-  localStorage.setItem('myLifeState', JSON.stringify(state));
+  save();
 }
 
 const avatarCategories = [
@@ -823,7 +893,6 @@ const avatarCategories = [
  {id:'background',label:'پس‌زمینه',icon:'▧'}
 ];
 let activeAvatarCategory = 'skin';
-let activeShopCategory = 'all';
 const avatarChoices = {
  skin:[['#f8d9c2','خیلی روشن'],['#efc49f','روشن'],['#d99b72','گندمی'],['#bd805d','کاراملی'],['#925c43','قهوه‌ای'],['#684638','تیره']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
  faceShape:[{value:'soft',label:'بیضی',icon:'◯'},{value:'round',label:'گرد',icon:'●'},{value:'square',label:'چهارگوش',icon:'▢'},{value:'heart',label:'قلبی',icon:'♡'}],
@@ -947,7 +1016,6 @@ function badgeArt(id) {
  const [bg,ink,shape]=art[id]||art['first-task'];
  return '<svg viewBox="0 0 180 150" aria-hidden="true" style="--badge-ink:'+ink+'"><rect x="23" y="8" width="134" height="134" rx="38" fill="'+bg+'"/><g color="'+ink+'">'+shape+'</g></svg>';
 }
-let activeProfileTab = 'creator';
 function mountProfile(main) {
  const root=main.querySelector('#profile-experience');
  if(!root)return;
@@ -1070,7 +1138,7 @@ function plusRender() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url; link.download = 'my-life-backup-' + state.date + '.json';
-    link.click(); URL.revokeObjectURL(url);
+    link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
     showToast('نسخه پشتیبان آماده شد');
   });
   document.getElementById('plus-import-file').addEventListener('change', event => {
@@ -1082,18 +1150,8 @@ function plusRender() {
         const imported = JSON.parse(reader.result);
         if (!imported || !Array.isArray(imported.tasks) || !Array.isArray(imported.habits)) throw new Error('invalid');
         if (!confirm('اطلاعات فعلی با نسخه پشتیبان جایگزین شود؟')) return;
-        state = {
-          ...structuredClone(defaultState), ...state, ...imported,
-          profile: { ...defaultState.profile, ...(state.profile || {}), ...(imported.profile || {}) },
-          settings: { ...plusDefaults, ...(state.settings || {}), ...(imported.settings || {}) },
-          tasks: Array.isArray(imported.tasks) ? imported.tasks : state.tasks,
-          habits: Array.isArray(imported.habits) ? imported.habits : state.habits,
-          earned: Array.isArray(imported.earned) ? imported.earned : state.earned,
-          journal: { ...(state.journal || {}), ...(imported.journal || {}) },
-          xpByDate: { ...(state.xpByDate || {}), ...(imported.xpByDate || {}) }
-        };
-        state.profile.unlocked = Array.isArray(state.profile.unlocked) ? state.profile.unlocked : [];
-        state.profile.questClaims = state.profile.questClaims && typeof state.profile.questClaims === 'object' ? state.profile.questClaims : {};
+        if (!isRecord(imported) || !Array.isArray(imported.tasks) || !Array.isArray(imported.habits)) throw new Error('invalid');
+        state = normalizeState(imported);
         plusSave(); plusRender(); showToast('اطلاعات با موفقیت بازیابی شد');
       } catch { showToast('فایل انتخاب‌شده معتبر نیست'); }
     };
