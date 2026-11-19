@@ -823,48 +823,71 @@ const avatarChoices = {
  background:[{value:'blossom',label:'شکوفه',icon:'✿'},{value:'meadow',label:'چمنزار',icon:'❧'},{value:'ocean',label:'اقیانوس',icon:'≈'},{value:'sunset',label:'غروب',icon:'◒'},{value:'lavender',label:'اسطوخودوس',icon:'◌',cost:40},{value:'galaxy',label:'کهکشان',icon:'✧',cost:75},{value:'mint',label:'نعنایی',icon:'◉',cost:35},{value:'peach',label:'هلویی',icon:'◒',cost:35},{value:'forest',label:'جنگل',icon:'♧',cost:60}]
 };
 function avatarMarkup(size) {
- const p=state.profile;
- const hairBack = p.hairStyle==='long'
-  ? '<path d="M42 78 Q34 32 90 25 Q146 31 138 80 L137 151 Q126 165 119 135 L112 81 Z" fill="var(--hair)"/>'
-  : p.hairStyle==='ponytail'
-  ? '<path d="M126 55 Q159 58 151 99 Q145 119 127 110 Z" fill="var(--hair)"/>'
-  : p.hairStyle==='curly'
-  ? '<g fill="var(--hair)"><circle cx="53" cy="54" r="18"/><circle cx="72" cy="35" r="19"/><circle cx="96" cy="31" r="20"/><circle cx="119" cy="43" r="19"/><circle cx="133" cy="64" r="16"/></g>'
-  : '<path d="M43 77 Q34 28 90 25 Q145 29 137 82 L127 112 L53 112 Z" fill="var(--hair)"/>';
- const fringe = p.hairStyle==='bob'
-  ? '<path d="M48 68 Q45 28 91 27 Q135 28 133 70 Q112 55 91 65 Q69 52 48 68Z" fill="var(--hair)"/>'
-  : p.hairStyle==='curly'
-  ? '<path d="M48 69 Q51 35 77 39 Q90 20 107 40 Q132 35 133 70 Q113 59 91 70 Q68 58 48 69Z" fill="var(--hair)"/>'
-  : '<path d="M48 69 Q49 29 91 29 Q132 30 133 69 Q115 57 103 73 Q90 59 78 75 Q63 59 48 69Z" fill="var(--hair)"/>';
- const outfit = p.outfitStyle==='jacket'||p.outfitStyle==='varsity'
-  ? '<path d="M54 143 L72 133 L90 149 L108 133 L126 143 L145 210 L35 210 Z" fill="var(--shirt)"/><path d="M72 137 L90 151 L108 137 L103 210 L77 210 Z" fill="#ffffff22"/><path d="M90 151 V207" stroke="#ffffff88" stroke-width="3"/>'+(p.outfitStyle==='varsity'?'<path d="M45 154 L59 149 L68 210 L47 210Z M122 149 L137 154 L133 210 L112 210Z" fill="#f3c75b"/>':'')
-  : p.outfitStyle==='raincoat'
-  ? '<path d="M55 143 L74 132 L90 147 L106 132 L125 143 L145 210 L35 210 Z" fill="var(--shirt)"/><path d="M73 137 L90 151 L107 137" fill="none" stroke="#ffffffaa" stroke-width="5"/>'
-  : p.outfitStyle==='star'
-  ? '<path d="M54 143 Q69 132 90 137 Q111 132 126 143 L145 210 L35 210 Z" fill="var(--shirt)"/><path d="M90 159 L94 171 L107 171 L97 179 L101 192 L90 184 L79 192 L83 179 L73 171 L86 171Z" fill="#f5d36b"/>'
-  : p.outfitStyle==='galaxy'
-  ? '<path d="M54 143 Q69 132 90 137 Q111 132 126 143 L145 210 L35 210 Z" fill="var(--shirt)"/><g fill="#fff"><circle cx="66" cy="174" r="2.5"/><circle cx="116" cy="160" r="2"/><circle cx="105" cy="193" r="2.5"/><circle cx="75" cy="199" r="1.8"/></g>'
-  : p.outfitStyle==='artist'
-  ? '<path d="M54 143 Q69 132 90 137 Q111 132 126 143 L145 210 L35 210 Z" fill="var(--shirt)"/><path d="M74 153 L106 153 L111 191 L69 191Z" fill="#f4d9b0"/><path d="M82 165 L98 165 M82 175 L98 175" stroke="#d49b5e" stroke-width="4" stroke-linecap="round"/>'
-  : '<path d="M54 143 Q69 132 90 137 Q111 132 126 143 L145 210 L35 210 Z" fill="var(--shirt)"/>'+(p.outfitStyle==='hoodie'?'<path d="M71 139 Q90 119 109 139 L104 158 Q90 169 76 158Z" fill="#00000018"/>':'');
- const accessory = p.accessory==='glasses'
-  ? '<g fill="none" stroke="#35434b" stroke-width="4"><rect x="57" y="78" width="29" height="20" rx="8"/><rect x="94" y="78" width="29" height="20" rx="8"/><path d="M86 86 H94"/></g>'
-  : p.accessory==='round'
-  ? '<g fill="none" stroke="#35434b" stroke-width="4"><circle cx="72" cy="88" r="14"/><circle cx="108" cy="88" r="14"/><path d="M86 86 H94"/></g>'
-  : p.accessory==='flower'
-  ? '<g transform="translate(126 48)" fill="#f4a8c5"><ellipse cy="-9" rx="5" ry="9"/><ellipse cy="9" rx="5" ry="9"/><ellipse cx="-9" rx="9" ry="5"/><ellipse cx="9" rx="9" ry="5"/><circle r="5" fill="#f5c95d"/></g>'
-  : p.accessory==='crown'
-  ? '<path d="M66 37 L76 20 L90 34 L105 19 L115 38 L121 48 L60 48 Z" fill="#f3c64e" stroke="#d69d2d" stroke-width="3"/>'
-  : p.accessory==='headphones'
-  ? '<g fill="none" stroke="#e8a34d" stroke-width="8"><path d="M48 77 Q44 28 90 28 Q136 28 132 77"/><rect x="42" y="70" width="13" height="31" rx="6" fill="#e8a34d" stroke="none"/><rect x="125" y="70" width="13" height="31" rx="6" fill="#e8a34d" stroke="none"/></g>'
-  : p.accessory==='cap'
-  ? '<path d="M45 58 Q52 29 91 32 Q125 33 133 58 L132 66 Q90 55 47 70Z" fill="#4d8f62"/><path d="M91 57 Q122 54 143 68 Q117 78 91 66Z" fill="#36764d"/>'
-  : p.accessory==='bow'
-  ? '<g fill="#e98eae"><path d="M91 43 Q64 22 65 47 Q69 61 91 49Z"/><path d="M91 43 Q118 22 117 47 Q113 61 91 49Z"/><circle cx="91" cy="46" r="5" fill="#f6c75c"/></g>'
-  : p.accessory==='scarf'
-  ? '<path d="M69 132 Q90 145 111 132 L116 151 Q90 164 64 151Z" fill="#e7a34e"/><path d="M103 146 L117 146 L112 184 L98 184Z" fill="#e7a34e"/>'
+ const p=state.profile||{};
+ const allowed=(category,fallback)=>((avatarChoices[category]||[]).some(x=>x.value===p[category])?p[category]:fallback);
+ const skin=allowed('skin','#e8b58d');
+ const hairColor=allowed('hairColor','#49312f');
+ const eyeColor=allowed('eyeColor','#5574aa');
+ const outfitColor=allowed('outfitColor','#69a7e8');
+ const hairStyle=allowed('hairStyle','short');
+ const outfitStyle=allowed('outfitStyle','tee');
+ const accessory=allowed('accessory','none');
+ const background=allowed('background','blossom');
+ const hairBack={
+  long:'<path d="M48 79 Q35 45 53 30 Q68 17 91 20 Q122 18 136 43 Q146 63 132 103 L133 151 Q124 165 113 151 L108 104 L72 104 L67 151 Q55 164 47 149 L49 103Z" fill="var(--hair)"/>',
+  bob:'<path d="M45 83 Q37 42 57 29 Q72 17 92 20 Q123 18 137 45 Q145 72 134 121 L128 145 L112 142 L111 104 L69 104 L67 143 L51 145 L45 120Z" fill="var(--hair)"/>',
+  ponytail:'<path d="M123 57 Q153 59 151 91 Q149 112 132 119 L121 106Z" fill="var(--hair)"/><path d="M47 81 Q38 43 56 30 Q72 17 92 20 Q123 18 137 45 Q145 66 133 93 L125 111 L54 111Z" fill="var(--hair)"/>',
+  curly:'<g fill="var(--hair)"><circle cx="53" cy="57" r="18"/><circle cx="62" cy="38" r="18"/><circle cx="82" cy="29" r="19"/><circle cx="104" cy="29" r="19"/><circle cx="123" cy="42" r="18"/><circle cx="133" cy="62" r="17"/><path d="M47 65 Q39 99 51 135 L65 145 L68 83Z M132 65 Q143 102 130 143 L115 145 L112 81Z"/></g>',
+  wave:'<path d="M47 82 Q35 49 55 30 Q75 12 103 22 Q133 25 139 55 Q144 78 131 112 L119 145 L108 111 L65 111 L58 145 L47 126Z" fill="var(--hair)"/>',
+  short:'<path d="M46 82 Q37 43 56 29 Q73 17 92 20 Q122 18 137 44 Q145 67 132 100 L119 109 L61 109 L49 99Z" fill="var(--hair)"/>'
+ }[hairStyle];
+ const fringe={
+  short:'<path d="M49 72 Q48 32 91 27 Q129 28 132 68 Q115 59 103 73 Q92 60 79 74 Q64 61 49 72Z" fill="var(--hair)"/>',
+  long:'<path d="M49 70 Q48 30 91 26 Q131 27 132 70 Q115 57 102 69 Q89 59 77 72 Q62 59 49 70Z" fill="var(--hair)"/>',
+  bob:'<path d="M48 71 Q46 29 91 26 Q132 28 133 72 Q119 62 107 69 Q94 62 81 73 Q63 61 48 71Z" fill="var(--hair)"/>',
+  ponytail:'<path d="M49 70 Q48 30 91 26 Q131 27 132 70 Q115 57 102 69 Q89 59 77 72 Q62 59 49 70Z" fill="var(--hair)"/>',
+  curly:'<g fill="var(--hair)"><circle cx="55" cy="60" r="15"/><circle cx="73" cy="43" r="16"/><circle cx="91" cy="38" r="17"/><circle cx="109" cy="43" r="16"/><circle cx="126" cy="60" r="15"/></g>',
+  wave:'<path d="M48 72 Q45 39 70 29 Q92 17 113 31 Q135 42 132 70 Q118 57 105 70 Q93 57 80 72 Q64 58 48 72Z" fill="var(--hair)"/>'
+ }[hairStyle];
+ const shirtBase='<path d="M53 151 Q66 137 78 137 L90 148 L102 137 Q116 137 127 151 L151 230 H29Z" fill="var(--shirt)"/>';
+ const outfit=outfitStyle==='jacket'||outfitStyle==='varsity'
+  ? '<path d="M53 151 Q66 137 78 137 L90 148 L102 137 Q116 137 127 151 L151 230 H29Z" fill="var(--shirt)"/><path d="M77 140 L90 153 L103 140 L100 230 H80Z" fill="#ffffff24"/><path d="M90 153 V226" stroke="#ffffff9c" stroke-width="3"/>'+(outfitStyle==='varsity'?'<path d="M40 163 L56 153 L69 230 H47Z M124 153 L140 163 L133 230 H111Z" fill="#f4cf66"/>':'')
+  : shirtBase+(outfitStyle==='hoodie'?'<path d="M70 145 Q90 121 110 145 L105 166 Q90 178 75 166Z" fill="#00000016"/>':'');
+ const accessoryArt={
+  glasses:'<g fill="none" stroke="#34434b" stroke-width="4"><rect x="56" y="86" width="30" height="21" rx="8"/><rect x="94" y="86" width="30" height="21" rx="8"/><path d="M86 94 H94"/></g>',
+  round:'<g fill="none" stroke="#34434b" stroke-width="4"><circle cx="71" cy="96" r="15"/><circle cx="109" cy="96" r="15"/><path d="M86 94 H94"/></g>',
+  flower:'<g transform="translate(127 43)" fill="#f4a8c5"><ellipse cy="-9" rx="5" ry="9"/><ellipse cy="9" rx="5" ry="9"/><ellipse cx="-9" rx="9" ry="5"/><ellipse cx="9" rx="9" ry="5"/><circle r="5" fill="#f5c95d"/></g>',
+  crown:'<path d="M65 47 L75 27 L90 43 L105 27 L116 47 L124 57 L57 57Z" fill="#f3c64e" stroke="#d69d2d" stroke-width="2.5"/>',
+  headphones:'<g fill="none" stroke="#e8a34d" stroke-width="7"><path d="M43 88 Q42 30 90 27 Q138 30 137 88"/><rect x="38" y="80" width="13" height="32" rx="6" fill="#e8a34d" stroke="none"/><rect x="129" y="80" width="13" height="32" rx="6" fill="#e8a34d" stroke="none"/></g>',
+  cap:'<path d="M47 57 Q53 32 91 32 Q124 32 134 59 L132 68 Q91 57 47 73Z" fill="#4d8f62"/><path d="M91 58 Q123 53 144 69 Q119 79 91 68Z" fill="#36764d"/>',
+  bow:'<g fill="#e98eae"><path d="M91 48 Q63 24 65 51 Q69 66 91 54Z"/><path d="M91 48 Q119 24 117 51 Q113 66 91 54Z"/><circle cx="91" cy="51" r="5" fill="#f6c75c"/></g>',
+  scarf:'<path d="M69 139 Q90 153 111 139 L116 157 Q90 172 64 157Z" fill="#e7a34e"/><path d="M103 151 L118 151 L113 194 L98 194Z" fill="#e7a34e"/>'
+ }[accessory]||'';
+ const outfitDetail=outfitStyle==='star'
+  ? '<path d="M90 173 L94 185 L107 185 L97 193 L101 206 L90 198 L79 206 L83 193 L73 185 L86 185Z" fill="#f5d36b"/>'
+  : outfitStyle==='galaxy'
+  ? '<g fill="#fff"><circle cx="66" cy="179" r="2.5"/><circle cx="116" cy="166" r="2"/><circle cx="105" cy="203" r="2.5"/><circle cx="75" cy="211" r="1.8"/></g>'
+  : outfitStyle==='artist'
+  ? '<path d="M74 163 L106 163 L111 201 L69 201Z" fill="#f4d9b0"/><path d="M82 175 L98 175 M82 185 L98 185" stroke="#d49b5e" stroke-width="4" stroke-linecap="round"/>'
+  : outfitStyle==='raincoat'
+  ? '<path d="M73 145 L90 160 L107 145" fill="none" stroke="#ffffffaa" stroke-width="5"/>'
   : '';
- return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+plusEscape(p.background)+'"><svg class="ml-avatar-person" viewBox="0 0 180 220" role="img" aria-label="آواتار شخصی‌سازی‌شده" style="--skin:'+plusEscape(p.skin)+';--hair:'+plusEscape(p.hairColor)+';--eyes:'+plusEscape(p.eyeColor)+';--shirt:'+plusEscape(p.outfitColor)+'"><ellipse cx="90" cy="211" rx="52" ry="7" fill="#314b3520"/><path d="M45 210 Q47 174 58 148 Q68 134 90 134 Q112 134 122 148 Q133 174 135 210Z" fill="var(--shirt)"/>'+outfit+hairBack+'<path d="M78 119 L102 119 L104 145 Q90 158 76 145Z" fill="var(--skin)"/><path d="M47 78 Q45 48 62 38 Q75 25 91 28 Q124 26 135 52 Q141 69 133 91 Q127 119 111 128 Q90 145 68 127 Q51 112 47 78Z" fill="var(--skin)"/><ellipse cx="47" cy="87" rx="8" ry="13" fill="var(--skin)"/><ellipse cx="133" cy="87" rx="8" ry="13" fill="var(--skin)"/>'+fringe+'<g fill="var(--eyes)"><ellipse cx="73" cy="88" rx="3.5" ry="5"/><ellipse cx="107" cy="88" rx="3.5" ry="5"/></g><path d="M82 108 Q90 115 98 108" fill="none" stroke="#a95d5b" stroke-width="3" stroke-linecap="round"/><path d="M59 78 Q71 71 82 77 M98 77 Q109 71 121 78" fill="none" stroke="var(--hair)" stroke-width="4" stroke-linecap="round"/>'+accessory+'<path d="M35 210 Q39 171 54 149 L70 143 L90 160 L110 143 L126 149 Q141 171 145 210Z" fill="none" stroke="#00000010" stroke-width="2"/></svg></div>';
+ return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+background+'"><svg class="ml-avatar-person" viewBox="0 0 180 230" role="img" aria-label="آواتار شخصی‌سازی‌شده" focusable="false" style="--skin:'+skin+';--hair:'+hairColor+';--eyes:'+eyeColor+';--shirt:'+outfitColor+'">'
+  +'<ellipse cx="90" cy="224" rx="53" ry="6" fill="#314b3520"/>'
+  +outfit+outfitDetail
+  +'<path d="M76 124 H104 L105 151 Q90 163 75 151Z" fill="var(--skin)"/>'
+  +hairBack
+  +'<ellipse cx="49" cy="96" rx="8" ry="13" fill="var(--skin)"/><ellipse cx="131" cy="96" rx="8" ry="13" fill="var(--skin)"/>'
+  +'<path d="M90 39 C65 39 50 57 49 82 L47 101 C47 126 65 145 90 147 C115 145 133 126 133 101 L131 82 C130 57 115 39 90 39Z" fill="var(--skin)"/>'
+  +'<path d="M57 117 Q64 122 72 118 M108 118 Q116 122 123 117" fill="none" stroke="#d28b77" stroke-width="2" opacity=".35"/>'
+  +fringe
+  +'<path d="M67 91 Q75 86 83 91 M97 91 Q105 86 113 91" fill="none" stroke="var(--hair)" stroke-width="3.5" stroke-linecap="round"/>'
+  +'<ellipse cx="75" cy="101" rx="3.6" ry="5" fill="var(--eyes)"/><ellipse cx="105" cy="101" rx="3.6" ry="5" fill="var(--eyes)"/>'
+  +'<path d="M90 104 Q86 113 90 115" fill="none" stroke="#b97868" stroke-width="2" stroke-linecap="round" opacity=".65"/>'
+  +'<path d="M81 126 Q90 133 99 126" fill="none" stroke="#a95d5b" stroke-width="2.8" stroke-linecap="round"/>'
+  +accessoryArt
+  +'<path d="M72 139 Q90 151 108 139" fill="none" stroke="#00000012" stroke-width="2"/>'
+  +'</svg></div>';
 }
 function badgeArt(id) {
  const art = {
