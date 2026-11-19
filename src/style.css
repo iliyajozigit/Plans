@@ -2176,3 +2176,51 @@ html[data-theme="dark"] .simple-avatar-choice small{background:#51452b;color:#f4
  .simple-avatar-name-form button{padding:10px 11px}
 }
 @media(prefers-reduced-motion:reduce){.simple-avatar-progress i,.simple-avatar-choice{transition:none}}
+
+
+/* Character creator refinement: expressive, friendly, uncluttered */
+#profile-experience{max-width:760px!important;margin-inline:auto!important}
+.simple-avatar-page{gap:18px!important}
+.simple-avatar-header{align-items:center!important}
+.simple-avatar-header h2{font-size:27px!important;letter-spacing:-.5px}
+.simple-avatar-header p{margin:5px 0 0;color:var(--muted,#849080);font-size:12px}
+.simple-avatar-eyebrow{letter-spacing:1.5px}
+.simple-avatar-wallet span{padding:8px 13px;border:1px solid #dcebd4;background:#f5fbf1;color:#547b43}
+.simple-avatar-preview{min-height:355px!important;padding:22px 15px 18px!important;border:1px solid #dcebd4!important;border-radius:25px!important;background:linear-gradient(180deg,#f7fbf3 0%,#edf7e6 100%)!important}
+.simple-avatar-preview-glow{top:44px!important;width:225px!important;height:225px!important;background:#fff!important;box-shadow:0 0 0 17px #ffffff78,0 14px 38px #7ba96b17!important}
+.simple-avatar-preview .ml-avatar-stage{z-index:1;width:205px!important;height:292px!important;margin-top:2px}
+.simple-avatar-preview .ml-avatar-person{width:100%!important;height:100%!important;overflow:visible;filter:drop-shadow(0 9px 2px #315b2b1c)}
+.simple-avatar-name{margin-top:-2px!important;padding:7px 17px!important;border:1px solid #e6efe0;background:#fff!important;color:#42683a!important;font-size:12px!important;box-shadow:0 3px 0 #dcebd3!important}
+.simple-avatar-editor{padding:17px 18px 19px!important;border-radius:21px!important}
+.simple-avatar-editor-title h3{font-size:17px!important}
+.simple-avatar-editor-title span{font-size:10px!important}
+.simple-avatar-tabs{gap:6px!important;padding:15px 0 14px!important}
+.simple-avatar-tab{padding:9px 11px!important;border-radius:13px!important;background:#fbfcfa!important;font-size:11px!important}
+.simple-avatar-tab span{display:grid;place-items:center;width:21px;height:21px;border-radius:7px;background:#f0f5ec;color:#6a9a56;font-size:14px}
+.simple-avatar-tab.active{border-color:#78c84d!important;background:#eff9e9!important;color:#438a2e!important;box-shadow:inset 0 -3px #78c84d!important}
+.simple-avatar-tab.active span{background:#dff1d4;color:#4c9632}
+.simple-avatar-options{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:9px!important}
+.simple-avatar-choice{min-height:92px!important;border-radius:15px!important;background:#fff!important}
+.simple-avatar-choice.selected{border-color:#78c84d!important;background:#f1faeb!important;box-shadow:inset 0 -3px #78c84d!important}
+.simple-avatar-symbol{width:42px!important;height:42px!important;border-radius:14px!important;background:#f1f6ed!important;color:#5c8c49!important;font-size:24px!important}
+.simple-avatar-swatch{width:38px!important;height:38px!important}
+.simple-avatar-choice-name{font-size:10px!important}
+.simple-avatar-name-form{margin-top:0!important;background:#fbfcfa!important}
+.simple-avatar-name-form button{box-shadow:0 3px 0 #55a92c!important}
+html[data-theme="dark"] .simple-avatar-preview{background:linear-gradient(180deg,#344431,#2b3b29)!important}
+html[data-theme="dark"] .simple-avatar-wallet span{background:#2b3928;color:#d4e9c8;border-color:#465c3d}
+html[data-theme="dark"] .simple-avatar-tab{background:#293329!important}
+html[data-theme="dark"] .simple-avatar-tab span{background:#374632;color:#c1e0b0}
+@media(max-width:620px){
+ .simple-avatar-page{gap:13px!important}
+ .simple-avatar-header h2{font-size:23px!important}
+ .simple-avatar-header p{font-size:10px}
+ .simple-avatar-preview{min-height:300px!important;padding:15px 10px 14px!important;border-radius:20px!important}
+ .simple-avatar-preview-glow{top:31px!important;width:190px!important;height:190px!important}
+ .simple-avatar-preview .ml-avatar-stage{width:174px!important;height:250px!important}
+ .simple-avatar-editor{padding:13px!important}
+ .simple-avatar-options{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+ .simple-avatar-choice{min-height:84px!important}
+ .simple-avatar-choice-name{font-size:9px!important}
+ .simple-avatar-editor-title h3{font-size:15px!important}
+}
