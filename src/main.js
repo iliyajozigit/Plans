@@ -1254,9 +1254,10 @@ function plusRender() {
   settingsWrap.innerHTML =
     '<div class="panel plus-panel" id="plus-settings">' +
       '<div class="plus-heading"><div><span class="eyebrow">PREFERENCES</span><h2>ظاهر و هدف‌ها</h2><p>ظاهر برنامه و هدف آب روزانه‌ات را تنظیم کن.</p></div></div>' +
-      '<div class="plus-actions"><button id="plus-theme">' + (state.settings.theme === 'dark' ? '☀ حالت روشن' : '☾ حالت تاریک') + '</button></div>' +
-      '<form id="plus-water-form" class="plus-form"><input id="plus-water-target" type="number" min="1" max="24" value="' + waterTarget() + '" aria-label="هدف آب روزانه"><button>ذخیره هدف آب</button></form>' +
-      '<small class="plus-note">هدف آب بین ۱ تا ۲۴ لیوان قابل تنظیم است.</small>' +
+      '<div class="settings-row"><div><strong>حالت تاریک</strong><small>ظاهر روشن یا تیره برای برنامه</small></div>' +
+        '<button id="plus-theme" class="secondary-button">' + (state.settings.theme === 'dark' ? '☀ حالت روشن' : '☾ حالت تاریک') + '</button></div>' +
+      '<div class="settings-row"><div><strong>هدف آب روزانه</strong><small>بین ۱ تا ۲۴ لیوان</small></div>' +
+        '<form id="plus-water-form" class="settings-inline"><input id="plus-water-target" type="number" min="1" max="24" value="' + waterTarget() + '" aria-label="هدف آب روزانه"><button class="primary-button">ذخیره</button></form></div>' +
     '</div>';
   main.querySelector('[data-page="settings"]').appendChild(settingsWrap);
 
