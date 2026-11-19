@@ -159,6 +159,9 @@ function render() {
         <span class="nature-leaf leaf-seven"></span><span class="nature-leaf leaf-eight"></span>
         <span class="nature-leaf leaf-nine"></span><span class="nature-leaf leaf-ten"></span>
         <span class="nature-leaf leaf-eleven"></span><span class="nature-leaf leaf-twelve"></span>
+        <span class="sakura-tree sakura-left" aria-hidden="true"></span>
+        <span class="sakura-tree sakura-right" aria-hidden="true"></span>
+        <span class="sakura-tree sakura-far" aria-hidden="true"></span>
       </div>
 
       <aside class="sidebar">
