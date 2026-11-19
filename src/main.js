@@ -510,8 +510,8 @@ function render() {
                   data-action="habit-toggle"
                   data-id="${habit.id}"
                 >
-                  <span class="habit-icon">${habit.icon}</span>
-                  <span class="habit-title">${habit.title}</span>
+                  <span class="habit-icon">${escapeHTML(habit.icon)}</span>
+                  <span class="habit-title">${escapeHTML(habit.title)}</span>
                   <span class="habit-status">${habit.done ? '✓' : '+'}</span>
                 </button>
               `).join('')}
