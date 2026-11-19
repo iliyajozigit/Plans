@@ -391,67 +391,68 @@ html[data-theme="dark"] .coach-insight p,html[data-theme="dark"] .smart-quote-re
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
-/* Living botanical atmosphere — subtle, calm and non-distracting */
-body{
-  background:#f4f6f2;
-  isolation:isolate;
-}
-body::before,
-body::after{
+/* Living botanical background — visible layered scene */
+html,body{min-height:100%;background:#f1f5ed}
+body{position:relative;isolation:isolate;overflow-x:hidden}
+body::before,body::after{
   content:"";
   position:fixed;
-  inset:-12%;
-  z-index:-1;
+  inset:-8%;
   pointer-events:none;
+  z-index:0;
 }
 body::before{
   background:
-    radial-gradient(ellipse at 12% 22%,rgba(151,214,180,.30),transparent 31%),
-    radial-gradient(ellipse at 84% 18%,rgba(190,181,255,.24),transparent 32%),
-    radial-gradient(ellipse at 72% 82%,rgba(255,211,174,.22),transparent 29%),
-    radial-gradient(ellipse at 22% 86%,rgba(168,218,202,.24),transparent 32%);
-  filter:blur(18px);
-  animation: natureGlow 22s ease-in-out infinite alternate;
+    radial-gradient(ellipse at 8% 18%,rgba(112,183,132,.38),transparent 28%),
+    radial-gradient(ellipse at 92% 24%,rgba(171,196,139,.34),transparent 30%),
+    radial-gradient(ellipse at 78% 88%,rgba(220,190,135,.30),transparent 28%),
+    radial-gradient(ellipse at 18% 82%,rgba(115,177,157,.32),transparent 31%),
+    linear-gradient(135deg,rgba(238,246,231,.62),rgba(247,242,225,.28));
+  filter:blur(24px);
+  animation:forestLight 16s ease-in-out infinite alternate;
 }
 body::after{
-  inset:-5%;
-  opacity:.48;
+  opacity:.72;
   background-image:
-    radial-gradient(ellipse 10px 25px at 8% 23%,rgba(91,158,119,.22) 0 46%,transparent 52%),
-    radial-gradient(ellipse 9px 23px at 12% 27%,rgba(120,181,139,.20) 0 46%,transparent 52%),
-    radial-gradient(ellipse 11px 27px at 88% 33%,rgba(119,164,130,.18) 0 46%,transparent 52%),
-    radial-gradient(ellipse 8px 22px at 92% 37%,rgba(151,190,155,.20) 0 46%,transparent 52%),
-    radial-gradient(ellipse 10px 24px at 77% 78%,rgba(129,174,145,.16) 0 46%,transparent 52%),
-    radial-gradient(ellipse 8px 20px at 82% 82%,rgba(159,195,163,.18) 0 46%,transparent 52%),
-    radial-gradient(ellipse 9px 22px at 24% 70%,rgba(130,179,145,.15) 0 46%,transparent 52%);
+    radial-gradient(ellipse 17px 43px at 5% 25%,rgba(53,125,79,.34) 0 45%,transparent 51%),
+    radial-gradient(ellipse 15px 39px at 9% 31%,rgba(91,157,104,.30) 0 45%,transparent 51%),
+    radial-gradient(ellipse 18px 45px at 93% 17%,rgba(64,132,83,.30) 0 45%,transparent 51%),
+    radial-gradient(ellipse 14px 37px at 88% 23%,rgba(117,169,105,.30) 0 45%,transparent 51%),
+    radial-gradient(ellipse 16px 41px at 83% 76%,rgba(70,139,91,.25) 0 45%,transparent 51%),
+    radial-gradient(ellipse 13px 35px at 78% 82%,rgba(128,177,117,.28) 0 45%,transparent 51%),
+    radial-gradient(ellipse 17px 43px at 16% 72%,rgba(69,139,99,.27) 0 45%,transparent 51%),
+    radial-gradient(ellipse 13px 34px at 21% 78%,rgba(128,177,130,.27) 0 45%,transparent 51%);
   background-repeat:no-repeat;
-  animation:leafDrift 30s ease-in-out infinite alternate;
+  animation:leavesSway 19s ease-in-out infinite alternate;
+  filter:blur(1.5px);
 }
-.app-shell{background:transparent}
-.sidebar{background:rgba(255,254,250,.88);backdrop-filter:blur(18px)}
-.panel,.stat-card,.smart-card{background:rgba(255,254,250,.91);backdrop-filter:blur(12px)}
-.smart-hub{background:linear-gradient(145deg,rgba(255,254,250,.92),rgba(241,240,255,.86))}
-@keyframes natureGlow{
-  0%{transform:translate3d(-1.5%,0,0) scale(1)}
-  50%{transform:translate3d(1%,1.2%,0) scale(1.035)}
-  100%{transform:translate3d(2%,-1%,0) scale(1.02)}
+#app{position:relative;z-index:1;min-height:100vh}
+.app-shell{position:relative;min-height:100vh;background:transparent}
+.sidebar{background:rgba(255,254,250,.82);backdrop-filter:blur(18px)}
+.panel,.stat-card,.smart-card{background:rgba(255,254,250,.82);backdrop-filter:blur(14px)}
+.smart-hub{background:linear-gradient(145deg,rgba(255,254,250,.86),rgba(239,241,225,.80));backdrop-filter:blur(14px)}
+@keyframes forestLight{
+  0%{transform:translate3d(-2%,1%,0) scale(1);filter:blur(24px) hue-rotate(-5deg)}
+  50%{transform:translate3d(1%,-1%,0) scale(1.04);filter:blur(29px) hue-rotate(8deg)}
+  100%{transform:translate3d(2%,1.5%,0) scale(1.02);filter:blur(25px) hue-rotate(-3deg)}
 }
-@keyframes leafDrift{
-  0%{transform:translate3d(-.5%,0,0) rotate(-1deg)}
-  50%{transform:translate3d(1.2%,-1%,0) rotate(1.5deg)}
-  100%{transform:translate3d(-1%,1.2%,0) rotate(-.5deg)}
+@keyframes leavesSway{
+  0%{transform:translate3d(-1.2%,0,0) rotate(-1.8deg) scale(1)}
+  50%{transform:translate3d(1.4%,-1.2%,0) rotate(1.5deg) scale(1.025)}
+  100%{transform:translate3d(-.4%,1.4%,0) rotate(-.8deg) scale(1.01)}
 }
-html[data-theme="dark"] body{background:#171d20}
+html[data-theme="dark"] body{background:#141d19}
 html[data-theme="dark"] body::before{
   background:
-    radial-gradient(ellipse at 12% 22%,rgba(58,117,84,.23),transparent 32%),
-    radial-gradient(ellipse at 84% 18%,rgba(93,81,150,.22),transparent 33%),
-    radial-gradient(ellipse at 72% 82%,rgba(125,91,65,.14),transparent 30%);
+    radial-gradient(ellipse at 8% 18%,rgba(49,117,70,.34),transparent 29%),
+    radial-gradient(ellipse at 92% 24%,rgba(80,116,69,.28),transparent 30%),
+    radial-gradient(ellipse at 78% 88%,rgba(119,91,55,.20),transparent 28%),
+    radial-gradient(ellipse at 18% 82%,rgba(47,113,96,.28),transparent 31%);
 }
-html[data-theme="dark"] body::after{opacity:.25}
-html[data-theme="dark"] .sidebar{background:rgba(36,36,58,.91)}
-html[data-theme="dark"] .panel,html[data-theme="dark"] .stat-card,html[data-theme="dark"] .smart-card{background:rgba(36,36,58,.91)}
-html[data-theme="dark"] .smart-hub{background:linear-gradient(145deg,rgba(37,36,59,.94),rgba(42,38,64,.9))}
+html[data-theme="dark"] body::after{opacity:.42}
+html[data-theme="dark"] .sidebar{background:rgba(29,43,36,.86)}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .stat-card,html[data-theme="dark"] .smart-card{background:rgba(31,43,38,.86)}
+html[data-theme="dark"] .smart-hub{background:linear-gradient(145deg,rgba(30,43,37,.9),rgba(39,48,40,.84))}
 @media(prefers-reduced-motion:reduce){
   body::before,body::after{animation:none!important}
 }
