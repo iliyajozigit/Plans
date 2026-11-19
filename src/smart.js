@@ -143,7 +143,7 @@ function mountSmartHub() {
   hub.id = 'smart-hub';
   hub.className = 'smart-hub smart-tools-details';
   hub.innerHTML = `
-    <summary class="smart-tools-summary"><span>ابزارهای هوشمند</span><small>آب‌وهوا و پیشنهاد روزانه</small><b>+</b></summary>
+    <summary class="smart-tools-summary"><span>پیشنهادهای روزانه</span><small>آب‌وهوا و پیشنهاد روزانه</small><b>+</b></summary>
     <div class="smart-grid">
       <article class="smart-card weather-card">
         <div class="smart-card-top"><h3>آب‌وهوای امروز</h3><span class="smart-icon">🌤️</span></div>
@@ -154,7 +154,7 @@ function mountSmartHub() {
         </form>
       </article>
       <article class="smart-card coach-card">
-        <div class="smart-card-top"><h3>پیشنهاد برای ادامه روز</h3><span class="smart-icon">✦</span></div>
+        <div class="smart-card-top"><h3>پیشنهاد برای ادامه روز</h3><span class="smart-icon">↗</span></div>
         <div class="coach-insight"><h4 id="coach-title">${safeText(insight.title)}</h4><p id="coach-body">${safeText(insight.body)}</p></div>
         <form id="smart-coach-form" class="smart-coach-form">
           <input id="smart-coach-question" maxlength="180" placeholder="سؤالت را بنویس..." aria-label="سؤال از مربی">
