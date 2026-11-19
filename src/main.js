@@ -62,7 +62,7 @@ function normalizeState(raw) {
   const next = { ...structuredClone(defaultState), ...source };
 
   next.profile = { ...defaultState.profile, ...(isRecord(source.profile) ? source.profile : {}) };
-  if (!['boy', 'girl', 'neutral'].includes(next.profile.gender)) next.profile.gender = 'boy';
+  if (!['boy', 'girl'].includes(next.profile.gender)) next.profile.gender = 'boy';
   if (isRecord(source.profile) && !asBoolean(source.profile.genderInitialized)) {
     next.profile.gender = 'boy';
     next.profile.hairStyle = 'short';
@@ -660,7 +660,7 @@ function render() {
 
             <div class="water-glasses">
               ${Array.from({ length: waterTarget() }, (_, i) => `
-                <span class="${i < state.water ? 'filled' : ''}">♧</span>
+                <span class="${i < state.water ? 'filled' : ''}">💧</span>
               `).join('')}
             </div>
 
@@ -945,7 +945,7 @@ const avatarCategories = [
 ];
 let activeAvatarCategory = 'skin';
 const avatarChoices = {
- gender:[{value:'boy',label:'پسر',icon:'♂'},{value:'girl',label:'دختر',icon:'♀'},{value:'neutral',label:'خنثی',icon:'◌'}],
+ gender:[{value:'boy',label:'پسر',icon:'♂'},{value:'girl',label:'دختر',icon:'♀'}],
  skin:[['#f8d9c2','خیلی روشن'],['#efc49f','روشن'],['#d99b72','گندمی'],['#bd805d','کاراملی'],['#925c43','قهوه‌ای'],['#684638','تیره']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
  faceShape:[{value:'soft',label:'بیضی',icon:'◯'},{value:'round',label:'گرد',icon:'●'},{value:'square',label:'چهارگوش',icon:'▢'},{value:'heart',label:'قلبی',icon:'♡'}],
  hairStyle:[{value:'short',label:'کوتاه',icon:'⌁'},{value:'wave',label:'موج‌دار',icon:'〰'},{value:'curly',label:'فر',icon:'❋'},{value:'long',label:'بلند',icon:'〰'},{value:'bob',label:'مصری',icon:'⌒'},{value:'ponytail',label:'دم‌اسبی',icon:'↗'},{value:'bun',label:'جمع‌شده',icon:'◉',cost:45},{value:'afro',label:'فر حجیم',icon:'✿',cost:55}],
@@ -961,9 +961,11 @@ const avatarChoices = {
  accessory:[{value:'none',label:'بدون اکسسوری',icon:'—'},{value:'glasses',label:'عینک',icon:'▱'},{value:'round',label:'عینک گرد',icon:'◎'},{value:'headphones',label:'هدفون',icon:'◖',cost:35},{value:'flower',label:'گل',icon:'✿',cost:35},{value:'cap',label:'کلاه',icon:'⌂',cost:45},{value:'bow',label:'پاپیون',icon:'⋈',cost:35}],
  background:[{value:'blossom',label:'سبز روشن',icon:'◉'},{value:'meadow',label:'نعنایی',icon:'◉'},{value:'ocean',label:'آبی',icon:'◉'},{value:'sunset',label:'هلویی',icon:'◉'},{value:'lavender',label:'یاسی',icon:'◉'}]
 };
+let avatarSeq = 0;
 function avatarMarkup(size, override) {
  const p={...(state.profile||{}),...(override||{})};
  const safe=(key,fallback)=>((avatarChoices[key]||[]).some(x=>x.value===p[key])?p[key]:fallback);
+ const girl=safe('gender','boy')==='girl';
  const skin=safe('skin','#d99b72'), hair=safe('hairColor','#49312f');
  const eyes=safe('eyeColor','#49362d'), shirt=safe('outfitColor','#4caa83');
  const hairStyle=safe('hairStyle','wave'), faceShape=safe('faceShape','soft');
@@ -971,6 +973,9 @@ function avatarMarkup(size, override) {
  const expression=safe('expression','happy'), mouthStyle=safe('mouthStyle','smile');
  const detail=safe('faceDetail','none'), outfitStyle=safe('outfitStyle','tee');
  const accessory=safe('accessory','none'), background=safe('background','blossom');
+ const uid='av'+(++avatarSeq);
+ const ink='#4a2f25', lipC=girl?'#c9646c':'#9e5553';
+ const inset=girl?9:0;
  const facePath={
   soft:'M90 39 C65 39 48 58 49 88 L50 112 C51 139 68 157 90 158 C112 157 129 139 130 112 L131 88 C132 58 115 39 90 39Z',
   round:'M90 40 C61 40 46 62 48 94 L51 119 C55 145 71 158 90 158 C109 158 125 145 129 119 L132 94 C134 62 119 40 90 40Z',
@@ -978,79 +983,102 @@ function avatarMarkup(size, override) {
   heart:'M90 42 C68 28 48 51 49 82 L53 116 Q61 147 90 158 Q119 147 127 116 L131 82 C132 51 112 28 90 42Z'
  }[faceShape];
  const hairBack={
-  short:'<path d="M45 91 Q38 38 70 22 Q101 7 125 29 Q145 49 135 103 L126 125 L116 81 L64 81 L55 124Z" fill="var(--hair)"/>',
-  wave:'<path d="M43 92 Q34 42 66 22 Q98 4 126 28 Q149 49 137 105 L141 160 Q127 174 114 157 L111 91 L67 91 L64 157 Q48 173 38 158 L44 105Z" fill="var(--hair)"/>',
-  long:'<path d="M42 91 Q35 38 67 21 Q99 4 127 28 Q149 49 137 103 L145 192 Q130 202 116 187 L110 94 L67 94 L63 187 Q47 202 35 190 L43 104Z" fill="var(--hair)"/>',
-  bob:'<path d="M43 91 Q35 38 67 21 Q99 4 127 28 Q149 49 137 103 L137 151 Q125 165 111 150 L110 92 L67 92 L65 150 Q50 165 39 151Z" fill="var(--hair)"/>',
-  ponytail:'<path d="M126 44 Q160 48 157 91 Q154 119 132 126 L119 105Z" fill="var(--hair)"/><path d="M43 91 Q35 39 67 22 Q99 5 127 29 Q149 50 137 103 L133 128 L47 128Z" fill="var(--hair)"/>',
-  curly:'<g fill="var(--hair)"><circle cx="48" cy="63" r="17"/><circle cx="61" cy="39" r="20"/><circle cx="84" cy="25" r="21"/><circle cx="108" cy="27" r="21"/><circle cx="129" cy="43" r="20"/><circle cx="139" cy="67" r="17"/><path d="M42 70 Q35 119 48 157 L65 160 L68 83Z M138 70 Q146 119 132 157 L115 160 L112 83Z"/></g>',
-  bun:'<circle cx="122" cy="30" r="18" fill="var(--hair)"/><path d="M43 91 Q35 39 67 22 Q99 5 127 29 Q149 50 137 103 L133 128 L47 128Z" fill="var(--hair)"/>',
-  afro:'<g fill="var(--hair)"><circle cx="49" cy="66" r="21"/><circle cx="60" cy="43" r="23"/><circle cx="82" cy="28" r="24"/><circle cx="108" cy="29" r="24"/><circle cx="129" cy="45" r="23"/><circle cx="139" cy="69" r="21"/><circle cx="90" cy="17" r="19"/></g>'
+  short:'<path d="M45 91 Q38 38 70 22 Q101 7 125 29 Q145 49 135 103 L126 125 L116 81 L64 81 L55 124Z"/>',
+  wave:'<path d="M43 92 Q34 42 66 22 Q98 4 126 28 Q149 49 137 105 L141 160 Q127 174 114 157 L111 91 L67 91 L64 157 Q48 173 38 158 L44 105Z"/>',
+  long:'<path d="M42 91 Q35 38 67 21 Q99 4 127 28 Q149 49 137 103 L145 192 Q130 202 116 187 L110 94 L67 94 L63 187 Q47 202 35 190 L43 104Z"/>',
+  bob:'<path d="M43 91 Q35 38 67 21 Q99 4 127 28 Q149 49 137 103 L137 151 Q125 165 111 150 L110 92 L67 92 L65 150 Q50 165 39 151Z"/>',
+  ponytail:'<path d="M126 44 Q160 48 157 91 Q154 119 132 126 L119 105Z"/><path d="M43 91 Q35 39 67 22 Q99 5 127 29 Q149 50 137 103 L133 128 L47 128Z"/>',
+  curly:'<circle cx="48" cy="63" r="17"/><circle cx="61" cy="39" r="20"/><circle cx="84" cy="25" r="21"/><circle cx="108" cy="27" r="21"/><circle cx="129" cy="43" r="20"/><circle cx="139" cy="67" r="17"/><path d="M42 70 Q35 119 48 157 L65 160 L68 83Z M138 70 Q146 119 132 157 L115 160 L112 83Z"/>',
+  bun:'<circle cx="122" cy="30" r="18"/><path d="M43 91 Q35 39 67 22 Q99 5 127 29 Q149 50 137 103 L133 128 L47 128Z"/>',
+  afro:'<circle cx="49" cy="66" r="21"/><circle cx="60" cy="43" r="23"/><circle cx="82" cy="28" r="24"/><circle cx="108" cy="29" r="24"/><circle cx="129" cy="45" r="23"/><circle cx="139" cy="69" r="21"/><circle cx="90" cy="17" r="19"/>'
  }[hairStyle]||'';
  const fringe={
-  short:'<path d="M48 83 Q46 31 89 25 Q130 25 132 83 Q116 67 104 82 Q91 66 78 82 Q63 68 48 83Z" fill="var(--hair)"/>',
-  wave:'<path d="M47 83 Q44 34 75 27 Q103 17 124 40 Q135 55 132 84 Q117 69 104 83 Q90 67 78 83 Q62 69 47 83Z" fill="var(--hair)"/>',
-  long:'<path d="M47 83 Q44 31 89 24 Q130 25 133 83 Q117 67 104 82 Q90 66 78 83 Q62 67 47 83Z" fill="var(--hair)"/>',
-  bob:'<path d="M47 83 Q44 31 89 24 Q130 25 133 83 Q117 67 104 82 Q90 66 78 83 Q62 67 47 83Z" fill="var(--hair)"/>',
-  ponytail:'<path d="M47 83 Q44 31 89 24 Q130 25 133 83 Q117 67 104 82 Q90 66 78 83 Q62 67 47 83Z" fill="var(--hair)"/>',
-  curly:'<g fill="var(--hair)"><circle cx="55" cy="65" r="15"/><circle cx="74" cy="45" r="17"/><circle cx="92" cy="39" r="18"/><circle cx="111" cy="45" r="17"/><circle cx="126" cy="65" r="15"/></g>',
-  bun:'<path d="M47 83 Q44 31 89 24 Q130 25 133 83 Q117 67 104 82 Q90 66 78 83 Q62 67 47 83Z" fill="var(--hair)"/>',
-  afro:'<path d="M48 84 Q44 44 68 32 Q90 16 115 31 Q137 43 132 84Z" fill="var(--hair)"/>'
+  short:'<path d="M48 83 Q46 31 89 25 Q130 25 132 83 Q116 67 104 82 Q91 66 78 82 Q63 68 48 83Z"/>',
+  wave:'<path d="M47 83 Q44 34 75 27 Q103 17 124 40 Q135 55 132 84 Q117 69 104 83 Q90 67 78 83 Q62 69 47 83Z"/>',
+  long:'<path d="M47 83 Q44 31 89 24 Q130 25 133 83 Q117 67 104 82 Q90 66 78 83 Q62 67 47 83Z"/>',
+  bob:'<path d="M47 83 Q44 31 89 24 Q130 25 133 83 Q117 67 104 82 Q90 66 78 83 Q62 67 47 83Z"/>',
+  ponytail:'<path d="M47 83 Q44 31 89 24 Q130 25 133 83 Q117 67 104 82 Q90 66 78 83 Q62 67 47 83Z"/>',
+  curly:'<circle cx="55" cy="65" r="15"/><circle cx="74" cy="45" r="17"/><circle cx="92" cy="39" r="18"/><circle cx="111" cy="45" r="17"/><circle cx="126" cy="65" r="15"/>',
+  bun:'<path d="M47 83 Q44 31 89 24 Q130 25 133 83 Q117 67 104 82 Q90 66 78 83 Q62 67 47 83Z"/>',
+  afro:'<path d="M48 84 Q44 44 68 32 Q90 16 115 31 Q137 43 132 84Z"/>'
  }[hairStyle]||'';
- const body='<path d="M55 160 Q68 145 80 148 L90 158 L100 148 Q114 145 125 160 Q145 177 151 238 H29 Q35 177 55 160Z" fill="var(--shirt)"/>';
+ const shoulderW=girl?'M38 238 C40 200 52 176 70 168 L90 181 L110 168 C128 176 140 200 142 238Z':'M28 238 C30 198 44 172 66 166 L90 180 L114 166 C136 172 150 198 152 238Z';
+ const shirtFill='<path d="'+shoulderW+'" fill="var(--shirt)"/>';
+ const shirtShade='<path d="'+shoulderW+'" fill="url(#'+uid+'sh)"/>';
  const clothes={
-  tee:'<path d="M77 155 L90 169 L103 155" fill="none" stroke="#ffffffb8" stroke-width="4" stroke-linecap="round"/>',
-  hoodie:'<path d="M70 159 Q90 136 110 159 L105 179 Q90 190 75 179Z" fill="#00000016"/><path d="M90 177 V237" stroke="#ffffff75" stroke-width="2.5"/>',
-  jacket:'<path d="M76 155 L90 169 L104 155 L100 238 H80Z" fill="#ffffff2a"/><path d="M90 169 V237" stroke="#ffffffb8" stroke-width="3"/>',
-  varsity:'<path d="M76 155 L90 169 L104 155 L100 238 H80Z" fill="#ffffff24"/><path d="M43 177 L57 162 L70 238 H49Z M137 177 L123 162 L110 238 H131Z" fill="#f4d16b"/>',
-  artist:'<path d="M72 180 L108 180 L112 220 L68 220Z" fill="#f7dfb7"/><path d="M81 191 H99 M81 202 H99" stroke="#c88f57" stroke-width="4" stroke-linecap="round"/>'
+  tee:'<path d="M74 170 Q90 194 106 170" fill="none" stroke="#ffffffc2" stroke-width="4" stroke-linecap="round"/><path d="M34 232 Q44 204 62 192" fill="none" stroke="#00000014" stroke-width="3" stroke-linecap="round"/>',
+  hoodie:'<path d="M68 172 Q90 136 112 172 Q106 188 90 190 Q74 188 68 172Z" fill="#00000026"/><path d="M86 186 V208 M94 186 V208" stroke="#ffffffb3" stroke-width="2.4" stroke-linecap="round"/><path d="M70 216 Q90 227 110 216 L110 234 H70Z" fill="#0000001c"/>',
+  jacket:'<path d="M76 168 L92 204 L84 238 L60 238 L66 180Z" fill="#ffffff26"/><path d="M104 168 L88 204 L96 238 L120 238 L114 180Z" fill="#ffffff26"/><path d="M90 204 V238" stroke="#ffffffc2" stroke-width="2.6"/>',
+  varsity:'<path d="M76 168 L92 204 L84 238 L60 238 L66 180Z" fill="#ffffff22"/><path d="M104 168 L88 204 L96 238 L120 238 L114 180Z" fill="#ffffff22"/><path d="M34 228 L48 196 M28 218 L44 186" stroke="#f4d16b" stroke-width="5" stroke-linecap="round"/><path d="M152 228 L138 196 M158 218 L142 186" stroke="#f4d16b" stroke-width="5" stroke-linecap="round"/><path d="M122 196 L124 202 L130 202 L125 206 L127 212 L122 208 L117 212 L119 206 L114 202 L120 202Z" fill="#fff"/>',
+  artist:'<path d="M70 186 H110 L114 238 H66Z" fill="#f7dfb7"/><path d="M80 194 H100" stroke="#c88f57" stroke-width="3" stroke-linecap="round"/><circle cx="82" cy="212" r="3.2" fill="#e77d9f"/><circle cx="95" cy="222" r="3.2" fill="#4f83bd"/><circle cx="104" cy="206" r="3.2" fill="#4caa83"/>'
  }[outfitStyle]||'';
- const eyeShape=eyeStyle==='round'?'rx="7" ry="8"':eyeStyle==='wide'?'rx="7.5" ry="9"':eyeStyle==='almond'?'rx="6.5" ry="4.5"':'rx="6" ry="6.5"';
- const eyeY=expression==='sleepy'?105:101;
- const eyesArt=expression==='wink'
-  ? '<path d="M64 104 Q74 96 84 104" fill="none" stroke="var(--hair)" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="105" cy="101" '+eyeShape+' fill="#fff"/><ellipse cx="105" cy="102" rx="3.4" ry="4.2" fill="var(--eyes)"/><circle cx="106" cy="100" r="1.5" fill="#fff"/>'
-  : expression==='sleepy'
-   ? '<path d="M64 106 Q74 99 84 106 M96 106 Q106 99 116 106" fill="none" stroke="var(--hair)" stroke-width="3.5" stroke-linecap="round"/>'
-   : '<ellipse cx="74" cy="'+eyeY+'" '+eyeShape+' fill="#fff"/><ellipse cx="106" cy="'+eyeY+'" '+eyeShape+' fill="#fff"/><ellipse cx="75" cy="'+(eyeY+1)+'" rx="3.8" ry="4.7" fill="var(--eyes)"/><ellipse cx="107" cy="'+(eyeY+1)+'" rx="3.8" ry="4.7" fill="var(--eyes)"/><circle cx="76.5" cy="'+(eyeY-1)+'" r="1.6" fill="#fff"/><circle cx="108.5" cy="'+(eyeY-1)+'" r="1.6" fill="#fff"/>';
- const browWeight=browStyle==='bold'?4.5:browStyle==='soft'?2.1:3.1;
- const browPath=browStyle==='arched'?'M63 88 Q74 77 85 89 M95 89 Q106 77 117 88':expression==='surprised'?'M64 84 Q74 77 84 84 M96 84 Q106 77 116 84':'M64 89 Q74 83 84 89 M96 89 Q106 83 116 89';
+ const eyeRx=eyeStyle==='wide'?7.4:eyeStyle==='round'?7:eyeStyle==='almond'?6.4:6.1;
+ const eyeRy=eyeStyle==='wide'?8.6:eyeStyle==='round'?8:eyeStyle==='almond'?4.9:(girl?7.1:6.5);
+ const eyeArt=(cx,mode,side)=>{
+  const rx=eyeRx, ry=expression==='confident'?eyeRy*0.8:expression==='surprised'?eyeRy+1.2:eyeRy;
+  if(mode==='closed') return '<path d="M'+(cx-rx)+' 102 Q'+cx+' '+(102+5)+' '+(cx+rx)+' 102" fill="none" stroke="'+ink+'" stroke-width="2.6" stroke-linecap="round"/>';
+  const top=101-ry;
+  let s='<ellipse cx="'+cx+'" cy="101" rx="'+rx+'" ry="'+ry+'" fill="#fffdf8"/>';
+  s+='<ellipse cx="'+cx+'" cy="'+(101.8)+'" rx="'+(rx*0.66).toFixed(2)+'" ry="'+(ry*0.74).toFixed(2)+'" fill="'+eyes+'"/>';
+  s+='<ellipse cx="'+cx+'" cy="101.8" rx="'+(rx*0.66).toFixed(2)+'" ry="'+(ry*0.74).toFixed(2)+'" fill="url(#'+uid+'ir)"/>';
+  s+='<circle cx="'+cx+'" cy="102" r="'+(rx*0.3).toFixed(2)+'" fill="#1d1512"/>';
+  s+='<circle cx="'+(cx+rx*0.28).toFixed(2)+'" cy="'+(101-ry*0.36).toFixed(2)+'" r="1.6" fill="#fff"/><circle cx="'+(cx-rx*0.3).toFixed(2)+'" cy="'+(101+ry*0.42).toFixed(2)+'" r=".8" fill="#fff" opacity=".8"/>';
+  s+='<path d="M'+(cx-rx-0.4)+' 101 Q'+cx+' '+(top-2.2).toFixed(2)+' '+(cx+rx+0.4)+' 101" fill="none" stroke="'+ink+'" stroke-width="2.1" stroke-linecap="round"/>';
+  if(girl){
+   const sg=side;
+   s+='<path d="M'+(cx+sg*rx)+' '+(top+2)+' l'+(sg*3.4)+' -1.6 M'+(cx+sg*(rx-1.2))+' '+(top+0.6)+' l'+(sg*3.1)+' -3.2" fill="none" stroke="'+ink+'" stroke-width="1.5" stroke-linecap="round"/>';
+  }
+  return s;
+ };
+ const leftMode=expression==='sleepy'?'closed':expression==='wink'?'closed':'open';
+ const rightMode=expression==='sleepy'?'closed':'open';
+ const eyesArt='<g class="av-eyes">'+eyeArt(74,leftMode,-1)+eyeArt(106,rightMode,1)+'</g>';
+ const browWeight=browStyle==='bold'?(girl?3.6:4.6):browStyle==='soft'?2.1:3.1;
+ const browPath=browStyle==='arched'?'M63 88 Q74 77 85 89 M95 89 Q106 77 117 88':expression==='surprised'?'M64 84 Q74 76 84 83 M96 83 Q106 76 116 84':'M64 89 Q74 83 84 89 M96 89 Q106 83 116 89';
  const mouth=expression==='surprised'||mouthStyle==='open'
-  ? '<ellipse cx="90" cy="135" rx="6" ry="8" fill="#9e5553"/>'
+  ? '<ellipse cx="90" cy="135" rx="6" ry="8" fill="#9e5553"/><ellipse cx="90" cy="131" rx="4" ry="2.4" fill="#ffffff80"/>'
   : expression==='confident'
-   ? '<path d="M81 134 Q92 139 101 131" fill="none" stroke="#9e5553" stroke-width="3" stroke-linecap="round"/>'
+   ? '<path d="M81 134 Q92 139 101 131" fill="none" stroke="'+lipC+'" stroke-width="3" stroke-linecap="round"/>'
    : mouthStyle==='neutral'
-    ? '<path d="M82 135 H98" fill="none" stroke="#9e5553" stroke-width="2.8" stroke-linecap="round"/>'
+    ? '<path d="M82 135 H98" fill="none" stroke="'+lipC+'" stroke-width="2.8" stroke-linecap="round"/>'
     : mouthStyle==='grin'||expression==='excited'
-     ? '<path d="M78 130 Q90 148 103 130 Q91 135 78 130Z" fill="#fff" stroke="#9e5553" stroke-width="2.2" stroke-linejoin="round"/>'
+     ? '<path d="M78 130 Q90 148 103 130 Q91 135 78 130Z" fill="#fff" stroke="'+lipC+'" stroke-width="2.2" stroke-linejoin="round"/>'
      : mouthStyle==='small'
-      ? '<path d="M84 134 Q90 138 96 134" fill="none" stroke="#9e5553" stroke-width="2.4" stroke-linecap="round"/>'
-      : '<path d="M79 131 Q90 145 102 131" fill="none" stroke="#9e5553" stroke-width="3" stroke-linecap="round"/>';
+      ? '<path d="M84 134 Q90 138 96 134" fill="none" stroke="'+lipC+'" stroke-width="2.4" stroke-linecap="round"/>'
+      : '<path d="M79 131 Q90 145 102 131" fill="none" stroke="'+lipC+'" stroke-width="3" stroke-linecap="round"/>'+(girl?'<path d="M84 132.5 Q90 135.5 96 132.5" fill="none" stroke="#ffffff99" stroke-width="1.1" stroke-linecap="round"/>':'');
+ const blush=detail==='blush'?0.46:girl?0.28:0.16;
  const faceDetail=detail==='freckles'
   ? '<g fill="#9c654b" opacity=".75"><circle cx="63" cy="119" r="1.5"/><circle cx="69" cy="122" r="1.4"/><circle cx="76" cy="120" r="1.3"/><circle cx="104" cy="120" r="1.3"/><circle cx="111" cy="122" r="1.4"/><circle cx="117" cy="119" r="1.5"/></g>'
   : detail==='beauty'?'<circle cx="115" cy="119" r="2" fill="#80513e"/>'
-  : detail==='blush'?'<ellipse cx="68" cy="119" rx="10" ry="5" fill="#ee8791" opacity=".34"/><ellipse cx="112" cy="119" rx="10" ry="5" fill="#ee8791" opacity=".34"/>':'<ellipse cx="68" cy="119" rx="8" ry="4" fill="#ee8791" opacity=".22"/><ellipse cx="112" cy="119" rx="8" ry="4" fill="#ee8791" opacity=".22"/>';
+  : '<ellipse cx="66" cy="119" rx="9" ry="4.6" fill="#ee8791" opacity="'+blush+'"/><ellipse cx="114" cy="119" rx="9" ry="4.6" fill="#ee8791" opacity="'+blush+'"/>';
  const accessoryArt={
-  glasses:'<g fill="none" stroke="#34434a" stroke-width="3.2"><rect x="56" y="91" width="31" height="24" rx="9"/><rect x="93" y="91" width="31" height="24" rx="9"/><path d="M87 101 H93"/></g>',
-  round:'<g fill="none" stroke="#34434a" stroke-width="3.2"><circle cx="72" cy="103" r="15"/><circle cx="108" cy="103" r="15"/><path d="M87 101 H93"/></g>',
-  headphones:'<path d="M40 102 Q38 24 90 24 Q142 24 140 102" fill="none" stroke="#e8a34d" stroke-width="7"/><rect x="34" y="88" width="15" height="34" rx="7" fill="#e8a34d"/><rect x="131" y="88" width="15" height="34" rx="7" fill="#e8a34d"/>',
-  flower:'<g transform="translate(127 43)" fill="#ef9cbd"><ellipse cy="-8" rx="5" ry="9"/><ellipse cy="8" rx="5" ry="9"/><ellipse cx="-8" rx="9" ry="5"/><ellipse cx="8" rx="9" ry="5"/><circle r="4" fill="#ffd45c"/></g>',
-  cap:'<path d="M47 56 Q55 28 91 28 Q126 28 135 58 L132 68 Q91 59 46 74Z" fill="#4d9366"/><path d="M91 57 Q125 52 146 69 Q120 80 91 68Z" fill="#34764d"/>',
+  glasses:'<g fill="#ffffff26" stroke="#34434a" stroke-width="3.2"><rect x="56" y="91" width="31" height="24" rx="9"/><rect x="93" y="91" width="31" height="24" rx="9"/><path d="M87 101 H93"/></g><path d="M61 97 Q64 94 69 94" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".8"/><path d="M98 97 Q101 94 106 94" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".8"/>',
+  round:'<g fill="#ffffff26" stroke="#34434a" stroke-width="3.2"><circle cx="72" cy="103" r="15"/><circle cx="108" cy="103" r="15"/><path d="M87 101 H93"/></g>',
+  headphones:'<path d="M40 102 Q38 24 90 24 Q142 24 140 102" fill="none" stroke="#c77f2e" stroke-width="8"/><path d="M40 102 Q38 24 90 24 Q142 24 140 102" fill="none" stroke="#f4b860" stroke-width="3" opacity=".7"/><rect x="33" y="88" width="16" height="34" rx="8" fill="#e8a34d"/><rect x="131" y="88" width="16" height="34" rx="8" fill="#e8a34d"/>',
+  flower:'<g transform="translate(127 43)" fill="#ef9cbd"><ellipse cy="-8" rx="5" ry="9"/><ellipse cy="8" rx="5" ry="9"/><ellipse cx="-8" rx="9" ry="5"/><ellipse cx="8" rx="9" ry="5"/><circle r="4.2" fill="#ffd45c"/></g>',
+  cap:'<path d="M47 56 Q55 28 91 28 Q126 28 135 58 L132 68 Q91 59 46 74Z" fill="#4d9366"/><path d="M91 57 Q125 52 146 69 Q120 80 91 68Z" fill="#34764d"/><path d="M60 46 Q90 36 120 46" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="4" stroke-linecap="round"/>',
   bow:'<g fill="#e98eae"><path d="M91 49 Q62 24 65 52 Q69 67 91 55Z"/><path d="M91 49 Q120 24 117 52 Q113 67 91 55Z"/><circle cx="91" cy="52" r="5" fill="#f7cd65"/></g>'
  }[accessory]||'';
- return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+background+'"><svg class="ml-avatar-person" viewBox="0 0 180 245" preserveAspectRatio="xMidYMid meet" role="img" aria-label="شخصیت کارتونی شخصی‌سازی‌شده" focusable="false" style="--skin:'+skin+';--hair:'+hair+';--eyes:'+eyes+';--shirt:'+shirt+'">'
-  +'<defs><linearGradient id="avatarFaceShade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#713f2c" stop-opacity=".10"/></linearGradient></defs>'
-  +'<ellipse cx="90" cy="239" rx="48" ry="5.5" fill="#314b3520"/>'
-  +body+clothes
-  +'<path d="M77 139 H103 L104 165 Q90 174 76 165Z" fill="var(--skin)"/>'
-  +hairBack
-  +'<ellipse cx="49" cy="105" rx="8" ry="12" fill="var(--skin)"/><ellipse cx="131" cy="105" rx="8" ry="12" fill="var(--skin)"/>'
-  +'<path d="'+facePath+'" fill="var(--skin)"/><path d="'+facePath+'" fill="url(#avatarFaceShade)"/>'
+ const shine='<path d="M58 44 Q90 20 122 44" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="5" stroke-linecap="round"/>';
+ return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+background+'"><svg class="ml-avatar-person" viewBox="0 0 180 245" preserveAspectRatio="xMidYMid meet" role="img" aria-label="'+(girl?'شخصیت دختر':'شخصیت پسر')+'" focusable="false" style="--skin:'+skin+';--hair:'+hair+';--shirt:'+shirt+'">'
+  +'<defs>'
+  +'<radialGradient id="'+uid+'sg" cx=".42" cy=".34" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".24"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#4a2519" stop-opacity=".22"/></radialGradient>'
+  +'<linearGradient id="'+uid+'sh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>'
+  +'<radialGradient id="'+uid+'ir" cx=".5" cy=".38" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></radialGradient>'
+  +'</defs>'
+  +'<ellipse cx="90" cy="240" rx="58" ry="5.5" fill="#1e3a2a" opacity=".14"/>'
+  +shirtFill+shirtShade+clothes
+  +'<path d="M80 146 H100 L104 178 Q90 188 76 178 Z" fill="var(--skin)"/><path d="M80 146 H100 L101 158 Q90 166 79 158Z" fill="#000" opacity=".14"/>'
+  +'<g fill="var(--hair)">'+hairBack+'</g>'
+  +'<g fill="var(--skin)"><ellipse cx="49" cy="105" rx="8" ry="12"/><ellipse cx="131" cy="105" rx="8" ry="12"/></g>'
+  +'<path d="M52 101 Q48 105 52 110" fill="none" stroke="'+ink+'" stroke-opacity=".2" stroke-width="1.4" stroke-linecap="round"/><path d="M128 101 Q132 105 128 110" fill="none" stroke="'+ink+'" stroke-opacity=".2" stroke-width="1.4" stroke-linecap="round"/>'
+  +'<path d="'+facePath+'" fill="var(--skin)"/><path d="'+facePath+'" fill="url(#'+uid+'sg)"/>'
   +faceDetail
+  +'<path d="M88 116 Q91 124 94 120" fill="none" stroke="'+ink+'" stroke-opacity=".5" stroke-width="1.6" stroke-linecap="round"/>'
   +'<path d="'+browPath+'" fill="none" stroke="var(--hair)" stroke-width="'+browWeight+'" stroke-linecap="round"/>'
-  +'<g class="av-eyes">'+eyesArt+'</g>'
-  +'<path d="M90 107 Q86 116 90 119" fill="none" stroke="#a66e5b" stroke-width="1.8" stroke-linecap="round" opacity=".65"/>'
+  +eyesArt
   +mouth
-  +fringe
+  +'<g fill="var(--hair)">'+fringe+'</g>'+shine
   +accessoryArt
   +'</svg></div>';
 }
@@ -1138,9 +1166,7 @@ function characterMarkup(p){
   const key=activeAvatarCategory+':'+item.value;
   const owned=!item.cost||p.unlocked.includes(key);
   const selected=p[activeAvatarCategory]===item.value;
-  const visual=activeAvatarCategory==='gender'
-   ? '<span class="look-symbol">'+(item.icon||'✦')+'</span>'
-   : avatarMarkup('mini',{[activeAvatarCategory]:item.value});
+  const visual=avatarMarkup('mini',{[activeAvatarCategory]:item.value});
   return '<button type="button" class="look-choice '+(selected?'selected':'')+(owned?'':' locked')+'" data-avatar-choice="'+activeAvatarCategory+'" data-avatar-value="'+item.value+'" aria-pressed="'+selected+'">'+
    (selected?'<span class="look-check" aria-hidden="true">✓</span>':'')+
    '<span class="look-visual">'+visual+'</span><span class="look-name">'+item.label+'</span>'+
@@ -1345,7 +1371,7 @@ function plusRender() {
       '<div class="settings-row"><div><strong>هدف آب روزانه</strong><small>بین ۱ تا ۲۴ لیوان</small></div>' +
         '<form id="plus-water-form" class="settings-inline"><input id="plus-water-target" type="number" min="1" max="24" value="' + waterTarget() + '" aria-label="هدف آب روزانه"><button class="primary-button">ذخیره</button></form></div>' +
     '</div>';
-  main.querySelector('[data-page="settings"]').appendChild(settingsWrap);
+  main.querySelector('[data-page="settings"]').prepend(settingsWrap);
 
   document.getElementById('plus-theme').addEventListener('click', () => {
     state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
