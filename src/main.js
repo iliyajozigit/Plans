@@ -56,7 +56,7 @@ function normalizeState(raw) {
 
   next.profile = { ...defaultState.profile, ...(isRecord(source.profile) ? source.profile : {}) };
   if (!['boy', 'girl', 'neutral'].includes(next.profile.gender)) next.profile.gender = 'boy';
-  if (!next.profile.genderInitialized) {
+  if (!asBoolean(next.profile.genderInitialized)) {
     next.profile.gender = 'boy';
     next.profile.hairStyle = 'short';
     next.profile.genderInitialized = true;
@@ -70,9 +70,9 @@ function normalizeState(raw) {
     ...task,
     id: Number.isSafeInteger(Number(task.id)) ? Number(task.id) : Date.now() + index,
     title: String(task.title ?? '').slice(0, 100),
-    done: Boolean(task.done),
-    rewardClaimed: Boolean(task.rewardClaimed ?? task.done),
-    countedComplete: Boolean(task.countedComplete ?? task.done)
+    done: asBoolean(task.done),
+    rewardClaimed: asBoolean(task.rewardClaimed ?? task.done),
+    countedComplete: asBoolean(task.countedComplete ?? task.done)
   }));
   next.habits = (Array.isArray(source.habits) ? source.habits : structuredClone(defaultState.habits))
     .filter(isRecord).map((habit, index) => ({
@@ -80,14 +80,14 @@ function normalizeState(raw) {
       id: Number.isSafeInteger(Number(habit.id)) ? Number(habit.id) : index + 1,
       title: String(habit.title ?? '').slice(0, 80),
       icon: String(habit.icon ?? '•').slice(0, 8),
-      done: Boolean(habit.done),
+      done: asBoolean(habit.done),
       lastRewardDate: isDateKey(habit.lastRewardDate) ? habit.lastRewardDate : null
     }));
   next.goals = (Array.isArray(source.goals) ? source.goals : []).filter(isRecord).map((goal, index) => ({
     ...goal,
     id: Number.isSafeInteger(Number(goal.id)) ? Number(goal.id) : Date.now() + index,
     title: String(goal.title ?? '').slice(0, 90),
-    done: Boolean(goal.done)
+    done: asBoolean(goal.done)
   }));
 
   next.journal = isRecord(source.journal)
@@ -139,12 +139,18 @@ const badges = [
   { id: 'legend', title: 'افسانه My Life', description: 'به ۵۰۰ امتیاز تجربه برس', icon: '👑', color: 'pink', target: 500, type: 'xp' }
 ];
 
+let storageWarningShown = false;
+
 function save() {
   try {
     localStorage.setItem('myLifeState', JSON.stringify(state));
     return true;
   } catch (error) {
     console.warn('My Life could not save local data:', error);
+    if (!storageWarningShown && document.body) {
+      storageWarningShown = true;
+      showToast('ذخیره‌سازی مرورگر در دسترس نیست؛ اطلاعات پس از بستن صفحه باقی نمی‌ماند.');
+    }
     return false;
   }
 }
