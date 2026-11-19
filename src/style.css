@@ -579,3 +579,146 @@ html[data-theme="dark"] .plus-empty,html[data-theme="dark"] .coach-insight{
 html[data-theme="dark"] .nav-item{color:#e1ebdf!important}
 html[data-theme="dark"] .nav-item.active{background:rgba(114,157,116,.32)!important;color:#f0fff0!important}
 @media(prefers-reduced-motion:reduce){.nature-scene *{animation:none!important}}
+
+
+/* === MY LIFE: FULL GLASSMORPHISM SYSTEM === */
+:root{
+  --glass-bg:rgba(255,255,255,.22);
+  --glass-bg-strong:rgba(255,255,255,.34);
+  --glass-border:rgba(255,255,255,.48);
+  --glass-shadow:0 12px 34px rgba(31,55,39,.10), inset 0 1px 0 rgba(255,255,255,.48);
+  --glass-blur: blur(22px) saturate(165%);
+}
+html,body,#app,.app-shell,.main-content{background:transparent!important}
+.app-shell{position:relative;isolation:isolate}
+.nature-scene{position:fixed!important;inset:0!important;z-index:0!important;pointer-events:none!important}
+.sidebar,.main-content{position:relative;z-index:2}
+.sidebar{
+  background:rgba(245,250,245,.28)!important;
+  border-color:rgba(255,255,255,.42)!important;
+  backdrop-filter:var(--glass-blur)!important;
+  -webkit-backdrop-filter:var(--glass-blur)!important;
+}
+.topbar,.page-intro,.footer{background:transparent!important}
+.panel,.stat-card,.smart-hub,.smart-card,.mini-level,.level-pill,
+.task-item,.habit-item,.plus-goal,.badge-card,.badge-overview-item,
+.empty-state,.plus-empty,.coach-insight,.focus-panel,.water-panel,
+.notes-panel,.plus-panel,.achievements-panel,.smart-weather,
+.smart-quote,.smart-coach,.smart-analytics,.counter,.achievement-count,
+.water-glasses span,.growth-card{
+  background:var(--glass-bg)!important;
+  border:1px solid var(--glass-border)!important;
+  box-shadow:var(--glass-shadow)!important;
+  backdrop-filter:var(--glass-blur)!important;
+  -webkit-backdrop-filter:var(--glass-blur)!important;
+}
+.panel,.smart-hub,.achievements-panel{background:rgba(255,255,255,.27)!important}
+.task-item,.habit-item,.plus-goal,.badge-card,.badge-overview-item,
+.empty-state,.plus-empty,.smart-card{background:rgba(255,255,255,.19)!important}
+.stat-icon,.habit-icon,.badge-overview-icon,.badge-emblem,.counter,
+.achievement-count,.plus-chip,.smart-status,.badge-rarity-chip{
+  background-color:rgba(255,255,255,.34)!important;
+  border:1px solid rgba(255,255,255,.48)!important;
+  backdrop-filter:blur(12px) saturate(150%);
+  -webkit-backdrop-filter:blur(12px) saturate(150%);
+}
+button,.hero-button,.primary-button,.secondary-button,.add-form button,
+.plus-form button,.plus-actions button,.plus-import,.filter-btn,
+.task-check,.habit-status,.delete-button,.nav-item{
+  border:1px solid rgba(255,255,255,.46)!important;
+  backdrop-filter:blur(16px) saturate(160%)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(160%)!important;
+  box-shadow:0 6px 18px rgba(34,54,40,.09),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:background .22s ease,transform .22s ease,box-shadow .22s ease;
+}
+.add-form button,.primary-button,.plus-form button,.plus-actions button{
+  background:rgba(105,94,220,.78)!important;color:#fff!important;
+}
+.secondary-button,.filter-btn,.plus-import{
+  background:rgba(255,255,255,.30)!important;color:#514b83!important;
+}
+.hero-button{background:rgba(255,255,255,.78)!important;color:#5148b4!important}
+input,textarea,select,#notes-input,#plus-journal-input,
+.add-form input,.plus-form input,.smart-city-form input,.smart-coach-form input{
+  background:rgba(255,255,255,.24)!important;
+  border:1px solid rgba(255,255,255,.58)!important;
+  color:var(--ink)!important;
+  box-shadow:inset 0 1px 8px rgba(40,60,45,.045)!important;
+  backdrop-filter:blur(15px) saturate(150%)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(150%)!important;
+}
+input::placeholder,textarea::placeholder{color:rgba(75,82,76,.65)!important}
+.progress-track,.stat-progress,.badge-progress-track,.badge-hero-track{
+  background:rgba(255,255,255,.30)!important;
+  border:1px solid rgba(255,255,255,.38);
+}
+.hero-card{
+  background:linear-gradient(115deg,rgba(86,77,190,.76),rgba(121,109,222,.64) 55%,rgba(157,147,245,.58))!important;
+  border:1px solid rgba(255,255,255,.38)!important;
+  backdrop-filter:blur(18px) saturate(150%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%)!important;
+}
+.badge-hero{
+  background:linear-gradient(115deg,rgba(38,43,75,.76),rgba(71,68,126,.65) 68%,rgba(115,104,187,.58))!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+  backdrop-filter:blur(18px)!important;
+}
+.nav-item{background:rgba(255,255,255,.14)!important;color:#465448!important}
+.nav-item:hover,.nav-item.active{
+  background:rgba(255,255,255,.42)!important;color:#5148b4!important;
+  border-color:rgba(255,255,255,.68)!important;
+  box-shadow:0 8px 22px rgba(50,65,50,.12),inset 0 1px 0 #ffffff99!important;
+}
+@media(max-width:760px){
+  .sidebar{position:relative!important;z-index:20!important;overflow:visible!important;background:transparent!important;border:0!important;backdrop-filter:none!important}
+  .navigation{
+    position:fixed!important;z-index:9999!important;
+    left:9px!important;right:9px!important;
+    bottom:calc(9px + env(safe-area-inset-bottom))!important;
+    display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    gap:2px!important;padding:7px 4px!important;margin:0!important;
+    border-radius:19px!important;
+    background:rgba(238,247,239,.56)!important;
+    border:1px solid rgba(255,255,255,.72)!important;
+    box-shadow:0 12px 34px rgba(25,48,31,.20),inset 0 1px 0 #ffffffb8!important;
+    backdrop-filter:blur(28px) saturate(180%)!important;
+    -webkit-backdrop-filter:blur(28px) saturate(180%)!important;
+    visibility:visible!important;opacity:1!important;
+  }
+  .navigation .nav-label{display:none!important}
+  .navigation .nav-item{
+    min-width:0!important;min-height:48px!important;padding:5px 1px!important;
+    display:flex!important;flex-direction:column!important;justify-content:center!important;
+    align-items:center!important;gap:1px!important;border-radius:12px!important;
+    background:transparent!important;color:#35483a!important;
+    font-size:9px!important;line-height:1.25!important;white-space:nowrap!important;
+    box-shadow:none!important;
+  }
+  .navigation .nav-item.active{
+    background:rgba(255,255,255,.58)!important;color:#5148b4!important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),0 3px 10px rgba(34,50,36,.09)!important;
+  }
+  .navigation .nav-symbol{width:auto!important;height:23px!important;font-size:17px!important;line-height:1!important}
+  .main-content{padding-bottom:112px!important}
+}
+html[data-theme="dark"]{
+  --glass-bg:rgba(20,34,27,.34);
+  --glass-bg-strong:rgba(20,34,27,.48);
+  --glass-border:rgba(205,230,207,.20);
+  --glass-shadow:0 12px 34px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.08);
+}
+html[data-theme="dark"] .sidebar{background:rgba(18,31,24,.42)!important}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .smart-hub,html[data-theme="dark"] .smart-card,
+html[data-theme="dark"] .task-item,html[data-theme="dark"] .habit-item,
+html[data-theme="dark"] .plus-goal,html[data-theme="dark"] .badge-card,
+html[data-theme="dark"] .badge-overview-item,html[data-theme="dark"] .empty-state,
+html[data-theme="dark"] .plus-empty,html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,html[data-theme="dark"] select{
+  background:var(--glass-bg)!important;border-color:var(--glass-border)!important;
+  color:#edf5ee!important;
+}
+html[data-theme="dark"] .navigation{background:rgba(20,36,27,.70)!important}
+html[data-theme="dark"] .navigation .nav-item{color:#edf5ee!important}
+html[data-theme="dark"] .navigation .nav-item.active{background:rgba(255,255,255,.16)!important;color:#fff!important}
+@media(prefers-reduced-motion:reduce){.nature-scene *{animation:none!important}}
