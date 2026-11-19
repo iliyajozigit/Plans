@@ -390,3 +390,68 @@ html[data-theme="dark"] .coach-insight p,html[data-theme="dark"] .smart-quote-re
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Living botanical atmosphere — subtle, calm and non-distracting */
+body{
+  background:#f4f6f2;
+  isolation:isolate;
+}
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  inset:-12%;
+  z-index:-1;
+  pointer-events:none;
+}
+body::before{
+  background:
+    radial-gradient(ellipse at 12% 22%,rgba(151,214,180,.30),transparent 31%),
+    radial-gradient(ellipse at 84% 18%,rgba(190,181,255,.24),transparent 32%),
+    radial-gradient(ellipse at 72% 82%,rgba(255,211,174,.22),transparent 29%),
+    radial-gradient(ellipse at 22% 86%,rgba(168,218,202,.24),transparent 32%);
+  filter:blur(18px);
+  animation: natureGlow 22s ease-in-out infinite alternate;
+}
+body::after{
+  inset:-5%;
+  opacity:.48;
+  background-image:
+    radial-gradient(ellipse 10px 25px at 8% 23%,rgba(91,158,119,.22) 0 46%,transparent 52%),
+    radial-gradient(ellipse 9px 23px at 12% 27%,rgba(120,181,139,.20) 0 46%,transparent 52%),
+    radial-gradient(ellipse 11px 27px at 88% 33%,rgba(119,164,130,.18) 0 46%,transparent 52%),
+    radial-gradient(ellipse 8px 22px at 92% 37%,rgba(151,190,155,.20) 0 46%,transparent 52%),
+    radial-gradient(ellipse 10px 24px at 77% 78%,rgba(129,174,145,.16) 0 46%,transparent 52%),
+    radial-gradient(ellipse 8px 20px at 82% 82%,rgba(159,195,163,.18) 0 46%,transparent 52%),
+    radial-gradient(ellipse 9px 22px at 24% 70%,rgba(130,179,145,.15) 0 46%,transparent 52%);
+  background-repeat:no-repeat;
+  animation:leafDrift 30s ease-in-out infinite alternate;
+}
+.app-shell{background:transparent}
+.sidebar{background:rgba(255,254,250,.88);backdrop-filter:blur(18px)}
+.panel,.stat-card,.smart-card{background:rgba(255,254,250,.91);backdrop-filter:blur(12px)}
+.smart-hub{background:linear-gradient(145deg,rgba(255,254,250,.92),rgba(241,240,255,.86))}
+@keyframes natureGlow{
+  0%{transform:translate3d(-1.5%,0,0) scale(1)}
+  50%{transform:translate3d(1%,1.2%,0) scale(1.035)}
+  100%{transform:translate3d(2%,-1%,0) scale(1.02)}
+}
+@keyframes leafDrift{
+  0%{transform:translate3d(-.5%,0,0) rotate(-1deg)}
+  50%{transform:translate3d(1.2%,-1%,0) rotate(1.5deg)}
+  100%{transform:translate3d(-1%,1.2%,0) rotate(-.5deg)}
+}
+html[data-theme="dark"] body{background:#171d20}
+html[data-theme="dark"] body::before{
+  background:
+    radial-gradient(ellipse at 12% 22%,rgba(58,117,84,.23),transparent 32%),
+    radial-gradient(ellipse at 84% 18%,rgba(93,81,150,.22),transparent 33%),
+    radial-gradient(ellipse at 72% 82%,rgba(125,91,65,.14),transparent 30%);
+}
+html[data-theme="dark"] body::after{opacity:.25}
+html[data-theme="dark"] .sidebar{background:rgba(36,36,58,.91)}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .stat-card,html[data-theme="dark"] .smart-card{background:rgba(36,36,58,.91)}
+html[data-theme="dark"] .smart-hub{background:linear-gradient(145deg,rgba(37,36,59,.94),rgba(42,38,64,.9))}
+@media(prefers-reduced-motion:reduce){
+  body::before,body::after{animation:none!important}
+}
