@@ -139,87 +139,61 @@ function mountSmartHub() {
 
   const prefs = readPrefs();
   const insight = buildCoachInsight(getSmartState());
-  const hub = document.createElement('section');
+  const hub = document.createElement('details');
   hub.id = 'smart-hub';
-  hub.className = 'smart-hub';
+  hub.className = 'smart-hub smart-tools-details';
   hub.innerHTML = `
-    <div class="smart-heading">
-      <div><span class="eyebrow">MY LIFE INTELLIGENCE</span><h2>مرکز هوشمندی تو <span>✦</span></h2><p>اطلاعات زنده و پیشنهادهایی بر اساس فعالیت‌های خودت</p></div>
-      <span class="smart-status"><i></i> SMART SPACE</span>
-    </div>
+    <summary class="smart-tools-summary"><span>ابزارهای هوشمند</span><small>آب‌وهوا و پیشنهاد روزانه</small><b>+</b></summary>
     <div class="smart-grid">
       <article class="smart-card weather-card">
-        <div class="smart-card-top"><div><span class="smart-kicker">LIVE WEATHER</span><h3>آب‌وهوای امروز</h3></div><span class="smart-icon">🌤️</span></div>
-        <div class="weather-result" id="smart-weather-result"><span class="smart-loading"></span><span>در حال دریافت وضعیت هوا...</span></div>
+        <div class="smart-card-top"><h3>آب‌وهوای امروز</h3><span class="smart-icon">🌤️</span></div>
+        <div class="weather-result" id="smart-weather-result"><span>برای دریافت آب‌وهوا، این بخش را باز کن.</span></div>
         <form id="smart-city-form" class="smart-city-form">
           <input id="smart-city" value="${safeText(prefs.city)}" maxlength="60" aria-label="نام شهر" placeholder="نام شهر">
-          <button type="submit">به‌روزرسانی</button>
+          <button type="submit">نمایش</button>
         </form>
-        <small class="smart-source">داده‌ها از Open-Meteo دریافت می‌شوند.</small>
-      </article>
-      <article class="smart-card quote-card">
-        <div class="smart-card-top"><div><span class="smart-kicker">DAILY INSPIRATION</span><h3>جرعه‌ای انگیزه</h3></div><span class="smart-icon">✧</span></div>
-        <div id="smart-quote-result" class="smart-quote-result"><span class="smart-loading"></span><span>در حال آماده‌سازی جمله امروز...</span></div>
-        <small class="smart-source">نقل‌قول‌ها از DummyJSON دریافت می‌شوند.</small>
       </article>
       <article class="smart-card coach-card">
-        <div class="smart-card-top"><div><span class="smart-kicker">PERSONAL COACH · LOCAL AI</span><h3>مربی هوشمند تو</h3></div><span class="smart-icon">✦</span></div>
-        <div class="coach-insight"><span class="coach-tag" id="coach-tag">${safeText(insight.tag)}</span><h4 id="coach-title">${safeText(insight.title)}</h4><p id="coach-body">${safeText(insight.body)}</p></div>
+        <div class="smart-card-top"><h3>پیشنهاد برای ادامه روز</h3><span class="smart-icon">✦</span></div>
+        <div class="coach-insight"><h4 id="coach-title">${safeText(insight.title)}</h4><p id="coach-body">${safeText(insight.body)}</p></div>
         <form id="smart-coach-form" class="smart-coach-form">
-          <input id="smart-coach-question" maxlength="180" placeholder="مثلاً از کجا شروع کنم؟" aria-label="سؤال از مربی">
+          <input id="smart-coach-question" maxlength="180" placeholder="سؤالت را بنویس..." aria-label="سؤال از مربی">
           <button type="submit" aria-label="ارسال سؤال">←</button>
         </form>
-        <p id="smart-coach-answer" class="smart-coach-answer" aria-live="polite">پاسخ‌ها بر اساس اطلاعات ذخیره‌شده روی همین دستگاه ساخته می‌شوند.</p>
-      </article>
-      <article class="smart-card analytics-card">
-        <div class="smart-card-top"><div><span class="smart-kicker">YOUR MOMENTUM</span><h3>نمای سریع عملکرد</h3></div><span class="smart-icon">◈</span></div>
-        <div id="smart-analytics"></div>
-        <button id="smart-refresh-insight" class="smart-refresh">تحلیل دوباره فعالیت‌ها <span>↻</span></button>
+        <p id="smart-coach-answer" class="smart-coach-answer" aria-live="polite"></p>
       </article>
     </div>
-    <div class="smart-footnote">هوشمندی محلی، آب‌وهوا و جمله روز فعال‌اند. برای گفت‌وگوی مولد با مدل هوش مصنوعی، اتصال امن به یک سرویس بک‌اند لازم است.</div>
   `;
 
-  const hero = dashboard.querySelector('.hero-card');
-  if (hero?.nextSibling) dashboard.insertBefore(hub, hero.nextSibling);
-  else dashboard.appendChild(hub);
-
+  dashboard.appendChild(hub);
+  let weatherLoaded = false;
   const weatherResult = hub.querySelector('#smart-weather-result');
-  const quoteResult = hub.querySelector('#smart-quote-result');
-  const renderAnalytics = () => {
-    const data = getSmartState();
-    const tasks = Array.isArray(data.tasks) ? data.tasks : [];
-    const habits = Array.isArray(data.habits) ? data.habits : [];
-    const doneTasks = tasks.filter(task => task.done).length;
-    const doneHabits = habits.filter(habit => habit.done).length;
-    const taskPercent = tasks.length ? Math.round(doneTasks / tasks.length * 100) : 0;
-    const habitPercent = habits.length ? Math.round(doneHabits / habits.length * 100) : 0;
-    const xp = Number(data.xp || 0);
-    hub.querySelector('#smart-analytics').innerHTML = `
-      <div class="smart-metric"><span>وظایف</span><strong>${doneTasks}<small> / ${tasks.length}</small></strong><div><i style="width:${taskPercent}%"></i></div></div>
-      <div class="smart-metric"><span>عادت‌ها</span><strong>${doneHabits}<small> / ${habits.length}</small></strong><div><i style="width:${habitPercent}%"></i></div></div>
-      <div class="smart-xp"><span>امتیاز تجربه</span><strong>${xp} XP</strong></div>`;
-  };
   const refreshWeather = async city => {
-    weatherResult.innerHTML = '<span class="smart-loading"></span><span>در حال دریافت اطلاعات...</span>';
+    weatherResult.innerHTML = '<span class="smart-loading"></span><span>در حال دریافت...</span>';
     try {
       const data = await loadWeather(city);
-      const c = data.current;
-      const d = data.daily;
+      const c = data.current, d = data.daily;
       weatherResult.innerHTML = `
         <div class="weather-main"><span>${weatherIcon(c.weather_code)}</span><strong>${Math.round(c.temperature_2m)}°</strong><small>${safeText(weatherText(c.weather_code))}</small></div>
         <div class="weather-place">${safeText(data.place.name)}، ${safeText(data.place.country || '')}</div>
-        <div class="weather-details"><span>حس‌شده <b>${Math.round(c.apparent_temperature)}°</b></span><span>رطوبت <b>${Math.round(c.relative_humidity_2m)}٪</b></span><span>بیشینه <b>${Math.round(d.temperature_2m_max[0])}°</b></span><span>کمینه <b>${Math.round(d.temperature_2m_min[0])}°</b></span></div>`;
-      const saved = readPrefs(); saved.city = city; localStorage.setItem(SMART_PREFS_KEY, JSON.stringify(saved));
+        <div class="weather-details"><span>حس‌شده <b>${Math.round(c.apparent_temperature)}°</b></span><span>بیشینه <b>${Math.round(d.temperature_2m_max[0])}°</b></span><span>کمینه <b>${Math.round(d.temperature_2m_min[0])}°</b></span></div>`;
+      const saved = readPrefs(); saved.city = city;
+      localStorage.setItem(SMART_PREFS_KEY, JSON.stringify(saved));
     } catch {
-      weatherResult.innerHTML = '<span class="weather-error">دریافت آب‌وهوا ممکن نشد. نام شهر یا اتصال اینترنت را بررسی کن.</span>';
+      weatherResult.innerHTML = '<span class="weather-error">آب‌وهوا دریافت نشد؛ اتصال اینترنت یا نام شهر را بررسی کن.</span>';
     }
   };
 
+  hub.addEventListener('toggle', () => {
+    if (hub.open && !weatherLoaded) {
+      weatherLoaded = true;
+      refreshWeather(prefs.city);
+    }
+  });
   hub.querySelector('#smart-city-form').addEventListener('submit', event => {
     event.preventDefault();
     const city = hub.querySelector('#smart-city').value.trim();
-    if (city) refreshWeather(city);
+    if (city) { weatherLoaded = true; refreshWeather(city); }
   });
   hub.querySelector('#smart-coach-form').addEventListener('submit', event => {
     event.preventDefault();
@@ -229,23 +203,7 @@ function mountSmartHub() {
     hub.querySelector('#smart-coach-answer').textContent = answerCoach(question, getSmartState());
     input.value = '';
   });
-  hub.querySelector('#smart-refresh-insight').addEventListener('click', () => {
-    const next = buildCoachInsight(getSmartState());
-    hub.querySelector('#coach-tag').textContent = next.tag;
-    hub.querySelector('#coach-title').textContent = next.title;
-    hub.querySelector('#coach-body').textContent = next.body;
-    renderAnalytics();
-  });
-
-  renderAnalytics();
-  refreshWeather(prefs.city);
-  loadQuote().then(quote => {
-    quoteResult.innerHTML = `<blockquote>“${safeText(quote.quote)}”</blockquote><span>— ${safeText(quote.author)}</span>`;
-  }).catch(() => {
-    quoteResult.innerHTML = '<span class="weather-error">فعلاً دریافت جمله روز ممکن نیست. کمی بعد دوباره تلاش کن.</span>';
-  });
 }
-
 const smartObserver = new MutationObserver(() => mountSmartHub());
 smartObserver.observe(document.getElementById('app') || document.body, { childList: true, subtree: true });
 mountSmartHub();
