@@ -2002,3 +2002,28 @@ html[data-theme="dark"] .shop-filter.active{background:#354b30;border-color:#628
 @media(prefers-reduced-motion:reduce){
  .avatar-tab,.avatar-choice,.shop-product,.profile-badge.earned .profile-badge-art{animation:none!important;transition:none!important}
 }
+
+
+/* Avatar identity selector */
+.avatar-gender-picker{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ padding:11px 12px;margin-bottom:11px;border:1.5px solid #e7eee3;
+ border-radius:14px;background:#f9fcf6
+}
+.avatar-gender-label{font-size:10px;font-weight:900;color:#59705a;white-space:nowrap}
+.avatar-gender-options{display:flex;gap:6px;flex-wrap:wrap}
+.avatar-gender-option{
+ min-width:76px;padding:8px 12px;border:1.5px solid #e4ebe0;border-radius:10px;
+ background:#fff;color:#718071;font-size:10px;font-weight:900;transition:.16s
+}
+.avatar-gender-option:hover{border-color:#b6dfa0;transform:translateY(-1px)}
+.avatar-gender-option.active{border-color:#83ce5b;background:#eaf8e2;color:#438e25;box-shadow:inset 0 -3px #58cc02}
+html[data-theme="dark"] .avatar-gender-picker{background:#2d352e;border-color:#465343}
+html[data-theme="dark"] .avatar-gender-label{color:#d5e5cf}
+html[data-theme="dark"] .avatar-gender-option{background:#252b27;border-color:#465343;color:#c6d3c1}
+html[data-theme="dark"] .avatar-gender-option.active{background:#354b30;border-color:#628d4d;color:#c5efae}
+@media(max-width:680px){
+ .avatar-gender-picker{align-items:flex-start;flex-direction:column;gap:8px}
+ .avatar-gender-options{width:100%}
+ .avatar-gender-option{flex:1;min-width:0;padding:9px 5px}
+}
