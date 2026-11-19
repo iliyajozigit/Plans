@@ -150,7 +150,7 @@ function render() {
   $('#app').innerHTML = `
     <div class="app-shell">
       <div class="nature-scene" aria-hidden="true">
-        <div class="sakura-petals" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="sakura-petals" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i><i class="petal-extra"></i></div>
         <span class="nature-photo-sakura"></span>
         <span class="nature-photo-leaves"></span>
         <span class="nature-glow glow-one"></span>
@@ -270,8 +270,9 @@ function render() {
               </div>
             </div>
 
-            <div class="floating-leaf">🌿</div>
-            <div class="floating-sparkle">✦</div>
+            <div class="hero-bloom" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b></b></div>
+            <div class="hero-orbit orbit-one" aria-hidden="true"><i></i></div>
+            <div class="hero-orbit orbit-two" aria-hidden="true"><i></i></div>
           </div>
         </section>
 
