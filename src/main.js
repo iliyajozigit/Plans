@@ -146,11 +146,161 @@ const badges = [
   { id: 'legend', title: 'افسانه My Life', description: 'به ۵۰۰ امتیاز تجربه برس', icon: '👑', color: 'pink', target: 500, type: 'xp' }
 ];
 
+const SYNC_TOKEN_KEY = 'myLifeToken';
+const SYNC_USER_KEY = 'myLifeAccount';
+const sync = { token: null, username: null, timer: null, status: 'local', pending: false };
+try {
+  sync.token = localStorage.getItem(SYNC_TOKEN_KEY);
+  sync.username = localStorage.getItem(SYNC_USER_KEY);
+} catch {}
+
+async function apiCall(route, options = {}) {
+  const headers = { 'content-type': 'application/json' };
+  if (sync.token) headers.authorization = 'Bearer ' + sync.token;
+  let response;
+  try {
+    response = await fetch('/api' + route, { ...options, headers });
+  } catch {
+    const error = new Error('network');
+    error.status = 0;
+    throw error;
+  }
+  let body = {};
+  try { body = await response.json(); } catch {}
+  if (!response.ok) {
+    const error = new Error(body.error || 'request failed');
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+}
+
+function scheduleSync() {
+  if (!sync.token) return;
+  sync.pending = true;
+  clearTimeout(sync.timer);
+  sync.timer = setTimeout(pushState, 800);
+}
+
+async function pushState() {
+  if (!sync.token) return;
+  clearTimeout(sync.timer);
+  sync.pending = false;
+  try {
+    await apiCall('/state', { method: 'PUT', body: JSON.stringify({ state }) });
+    sync.status = 'synced';
+  } catch (error) {
+    if (error.status === 401) { signOut(false); return; }
+    sync.status = 'offline';
+    sync.pending = true;
+  }
+}
+
+function replaceStateFromServer(remote) {
+  state = normalizeState(remote);
+  save_local_only();
+}
+
+function save_local_only() {
+  try { localStorage.setItem('myLifeState', JSON.stringify(state)); } catch {}
+}
+
+async function pullState() {
+  if (!sync.token) return;
+  try {
+    const result = await apiCall('/state');
+    if (result.state) {
+      replaceStateFromServer(result.state);
+      render();
+    } else {
+      await pushState();
+    }
+    sync.status = 'synced';
+  } catch (error) {
+    if (error.status === 401) { signOut(false); return; }
+    sync.status = 'offline';
+  }
+}
+
+async function authenticate(mode, username, password) {
+  const result = await apiCall('/' + mode, { method: 'POST', body: JSON.stringify({ username, password }) });
+  sync.token = result.token;
+  sync.username = result.username;
+  try {
+    localStorage.setItem(SYNC_TOKEN_KEY, result.token);
+    localStorage.setItem(SYNC_USER_KEY, result.username);
+  } catch {}
+  const remote = await apiCall('/state');
+  if (remote.state) replaceStateFromServer(remote.state);
+  else await pushState();
+  sync.status = 'synced';
+  render();
+  showToast('وارد حساب شدی و داده‌هات همگام شد ☁️');
+}
+
+function signOut(notify = true) {
+  if (sync.token && notify) apiCall('/logout', { method: 'POST' }).catch(() => {});
+  sync.token = null;
+  sync.username = null;
+  sync.status = 'local';
+  clearTimeout(sync.timer);
+  try {
+    localStorage.removeItem(SYNC_TOKEN_KEY);
+    localStorage.removeItem(SYNC_USER_KEY);
+  } catch {}
+  if (notify) { render(); showToast('از حساب خارج شدی. داده‌ها روی این دستگاه می‌مونه.'); }
+}
+
+function accountMarkup() {
+  if (sync.token) {
+    const label = sync.status === 'synced' ? '☁️ همگام‌سازی شده' : sync.status === 'offline' ? '⚠️ آفلاین؛ بعداً همگام می‌شه' : '☁️ در حال همگام‌سازی';
+    return '<div class="plus-panel account-panel" id="plus-account">' +
+      '<div class="plus-heading"><div><span class="eyebrow">ACCOUNT</span><h2>حساب من</h2>' +
+      '<p>داده‌هات با حسابت روی همه دستگاه‌ها هماهنگ می‌شن.</p></div></div>' +
+      '<div class="settings-row"><div><strong>' + plusEscape(sync.username || '') + '</strong><small>' + label + '</small></div>' +
+      '<button id="plus-signout" class="secondary-button" type="button">خروج</button></div></div>';
+  }
+  return '<div class="plus-panel account-panel" id="plus-account">' +
+    '<div class="plus-heading"><div><span class="eyebrow">ACCOUNT</span><h2>ورود یا ثبت‌نام</h2>' +
+    '<p>با حساب، داده‌هات روی همه دستگاه‌ها باقی می‌مونه. اگه حساب داری وارد شو، وگرنه یک حساب بساز.</p></div></div>' +
+    '<form id="plus-auth-form" class="account-form">' +
+      '<input name="username" autocomplete="username" placeholder="نام کاربری (انگلیسی)" maxlength="20" required>' +
+      '<input name="password" type="password" autocomplete="current-password" placeholder="رمز عبور (حداقل ۶ کاراکتر)" maxlength="100" required>' +
+      '<div class="account-actions"><button type="submit" data-mode="login" class="primary-button">ورود</button>' +
+      '<button type="submit" data-mode="register" class="secondary-button">ساخت حساب</button></div>' +
+      '<p id="plus-auth-error" class="account-error" role="alert"></p>' +
+    '</form></div>';
+}
+
+function bindAccountPanel() {
+  document.getElementById('plus-signout')?.addEventListener('click', () => signOut(true));
+  const form = document.getElementById('plus-auth-form');
+  if (!form) return;
+  let mode = 'login';
+  form.querySelectorAll('button[data-mode]').forEach(btn => btn.addEventListener('click', () => { mode = btn.dataset.mode; }));
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const username = String(data.get('username') || '').trim();
+    const password = String(data.get('password') || '');
+    const errorBox = document.getElementById('plus-auth-error');
+    if (errorBox) errorBox.textContent = '';
+    try {
+      await authenticate(mode, username, password);
+    } catch (error) {
+      const messages = { 401: 'نام کاربری یا رمز عبور اشتباهه', 409: 'این نام کاربری قبلاً گرفته شده' };
+      const text = error.status === 0 ? 'اتصال به سرور برقرار نیست (حالت آفلاین)' : (messages[error.status] || error.message || 'خطایی پیش آمد');
+      if (errorBox) errorBox.textContent = text;
+    }
+  });
+}
+
 let storageWarningShown = false;
 
 function save() {
   try {
     localStorage.setItem('myLifeState', JSON.stringify(state));
+    scheduleSync();
     return true;
   } catch (error) {
     console.warn('My Life could not save local data:', error);
@@ -1402,8 +1552,10 @@ function plusRender() {
         '<button id="plus-theme" class="secondary-button">' + (state.settings.theme === 'dark' ? '☀ حالت روشن' : '☾ حالت تاریک') + '</button></div>' +
       '<div class="settings-row"><div><strong>هدف آب روزانه</strong><small>بین ۱ تا ۲۴ لیوان</small></div>' +
         '<form id="plus-water-form" class="settings-inline"><input id="plus-water-target" type="number" min="1" max="24" value="' + waterTarget() + '" aria-label="هدف آب روزانه"><button class="primary-button">ذخیره</button></form></div>' +
-    '</div>';
+    '</div>' +
+    accountMarkup();
   main.querySelector('[data-page="settings"]').prepend(settingsWrap);
+  bindAccountPanel();
 
   document.getElementById('plus-theme').addEventListener('click', () => {
     state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';

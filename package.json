@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "node --check src/main.js && node --check src/smart.js",
-    "test:e2e": "node tests/smoke.mjs"
+    "test:e2e": "node tests/smoke.mjs",
+    "start": "node server/index.js",
+    "server": "node server/index.js"
   },
   "devDependencies": {
     "playwright-core": "^1.65.1",
