@@ -456,3 +456,66 @@ html[data-theme="dark"] .smart-hub{background:linear-gradient(145deg,rgba(30,43,
 @media(prefers-reduced-motion:reduce){
   body::before,body::after{animation:none!important}
 }
+
+
+/* Dedicated animated nature scene: rendered as real DOM, not pseudo-elements. */
+body::before,body::after{content:none!important;display:none!important}
+#app{position:relative;z-index:auto;min-height:100vh}
+.app-shell{position:relative;isolation:isolate;min-height:100vh;background:transparent}
+.nature-scene{
+  position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 12% 18%,rgba(115,183,128,.28),transparent 34%),
+    radial-gradient(ellipse at 88% 24%,rgba(179,198,139,.25),transparent 36%),
+    radial-gradient(ellipse at 78% 88%,rgba(226,190,132,.24),transparent 32%),
+    radial-gradient(ellipse at 18% 82%,rgba(116,183,163,.22),transparent 34%),
+    linear-gradient(135deg,#f0f5e9 0%,#f7f5e9 48%,#edf4e9 100%);
+}
+.nature-glow{position:absolute;display:block;width:38vw;height:38vw;min-width:240px;min-height:240px;border-radius:50%;filter:blur(42px);opacity:.48;will-change:transform}
+.glow-one{left:-10%;top:4%;background:rgba(100,177,119,.35);animation:glowFloat 15s ease-in-out infinite alternate}
+.glow-two{right:-12%;top:20%;background:rgba(178,196,125,.34);animation:glowFloat 19s ease-in-out infinite alternate-reverse}
+.glow-three{left:35%;bottom:-24%;background:rgba(226,181,132,.30);animation:glowFloat 17s ease-in-out infinite alternate}
+.nature-leaf{
+  position:absolute;display:block;width:clamp(22px,3.3vw,48px);height:clamp(42px,6vw,76px);
+  border-radius:100% 0 100% 0;transform-origin:bottom center;
+  background:linear-gradient(145deg,rgba(76,151,91,.58),rgba(153,193,126,.25));
+  border:1px solid rgba(63,132,79,.18);filter:drop-shadow(0 8px 10px rgba(55,104,63,.08));
+  opacity:.62;will-change:transform;
+}
+.nature-leaf::after{content:"";position:absolute;width:1px;height:78%;left:50%;top:10%;background:rgba(53,119,70,.30);transform:rotate(-22deg)}
+.leaf-one{left:4%;top:22%;animation:leafDriftOne 13s ease-in-out infinite}
+.leaf-two{left:9%;top:31%;width:25px;height:48px;animation:leafDriftTwo 17s ease-in-out infinite}
+.leaf-three{right:6%;top:15%;animation:leafDriftTwo 15s ease-in-out infinite}
+.leaf-four{right:11%;top:24%;width:24px;height:45px;animation:leafDriftOne 18s ease-in-out infinite}
+.leaf-five{left:16%;bottom:14%;animation:leafDriftTwo 16s ease-in-out infinite}
+.leaf-six{left:21%;bottom:9%;width:22px;height:42px;animation:leafDriftOne 19s ease-in-out infinite}
+.leaf-seven{right:17%;bottom:13%;animation:leafDriftOne 14s ease-in-out infinite}
+.leaf-eight{right:10%;bottom:20%;width:25px;height:46px;animation:leafDriftTwo 20s ease-in-out infinite}
+.leaf-nine{left:48%;top:7%;width:21px;height:39px;opacity:.36;animation:leafDriftOne 21s ease-in-out infinite}
+.leaf-ten{right:35%;bottom:6%;width:24px;height:44px;opacity:.38;animation:leafDriftTwo 18s ease-in-out infinite}
+.leaf-eleven{left:2%;bottom:42%;width:20px;height:38px;opacity:.42;animation:leafDriftTwo 16s ease-in-out infinite}
+.leaf-twelve{right:2%;top:48%;width:22px;height:41px;opacity:.42;animation:leafDriftOne 17s ease-in-out infinite}
+.sidebar{position:sticky;z-index:20;background:rgba(255,254,250,.78);backdrop-filter:blur(18px)}
+.main-content{position:relative;z-index:1;background:transparent}
+.panel,.stat-card,.smart-card{background:rgba(255,254,250,.78);backdrop-filter:blur(14px)}
+.smart-hub{background:linear-gradient(145deg,rgba(255,254,250,.82),rgba(239,241,225,.74));backdrop-filter:blur(14px)}
+@keyframes glowFloat{0%{transform:translate3d(-2%,1%,0) scale(.94)}50%{transform:translate3d(5%,-4%,0) scale(1.08)}100%{transform:translate3d(-3%,5%,0) scale(1.02)}}
+@keyframes leafDriftOne{0%,100%{transform:translate3d(0,0,0) rotate(-18deg)}50%{transform:translate3d(22px,-28px,0) rotate(12deg)}}
+@keyframes leafDriftTwo{0%,100%{transform:translate3d(0,0,0) rotate(22deg)}50%{transform:translate3d(-18px,24px,0) rotate(-10deg)}}
+html[data-theme="dark"] .nature-scene{
+  background:
+    radial-gradient(ellipse at 12% 18%,rgba(49,117,70,.28),transparent 34%),
+    radial-gradient(ellipse at 88% 24%,rgba(80,116,69,.25),transparent 36%),
+    radial-gradient(ellipse at 78% 88%,rgba(119,91,55,.18),transparent 32%),
+    linear-gradient(135deg,#15231a 0%,#1c2920 55%,#17251e 100%);
+}
+html[data-theme="dark"] .nature-leaf{background:linear-gradient(145deg,rgba(83,151,91,.52),rgba(133,173,111,.22));border-color:rgba(143,190,132,.18)}
+html[data-theme="dark"] .sidebar{background:rgba(29,43,36,.82)}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .stat-card,html[data-theme="dark"] .smart-card{background:rgba(31,43,38,.80)}
+@media(prefers-reduced-motion:reduce){
+  .nature-glow,.nature-leaf{animation:none!important}
+}
+@media(max-width:760px){
+  .nature-leaf{opacity:.48}
+  .nature-glow{filter:blur(32px);opacity:.38}
+}
