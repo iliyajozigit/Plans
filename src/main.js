@@ -26,7 +26,10 @@ const defaultState = {
   water: 0,
   notes: '',
   earned: [],
-  focusSessions: 0
+  focusSessions: 0,
+  profile: { displayName: 'ماجراجوی My Life', bio: 'در مسیر نسخه بهتر خودم ✨', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {} },
+  gems: 120, streak: 0, longestStreak: 0, lastActiveDate: null,
+  totalTasksCompleted: 0, totalHabitsCompleted: 0, xpByDate: {}, createdAt: today()
 };
 
 function loadState() {
@@ -39,6 +42,13 @@ function loadState() {
 }
 
 let state = loadState();
+state.profile = { ...defaultState.profile, ...(state.profile || {}) };
+state.profile.unlocked = Array.isArray(state.profile.unlocked) ? state.profile.unlocked : [];
+state.profile.questClaims = state.profile.questClaims && typeof state.profile.questClaims === 'object' ? state.profile.questClaims : {};
+state.gems = Number.isFinite(Number(state.gems)) ? Number(state.gems) : 120;
+state.streak = Number(state.streak || 0); state.longestStreak = Number(state.longestStreak || 0);
+state.xpByDate = state.xpByDate && typeof state.xpByDate === 'object' ? state.xpByDate : {};
+state.totalTasksCompleted = Number(state.totalTasksCompleted || 0); state.totalHabitsCompleted = Number(state.totalHabitsCompleted || 0);
 
 function resetDailyData() {
   state.date = today();
@@ -113,9 +123,30 @@ function showToast(message) {
   }, 3000);
 }
 
+function recordActiveDay() {
+  const current = today();
+  if (state.lastActiveDate !== current) {
+    if (state.lastActiveDate) {
+      const gap = Math.round((new Date(current + 'T00:00:00') - new Date(state.lastActiveDate + 'T00:00:00')) / 86400000);
+      state.streak = gap === 1 ? state.streak + 1 : 1;
+    } else state.streak = 1;
+    state.lastActiveDate = current;
+    state.longestStreak = Math.max(state.longestStreak, state.streak);
+  }
+}
 function addXP(amount) {
   state.xp += amount;
+  state.xpByDate[today()] = Number(state.xpByDate[today()] || 0) + amount;
+  recordActiveDay();
   checkBadges();
+}
+function getRecentXP(days = 7) {
+  let total = 0;
+  for (let offset = 0; offset < days; offset++) {
+    const date = new Date(); date.setDate(date.getDate() - offset);
+    total += Number(state.xpByDate[date.toLocaleDateString('en-CA')] || 0);
+  }
+  return total;
 }
 
 function getLevel() {
@@ -181,6 +212,7 @@ function render() {
           <a class="nav-item ${activeView === 'dashboard' ? 'active' : ''}" href="#dashboard" data-view="dashboard"><span class="nav-symbol">▦</span><span>نمای کلی</span></a>
           <a class="nav-item ${activeView === 'planner' ? 'active' : ''}" href="#planner" data-view="planner"><span class="nav-symbol">☑</span><span>برنامه‌ریزی</span></a>
           <a class="nav-item ${activeView === 'growth' ? 'active' : ''}" href="#growth" data-view="growth"><span class="nav-symbol">✧</span><span>رشد من</span></a>
+          <a class="nav-item ${activeView === 'profile' ? 'active' : ''}" href="#profile" data-view="profile"><span class="nav-symbol">☺</span><span>شخصیت من</span></a>
           <p class="nav-label">ابزارهای من</p>
           <a class="nav-item ${activeView === 'focus' ? 'active' : ''}" href="#focus" data-view="focus"><span class="nav-symbol">◷</span><span>تمرکز</span></a>
           <a class="nav-item ${activeView === 'journal' ? 'active' : ''}" href="#journal" data-view="journal"><span class="nav-symbol">✎</span><span>دفتر شخصی</span></a>
@@ -205,13 +237,13 @@ function render() {
         <header class="topbar">
           <div>
             <span class="eyebrow">PERSONAL DASHBOARD</span>
-            <h1>${({dashboard:'روزت رو بساز',planner:'برنامه‌ریزی هوشمند',growth:'مسیر رشد تو',focus:'فضای تمرکز',journal:'دفتر شخصی',settings:'تنظیمات'})[activeView]} <span class="wave">✦</span></h1>
+            <h1>${({dashboard:'روزت رو بساز',planner:'برنامه‌ریزی هوشمند',growth:'مسیر رشد تو',profile:'شخصیت و افتخارات من',focus:'فضای تمرکز',journal:'دفتر شخصی',settings:'تنظیمات'})[activeView]} <span class="wave">✦</span></h1>
             <p class="date-text" id="live-date">${formatDate()}</p>
           </div>
 
           <div class="topbar-right">
             <div class="level-pill">⭐ سطح ${getLevel()}</div>
-            <div class="avatar">M</div>
+            <button class="avatar profile-shortcut" data-view="profile" aria-label="رفتن به پروفایل">✦</button>
           </div>
         </header>
 
@@ -545,6 +577,7 @@ function render() {
 
         </section>
 
+        <section class="page-view ${activeView === 'profile' ? 'active' : ''} profile-page" data-page="profile"><div class="page-intro"><span class="eyebrow">YOUR CHARACTER · YOUR JOURNEY</span><h2>شخصیت و افتخارات من</h2><p>ظاهر خودت را بساز، تجربه‌هایت را جمع کن و مسیر پیشرفتت را ببین.</p></div><div id="profile-experience"></div></section>
         <section class="page-view ${activeView === 'settings' ? 'active' : ''}" data-page="settings">
           <div class="page-intro"><span class="eyebrow">PREFERENCES</span><h2>تنظیمات فضای تو</h2><p>ظاهر برنامه، هدف‌ها و نسخه پشتیبان اطلاعاتت را مدیریت کن.</p></div>
         </section>
@@ -570,7 +603,7 @@ function bindEvents() {
       activeView = link.dataset.view;
       document.querySelectorAll('[data-view]').forEach(item => item.classList.toggle('active', item === link));
       document.querySelectorAll('[data-page]').forEach(page => page.classList.toggle('active', page.dataset.page === activeView));
-      const titles = { dashboard: 'روزت رو بساز', planner: 'برنامه‌ریزی هوشمند', growth: 'مسیر رشد تو', focus: 'فضای تمرکز', journal: 'دفتر شخصی', settings: 'تنظیمات' };
+      const titles = { dashboard: 'روزت رو بساز', planner: 'برنامه‌ریزی هوشمند', growth: 'مسیر رشد تو', profile: 'شخصیت و افتخارات من', focus: 'فضای تمرکز', journal: 'دفتر شخصی', settings: 'تنظیمات' };
       const heading = $('.topbar h1');
       if (heading) heading.innerHTML = `${titles[activeView]} <span class="wave">✦</span>`;
       history.replaceState(null, '', `#${activeView}`);
@@ -608,7 +641,7 @@ function bindEvents() {
 
         task.done = !task.done;
 
-        if (task.done) addXP(10);
+        if (task.done) { addXP(10); state.totalTasksCompleted++; }
         else state.xp = Math.max(0, state.xp - 10);
       }
 
@@ -622,7 +655,7 @@ function bindEvents() {
 
         habit.done = !habit.done;
 
-        if (habit.done) addXP(15);
+        if (habit.done) { addXP(15); state.totalHabitsCompleted++; }
         else state.xp = Math.max(0, state.xp - 15);
       }
 
@@ -758,11 +791,61 @@ function plusEscape(value) {
 function plusSave() {
   localStorage.setItem('myLifeState', JSON.stringify(state));
 }
+
+const avatarCategories = [
+  {id:'skin',label:'پوست',icon:'◉'},{id:'hairStyle',label:'مدل مو',icon:'✂'},
+  {id:'hairColor',label:'رنگ مو',icon:'🎨'},{id:'eyeColor',label:'چشم‌ها',icon:'◉'},
+  {id:'outfitStyle',label:'لباس',icon:'👕'},{id:'outfitColor',label:'رنگ لباس',icon:'🧵'},
+  {id:'accessory',label:'اکسسوری',icon:'✦'},{id:'background',label:'پس‌زمینه',icon:'🌈'}
+];
+let activeAvatarCategory = 'skin';
+const avatarChoices = {
+ skin:[['#f4d0b1','روشن'],['#e8b58d','گندمی روشن'],['#d99b72','گندمی'],['#b97855','کاراملی'],['#8c573f','قهوه‌ای'],['#633e35','تیره']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
+ hairStyle:[['short','کوتاه','✂️'],['wave','موج‌دار','〰️'],['curly','فر','🌀'],['long','بلند','💇']].map(x=>({value:x[0],label:x[1],icon:x[2]})),
+ hairColor:[['#302321','مشکی'],['#49312f','قهوه‌ای'],['#87513a','فندقی'],['#d6a04d','بلوند'],['#a65e91','یاسی'],['#6376c9','آبی']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
+ eyeColor:[['#4b8177','سبزآبی'],['#5574aa','آبی'],['#694b37','قهوه‌ای'],['#747b8d','خاکستری']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
+ outfitStyle:[{value:'tee',label:'تی‌شرت',icon:'👕'},{value:'hoodie',label:'هودی',icon:'🧥'},{value:'jacket',label:'کت',icon:'🧥',cost:55},{value:'star',label:'ستاره‌ای',icon:'🌟',cost:85},{value:'galaxy',label:'کهکشانی',icon:'🌌',cost:120}],
+ outfitColor:[['#7666df','بنفش'],['#4caa83','سبز'],['#e77d9f','صورتی'],['#4f83bd','آبی'],['#e59b4e','نارنجی'],['#38465d','سرمه‌ای']].map(x=>({value:x[0],label:x[1],swatch:x[0]})),
+ accessory:[{value:'none',label:'بدون اکسسوری',icon:'—'},{value:'glasses',label:'عینک کلاسیک',icon:'👓'},{value:'round',label:'عینک گرد',icon:'🕶️'},{value:'headphones',label:'هدفون',icon:'🎧',cost:35},{value:'flower',label:'گل ساکورا',icon:'🌸',cost:45},{value:'crown',label:'تاج افتخار',icon:'👑',cost:90}],
+ background:[{value:'blossom',label:'شکوفه',icon:'🌸'},{value:'meadow',label:'چمنزار',icon:'🌿'},{value:'ocean',label:'اقیانوس',icon:'🌊'},{value:'sunset',label:'غروب',icon:'🌅'},{value:'lavender',label:'اسطوخودوس',icon:'💜',cost:40},{value:'galaxy',label:'کهکشان',icon:'🌌',cost:75}]
+};
+function avatarMarkup(size) {
+ const p=state.profile;
+ return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+plusEscape(p.background)+'"><span class="ml-avatar-spark spark-a">✦</span><span class="ml-avatar-spark spark-b">✧</span><div class="ml-avatar-person" data-hair="'+plusEscape(p.hairStyle)+'" data-outfit="'+plusEscape(p.outfitStyle)+'" data-accessory="'+plusEscape(p.accessory)+'" style="--skin:'+plusEscape(p.skin)+';--hair:'+plusEscape(p.hairColor)+';--eyes:'+plusEscape(p.eyeColor)+';--shirt:'+plusEscape(p.outfitColor)+'"><div class="ml-avatar-hair"></div><div class="ml-avatar-head"><i class="ml-eye left"></i><i class="ml-eye right"></i><i class="ml-smile"></i><i class="ml-glasses"></i><i class="ml-hair-fringe"></i></div><div class="ml-avatar-neck"></div><div class="ml-avatar-body"><span class="ml-shirt-detail">✦</span></div><i class="ml-avatar-arm arm-left"></i><i class="ml-avatar-arm arm-right"></i><span class="ml-avatar-accessory">'+(p.accessory==='flower'?'🌸':p.accessory==='crown'?'👑':p.accessory==='headphones'?'🎧':'')+'</span></div><span class="ml-avatar-base"></span></div>';
+}
+function mountProfile(main) {
+ const root=main.querySelector('#profile-experience'); if(!root)return;
+ const p=state.profile, level=getLevel(), xpInLevel=getLevelProgress();
+ const doneTasks=state.tasks.filter(t=>t.done).length, doneHabits=state.habits.filter(h=>h.done).length;
+ const todayXP=Number(state.xpByDate[today()]||0), weekXP=getRecentXP(7), earned=state.earned.length;
+ const maxDaily=Math.max(1,...Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return Number(state.xpByDate[d.toLocaleDateString('en-CA')]||0)}));
+ const bars=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));const v=Number(state.xpByDate[d.toLocaleDateString('en-CA')]||0);return '<div class="profile-week-day"><div class="profile-week-track"><i style="height:'+Math.max(5,v/maxDaily*100)+'%"></i></div><small>'+['ی','د','س','چ','پ','ج','ش'][d.getDay()]+'</small><b>'+v+'</b></div>';}).join('');
+ const claims=p.questClaims[state.date]||[];
+ const quests=[{id:'tasks',title:'دو کار را تمام کن',desc:'برای نظم روزانه',icon:'☑',progress:doneTasks,target:2,xp:20,gems:10},{id:'habits',title:'دو عادت را انجام بده',desc:'برای استمرار',icon:'🌱',progress:doneHabits,target:2,xp:15,gems:8},{id:'water',title:'چهار لیوان آب ثبت کن',desc:'برای توجه به خودت',icon:'💧',progress:state.water,target:4,xp:10,gems:5}];
+ const questHTML=quests.map(q=>{const claimed=claims.includes(q.id),ready=q.progress>=q.target;return '<article class="profile-quest '+(claimed?'claimed':'')+'"><span class="profile-quest-icon">'+q.icon+'</span><div class="profile-quest-info"><strong>'+q.title+'</strong><small>'+q.desc+'</small><div class="profile-quest-progress"><i style="width:'+Math.min(100,q.progress/q.target*100)+'%"></i></div><small>'+Math.min(q.progress,q.target)+' / '+q.target+'</small></div><button data-profile-quest="'+q.id+'" '+(!ready||claimed?'disabled':'')+'>'+(claimed?'دریافت شد':ready?'دریافت '+q.xp+' XP · '+q.gems+' ◆':'در حال انجام')+'</button></article>';}).join('');
+ const tabs=avatarCategories.map(c=>'<button class="avatar-tab '+(activeAvatarCategory===c.id?'active':'')+'" data-avatar-tab="'+c.id+'"><span>'+c.icon+'</span>'+c.label+'</button>').join('');
+ const options=(avatarChoices[activeAvatarCategory]||[]).map(item=>{const key=activeAvatarCategory+':'+item.value,unlocked=p.unlocked.includes(key),locked=!!item.cost&&!unlocked,selected=p[activeAvatarCategory]===item.value;const visual=item.swatch?'<span class="avatar-swatch" style="--swatch:'+item.swatch+'"></span>':'<span class="avatar-option-icon">'+(item.icon||'✦')+'</span>';return '<button class="avatar-choice '+(selected?'selected ':'')+(locked?'locked':'')+'" data-avatar-choice="'+activeAvatarCategory+'" data-avatar-value="'+item.value+'" data-avatar-cost="'+(item.cost||0)+'">'+visual+'<span>'+item.label+'</span>'+(locked?'<small>🔒 '+item.cost+' ◆</small>':selected?'<small>انتخاب‌شده ✓</small>':'')+'</button>';}).join('');
+ const badgeHTML=badges.map(b=>{const has=state.earned.includes(b.id);return '<div class="profile-badge '+(has?'earned':'locked')+'"><span>'+b.icon+'</span><strong>'+b.title+'</strong><small>'+(has?'دریافت‌شده':b.description)+'</small></div>';}).join('');
+ root.innerHTML =
+ '<section class="profile-hero-card"><div class="profile-hero-copy"><span class="profile-overline">MY LIFE · PLAYER CARD</span><div class="profile-name-line"><h2>'+plusEscape(p.displayName)+'</h2><span class="profile-level-tag">LV. '+level+'</span></div><p>'+plusEscape(p.bio)+'</p><div class="profile-xp-line"><span>⭐ '+state.xp.toLocaleString('fa-IR')+' XP</span><span>'+xpInLevel+' / 100 تا سطح بعدی</span></div><div class="profile-level-track"><i style="width:'+xpInLevel+'%"></i></div><div class="profile-hero-actions"><span>💎 '+state.gems.toLocaleString('fa-IR')+' کریستال</span><span>🔥 '+state.streak.toLocaleString('fa-IR')+' روز پیاپی</span></div></div>'+avatarMarkup('large')+'<span class="profile-hero-deco">✦</span></section>'+
+ '<div class="profile-stats-grid"><article><span>⭐</span><small>کل تجربه</small><strong>'+state.xp.toLocaleString('fa-IR')+'</strong><em>XP</em></article><article><span>🔥</span><small>استریک فعلی</small><strong>'+state.streak.toLocaleString('fa-IR')+'</strong><em>روز</em></article><article><span>🏆</span><small>طولانی‌ترین استریک</small><strong>'+state.longestStreak.toLocaleString('fa-IR')+'</strong><em>روز</em></article><article><span>💎</span><small>کریستال‌ها</small><strong>'+state.gems.toLocaleString('fa-IR')+'</strong><em>عدد</em></article><article><span>🎖️</span><small>نشان‌ها</small><strong>'+earned+'</strong><em>از '+badges.length+'</em></article><article><span>📅</span><small>XP امروز</small><strong>'+todayXP.toLocaleString('fa-IR')+'</strong><em>امتیاز</em></article></div>'+
+ '<div class="profile-columns"><section class="panel avatar-custom-panel"><div class="profile-section-head"><div><span class="eyebrow">AVATAR STUDIO</span><h3>ظاهر من، انتخاب من</h3><p>هر جزئیات را مطابق سلیقه‌ات تغییر بده.</p></div><span class="profile-mini-tag">✦ AVATAR LAB</span></div><div class="avatar-studio-layout"><div class="avatar-preview-column">'+avatarMarkup('preview')+'<strong>'+plusEscape(p.displayName)+'</strong><small>نسخه‌ی من در دنیای My Life</small></div><div class="avatar-editor"><div class="avatar-tabs">'+tabs+'</div><div class="avatar-options">'+options+'</div></div></div><form id="profile-name-form" class="profile-name-form"><label>نام نمایشی</label><input name="displayName" maxlength="32" value="'+plusEscape(p.displayName)+'" placeholder="اسم دلخواهت"><button type="submit">ذخیره نام</button></form></section>'+
+ '<section class="panel profile-progress-panel"><div class="profile-section-head"><div><span class="eyebrow">YOUR MOMENTUM</span><h3>ریتم پیشرفت</h3><p>تجربه‌هایی که در هفت روز اخیر جمع کرده‌ای.</p></div><span class="profile-mini-tag">۷ روز</span></div><div class="profile-week-total"><strong>'+weekXP.toLocaleString('fa-IR')+'</strong><span>XP این هفته</span></div><div class="profile-week-chart">'+bars+'</div><div class="profile-lifetime"><span>☑ '+state.totalTasksCompleted+' کار تکمیل‌شده</span><span>🌱 '+state.totalHabitsCompleted+' عادت انجام‌شده</span><span>🧠 '+state.focusSessions+' جلسه تمرکز</span></div></section></div>'+
+ '<section class="panel profile-quests-panel"><div class="profile-section-head"><div><span class="eyebrow">DAILY QUESTS</span><h3>مأموریت‌های امروز</h3><p>با انجام فعالیت‌های واقعی، کریستال و XP بگیر.</p></div><span class="profile-mini-tag">🎁 پاداش روزانه</span></div><div class="profile-quests">'+questHTML+'</div></section>'+
+ '<section class="panel profile-badges-panel"><div class="profile-section-head"><div><span class="eyebrow">TROPHY ROOM</span><h3>تالار نشان‌های من</h3><p>'+earned+' نشان از '+badges.length+' نشان به دست آمده است.</p></div><span class="profile-mini-tag">🏆 COLLECTION</span></div><div class="profile-badge-grid">'+badgeHTML+'</div></section>';
+ root.querySelectorAll('[data-avatar-tab]').forEach(btn=>btn.addEventListener('click',()=>{activeAvatarCategory=btn.dataset.avatarTab;mountProfile(main);}));
+ root.querySelectorAll('[data-avatar-choice]').forEach(btn=>btn.addEventListener('click',()=>{const cat=btn.dataset.avatarChoice,val=btn.dataset.avatarValue,cost=Number(btn.dataset.avatarCost||0),key=cat+':'+val;if(cost&&!p.unlocked.includes(key)){if(state.gems<cost){showToast('برای بازکردن این آیتم کریستال کافی نداری 💎');return;}state.gems-=cost;p.unlocked.push(key);showToast('آیتم جدید به کمدت اضافه شد! ✨');}p[cat]=val;plusSave();mountProfile(main);}));
+ root.querySelector('#profile-name-form').addEventListener('submit',e=>{e.preventDefault();const val=new FormData(e.currentTarget).get('displayName').trim();if(!val)return;p.displayName=val;plusSave();mountProfile(main);showToast('نام نمایشی ذخیره شد ✨');});
+ root.querySelectorAll('[data-profile-quest]').forEach(btn=>btn.addEventListener('click',()=>{const q=quests.find(x=>x.id===btn.dataset.profileQuest);if(!q||q.progress<q.target||claims.includes(q.id))return;p.questClaims[state.date]=claims.concat(q.id);state.gems+=q.gems;addXP(q.xp);plusSave();mountProfile(main);showToast('پاداش مأموریت دریافت شد! 🎉');}));
+}
+
 function plusRender() {
   originalRender();
   document.documentElement.dataset.theme = state.settings.theme;
   const main = document.querySelector('.main-content');
-  if (!main || document.getElementById('plus-tools')) return;
+  if (!main) return;
+  mountProfile(main);
+  if (document.getElementById('plus-tools')) return;
   const section = document.createElement('section');
   section.id = 'plus-tools';
   section.className = 'plus-grid';
