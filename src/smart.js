@@ -1,5 +1,4 @@
 const SMART_PREFS_KEY = 'myLifeSmartPrefs';
-const SMART_QUOTE_KEY = 'myLifeDailyQuote';
 
 const readPrefs = () => {
   try { return { city: 'Tehran', ...(JSON.parse(localStorage.getItem(SMART_PREFS_KEY)) || {}) }; }
@@ -119,19 +118,7 @@ async function loadWeather(city) {
   return { place, current: weather.current, daily: weather.daily };
 }
 
-async function loadQuote() {
-  const today = new Date().toLocaleDateString('en-CA');
-  try {
-    const cached = JSON.parse(localStorage.getItem(SMART_QUOTE_KEY) || 'null');
-    if (cached?.date === today && cached.quote) return cached;
-  } catch {}
-  const response = await fetch('https://dummyjson.com/quotes/random', { signal: AbortSignal.timeout(10000) });
-  if (!response.ok) throw new Error('quote');
-  const quote = await response.json();
-  const result = { date: today, quote: quote.quote, author: quote.author };
-  localStorage.setItem(SMART_QUOTE_KEY, JSON.stringify(result));
-  return result;
-}
+let weatherRequestId = 0;
 
 function mountSmartHub() {
   const dashboard = document.querySelector('[data-page="dashboard"]');
@@ -169,9 +156,11 @@ function mountSmartHub() {
   let weatherLoaded = false;
   const weatherResult = hub.querySelector('#smart-weather-result');
   const refreshWeather = async city => {
+    const requestId = ++weatherRequestId;
     weatherResult.innerHTML = '<span class="smart-loading"></span><span>در حال دریافت...</span>';
     try {
       const data = await loadWeather(city);
+      if (requestId !== weatherRequestId) return;
       const c = data.current, d = data.daily;
       weatherResult.innerHTML = `
         <div class="weather-main"><span>${weatherIcon(c.weather_code)}</span><strong>${Math.round(c.temperature_2m)}°</strong><small>${safeText(weatherText(c.weather_code))}</small></div>
@@ -180,6 +169,7 @@ function mountSmartHub() {
       const saved = readPrefs(); saved.city = city;
       localStorage.setItem(SMART_PREFS_KEY, JSON.stringify(saved));
     } catch {
+      if (requestId !== weatherRequestId) return;
       weatherResult.innerHTML = '<span class="weather-error">آب‌وهوا دریافت نشد؛ اتصال اینترنت یا نام شهر را بررسی کن.</span>';
     }
   };
