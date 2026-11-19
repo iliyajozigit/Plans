@@ -1489,3 +1489,64 @@ textarea{border:2px solid #e5e5e5!important;border-radius:13px!important;backgro
  .clean-details-body{padding:3px 10px 12px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* Smart Hub and secondary screens follow the same visual rules. */
+.smart-hub{padding:18px 0;background:transparent;border:0;box-shadow:none}
+.smart-heading{margin-bottom:12px}
+.smart-heading h2{font-size:17px;color:#3c3c3c}
+.smart-heading h2 span{color:var(--ml-green-dark)}
+.smart-heading p{font-size:9px;color:#888}
+.smart-status{background:#efffe6;color:#429d08;border-radius:9px}
+.smart-status i{background:var(--ml-green);box-shadow:none}
+.smart-grid{gap:9px}
+.smart-card{padding:14px;border:2px solid #e5e5e5;border-bottom-width:4px;border-radius:15px;background:#fff;box-shadow:none}
+.smart-card:hover{transform:translateY(-2px);box-shadow:none;border-color:#d8d8d8}
+.smart-kicker{font-family:'Nunito',sans-serif;color:#999;font-size:8px}
+.smart-card h3{font-size:12px;color:#3c3c3c}
+.smart-icon{background:#efffe6;border-radius:10px}
+.smart-source{color:#999;font-size:8px}
+.weather-main strong{font-family:'Nunito',sans-serif;color:#3c3c3c}
+.weather-main small,.weather-place,.weather-details span{color:#888}
+.weather-details b{color:#555}
+.smart-city-form button,.smart-coach-form button{background:var(--ml-green);box-shadow:0 3px 0 var(--ml-green-dark);border-radius:9px}
+.smart-quote-result blockquote{color:#444;line-height:1.85}
+.smart-quote-result>span{color:#999}
+.coach-insight{background:#f6fff1;border:1px solid #e0f1d7;border-radius:12px}
+.coach-tag{color:#429d08}
+.coach-insight h4{color:#3c3c3c}
+.coach-insight p,.smart-coach-answer{color:#777}
+.smart-metric>span{color:#888}
+.smart-metric>div{background:#eee}
+.smart-metric>div i{background:var(--ml-green)}
+.smart-xp{border-color:#eee;color:#888}
+.smart-xp strong,.smart-refresh{color:#429d08}
+.smart-footnote{color:#999}
+.smart-loading{border-color:#dff3d2;border-top-color:var(--ml-green)}
+.empty-state,.plus-empty{background:#fafafa;border:1px dashed #ddd;border-radius:13px}
+@media(max-width:760px){.smart-grid{grid-template-columns:1fr}.smart-card{padding:12px}.smart-hub{padding-top:12px}}
+html[data-theme="dark"] .daily-path-panel,
+html[data-theme="dark"] .daily-path-step,
+html[data-theme="dark"] .clean-profile-hero,
+html[data-theme="dark"] .clean-section,
+html[data-theme="dark"] .clean-details,
+html[data-theme="dark"] .clean-stat-strip>div,
+html[data-theme="dark"] .smart-card{background:#24243a;border-color:#38384e;color:#f0eff8}
+html[data-theme="dark"] .daily-path-heading h2,
+html[data-theme="dark"] .daily-path-step strong,
+html[data-theme="dark"] .clean-name-row h2,
+html[data-theme="dark"] .clean-section-head h3,
+html[data-theme="dark"] .smart-card h3{color:#f0eff8}
+html[data-theme="dark"] .daily-path-step small,
+html[data-theme="dark"] .daily-path-heading p,
+html[data-theme="dark"] .clean-profile-copy>p,
+html[data-theme="dark"] .smart-heading p{color:#aaa}
+html[data-theme="dark"] .daily-path-step{border-color:#3b3b53}
+html[data-theme="dark"] .clean-quest,
+html[data-theme="dark"] .clean-shop-item,
+html[data-theme="dark"] .profile-badge{background:#292940;border-color:#3b3b53}
+html[data-theme="dark"] .clean-quest-copy strong,
+html[data-theme="dark"] .clean-shop-item strong,
+html[data-theme="dark"] .profile-badge strong{color:#eee}
+html[data-theme="dark"] .clean-wallet-row span{background:#292940;border-color:#3b3b53;color:#ddd}
+html[data-theme="dark"] .coach-insight{background:#34304d;border-color:#46405e}
