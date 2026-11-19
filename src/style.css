@@ -1761,3 +1761,29 @@ html[data-theme="dark"] .profile-badge strong{color:#eee}
  .shop-product>button{padding:8px;font-size:9px}
  .profile-badge-art{width:58px!important;height:58px!important}
 }
+
+
+/* Avatar rendering hotfix: one predictable SVG coordinate system at every size. */
+.ml-avatar-stage{isolation:isolate;overflow:hidden}
+.ml-avatar-stage svg.ml-avatar-person,
+.ml-avatar-stage.preview svg.ml-avatar-person,
+.clean-profile-hero svg.ml-avatar-person{
+  display:block!important;position:relative!important;
+  width:100%!important;height:100%!important;max-width:100%!important;
+  margin:0!important;padding:0!important;
+  transform:none!important;transform-origin:center!important;
+  animation:none!important;overflow:hidden!important;
+  z-index:1;flex:none!important;
+}
+.ml-avatar-person *{vector-effect:non-scaling-stroke}
+.ml-avatar-stage.large{min-width:0}
+.ml-avatar-stage.preview{min-width:0}
+@media(max-width:760px){
+ .clean-profile-hero .ml-avatar-stage.large{width:100px;height:120px;flex:0 0 100px}
+ .clean-profile-hero svg.ml-avatar-person,
+ .ml-avatar-stage.preview svg.ml-avatar-person{transform:none!important}
+ .ml-avatar-stage.preview{width:190px;height:215px}
+}
+@media(prefers-reduced-motion:reduce){
+ .ml-avatar-stage svg.ml-avatar-person{animation:none!important}
+}
