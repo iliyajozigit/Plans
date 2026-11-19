@@ -871,6 +871,7 @@ function avatarMarkup(size) {
  }[accessory]||'';
  const face='<path d="M90 39 C66 39 50 57 49 83 L48 103 C48 128 66 145 90 147 C114 145 132 128 132 103 L131 83 C130 57 114 39 90 39Z" fill="var(--skin)"/>';
  const browArt=expression==='sleepy'?'<path d="M66 94 Q75 98 83 94 M97 94 Q105 98 114 94"':'<path d="M66 91 Q75 85 83 91 M97 91 Q105 85 114 91"';
+ const eyeArt=expression==='wink'?'<ellipse cx="75" cy="101" rx="4.2" ry="6" fill="var(--eyes)"/><path d="M98 102 Q105 108 112 102" fill="none" stroke="var(--hair)" stroke-width="3" stroke-linecap="round"/>':expression==='sleepy'?'<path d="M68 102 Q75 107 82 102 M98 102 Q105 107 112 102" fill="none" stroke="var(--eyes)" stroke-width="4" stroke-linecap="round"/>':expression==='surprised'?'<ellipse cx="75" cy="101" rx="5.2" ry="7.5" fill="var(--eyes)"/><ellipse cx="105" cy="101" rx="5.2" ry="7.5" fill="var(--eyes)"/>':'<ellipse cx="75" cy="101" rx="4.2" ry="6" fill="var(--eyes)"/><ellipse cx="105" cy="101" rx="4.2" ry="6" fill="var(--eyes)"/>';
  const mouthArt=expression==='surprised'?'<ellipse cx="90" cy="127" rx="5" ry="7" fill="#a95d5b"/>':expression==='confident'?'<path d="M82 126 Q92 133 101 124" fill="none" stroke="#a95d5b" stroke-width="2.7" stroke-linecap="round"/>':expression==='sleepy'?'<path d="M83 128 Q90 130 97 128" fill="none" stroke="#a95d5b" stroke-width="2.7" stroke-linecap="round"/>':'<path d="M81 126 Q90 133 99 126" fill="none" stroke="#a95d5b" stroke-width="2.7" stroke-linecap="round"/>';
  return '<div class="ml-avatar-stage '+(size||'large')+'" data-bg="'+background+'"><svg class="ml-avatar-person" viewBox="0 0 180 230" preserveAspectRatio="xMidYMid meet" role="img" aria-label="آواتار شخصی‌سازی‌شده" focusable="false" style="--skin:'+skin+';--hair:'+hair+';--eyes:'+eyes+';--shirt:'+shirt+'">'
   +'<ellipse cx="90" cy="220" rx="48" ry="6" fill="#314b3520"/>'
@@ -882,7 +883,7 @@ function avatarMarkup(size) {
   +'<ellipse cx="69" cy="113" rx="8" ry="4.5" fill="#ed8e91" opacity=".26"/><ellipse cx="111" cy="113" rx="8" ry="4.5" fill="#ed8e91" opacity=".26"/>'
   +fringe
   +browArt.replace('<path','<path fill="none" stroke="var(--hair)" stroke-width="3.2" stroke-linecap="round"')
-  +'<ellipse cx="75" cy="101" rx="4.2" ry="6" fill="var(--eyes)"/><ellipse cx="105" cy="101" rx="4.2" ry="6" fill="var(--eyes)"/><circle cx="76.5" cy="99" r="1.5" fill="#fff"/><circle cx="106.5" cy="99" r="1.5" fill="#fff"/>'
+  +eyeArt
   +'<path d="M90 105 Q86 113 90 115" fill="none" stroke="#b97868" stroke-width="1.8" stroke-linecap="round" opacity=".55"/>'
   +mouthArt
   +accessoryArt
