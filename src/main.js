@@ -208,19 +208,19 @@ function render() {
           <div class="brand-icon">✦</div>
           <div>
             <h2>My Life</h2>
-            <span>YOUR PERSONAL SPACE</span>
+            <span>YOUR DAILY PROGRESS</span>
           </div>
         </div>
 
         <nav class="navigation">
           <p class="nav-label">فضای شخصی</p>
-          <a class="nav-item ${activeView === 'dashboard' ? 'active' : ''}" href="#dashboard" data-view="dashboard"><span class="nav-symbol">▦</span><span>نمای کلی</span></a>
-          <a class="nav-item ${activeView === 'planner' ? 'active' : ''}" href="#planner" data-view="planner"><span class="nav-symbol">☑</span><span>برنامه‌ریزی</span></a>
-          <a class="nav-item ${activeView === 'growth' ? 'active' : ''}" href="#growth" data-view="growth"><span class="nav-symbol">✧</span><span>رشد من</span></a>
-          <a class="nav-item ${activeView === 'profile' ? 'active' : ''}" href="#profile" data-view="profile"><span class="nav-symbol">☺</span><span>شخصیت من</span></a>
+          <a class="nav-item ${activeView === 'dashboard' ? 'active' : ''}" href="#dashboard" data-view="dashboard"><span class="nav-symbol">⌂</span><span>نمای کلی</span></a>
+          <a class="nav-item ${activeView === 'planner' ? 'active' : ''}" href="#planner" data-view="planner"><span class="nav-symbol">✓</span><span>برنامه‌ریزی</span></a>
+          <a class="nav-item ${activeView === 'growth' ? 'active' : ''}" href="#growth" data-view="growth"><span class="nav-symbol">↗</span><span>رشد من</span></a>
+          <a class="nav-item ${activeView === 'profile' ? 'active' : ''}" href="#profile" data-view="profile"><span class="nav-symbol">●</span><span>شخصیت من</span></a>
           <p class="nav-label">ابزارهای من</p>
           <a class="nav-item ${activeView === 'focus' ? 'active' : ''}" href="#focus" data-view="focus"><span class="nav-symbol">◷</span><span>تمرکز</span></a>
-          <a class="nav-item ${activeView === 'journal' ? 'active' : ''}" href="#journal" data-view="journal"><span class="nav-symbol">✎</span><span>دفتر شخصی</span></a>
+          <a class="nav-item ${activeView === 'journal' ? 'active' : ''}" href="#journal" data-view="journal"><span class="nav-symbol">▤</span><span>دفتر شخصی</span></a>
           <a class="nav-item ${activeView === 'settings' ? 'active' : ''}" href="#settings" data-view="settings"><span class="nav-symbol">⚙</span><span>تنظیمات</span></a>
         </nav>
 
@@ -241,7 +241,7 @@ function render() {
 
         <header class="topbar">
           <div>
-            <span class="eyebrow">PERSONAL DASHBOARD</span>
+            <span class="eyebrow">YOUR DAILY PROGRESS</span>
             <h1>${({dashboard:'روزت رو بساز',planner:'برنامه‌ریزی هوشمند',growth:'مسیر رشد تو',profile:'شخصیت و افتخارات من',focus:'فضای تمرکز',journal:'دفتر شخصی',settings:'تنظیمات'})[activeView]} <span class="wave">✦</span></h1>
             <p class="date-text" id="live-date">${formatDate()}</p>
           </div>
@@ -351,6 +351,27 @@ function render() {
           </div>
         </section>
 
+
+        <section class="daily-path-panel">
+          <div class="daily-path-heading">
+            <div><span class="eyebrow">YOUR DAILY JOURNEY</span><h2>مسیر امروزت</h2><p>هر قدم کوچیک، تو رو جلوتر می‌بره.</p></div>
+            <span class="daily-path-progress">\${Math.round((taskPercent + habitPercent) / 2)}٪</span>
+          </div>
+          <div class="daily-path-steps">
+            <a href="#planner" data-view="planner" class="daily-path-step \${completedTasks > 0 ? 'step-started' : ''}">
+              <span class="daily-step-node">✓</span><span><strong>برنامه‌ریزی</strong><small>\${completedTasks} از \${state.tasks.length} وظیفه</small></span><b>←</b>
+            </a>
+            <a href="#planner" data-view="planner" class="daily-path-step \${completedHabits > 0 ? 'step-started' : ''}">
+              <span class="daily-step-node">🌱</span><span><strong>ساخت عادت</strong><small>\${completedHabits} از \${state.habits.length} عادت</small></span><b>←</b>
+            </a>
+            <a href="#focus" data-view="focus" class="daily-path-step \${state.focusSessions > 0 ? 'step-started' : ''}">
+              <span class="daily-step-node">◷</span><span><strong>تمرکز عمیق</strong><small>\${state.focusSessions} جلسه کامل‌شده</small></span><b>←</b>
+            </a>
+            <a href="#journal" data-view="journal" class="daily-path-step">
+              <span class="daily-step-node">✎</span><span><strong>مرور روز</strong><small>ثبت یک یادداشت کوتاه</small></span><b>←</b>
+            </a>
+          </div>
+        </section>
         </section>
 
         <section class="page-view ${activeView === 'planner' ? 'active' : ''}" data-page="planner">
