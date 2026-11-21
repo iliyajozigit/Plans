@@ -251,6 +251,8 @@ function signOut(notify = true) {
   if (notify) { render(); showToast('Signed out. Your data stays on this device.'); }
 }
 
+const SPROUT_MARK = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 21.5V12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M12.6 12.8C12.6 8.6 15.2 6 19.8 6c0 4.3-2.6 6.8-7.2 6.8z" fill="currentColor"/><path d="M11.6 15.2C11.6 11.4 9.3 9.2 5 9.2c0 3.8 2.3 6 6.6 6z" fill="currentColor" opacity=".8"/></svg>';
+
 function accountMarkup() {
   if (sync.token) {
     const label = sync.status === 'synced' ? '☁️ Synced' : sync.status === 'offline' ? '⚠️ Offline; will sync later' : '☁️ Syncing';
@@ -260,14 +262,21 @@ function accountMarkup() {
       '<div class="settings-row"><div><strong>' + plusEscape(sync.username || '') + '</strong><small>' + label + '</small></div>' +
       '<button id="plus-signout" class="secondary-button" type="button">Sign out</button></div></div>';
   }
-  return '<div class="plus-panel account-panel" id="plus-account">' +
-    '<div class="plus-heading"><div><span class="eyebrow">ACCOUNT</span><h2>Sign in or sign up</h2>' +
-    '<p>With an account, your data follows you across devices. Sign in if you have one, or create one.</p></div></div>' +
-    '<form id="plus-auth-form" class="account-form">' +
-      '<input name="username" autocomplete="username" placeholder="Username (English letters)" maxlength="20" required>' +
-      '<input name="password" type="password" autocomplete="current-password" placeholder="Password (at least 6 characters)" maxlength="100" required>' +
-      '<div class="account-actions"><button type="submit" data-mode="login" class="primary-button">Sign in</button>' +
-      '<button type="submit" data-mode="register" class="secondary-button">Create account</button></div>' +
+  return '<div class="plus-panel account-panel auth-card" id="plus-account">' +
+    '<div class="auth-head"><span class="auth-mark" aria-hidden="true">' + SPROUT_MARK + '</span>' +
+    '<div><h2>Save your progress</h2><p>Sign in to keep your data safe and use it on every device.</p></div></div>' +
+    '<div class="auth-tabs" id="auth-tabs" role="tablist" aria-label="Account">' +
+      '<button type="button" role="tab" id="auth-tab-login" data-mode="login" aria-selected="true">Sign in</button>' +
+      '<button type="button" role="tab" id="auth-tab-register" data-mode="register" aria-selected="false">Create account</button>' +
+    '</div>' +
+    '<form id="plus-auth-form" class="auth-form" novalidate>' +
+      '<label class="auth-field"><span>Username</span>' +
+        '<input name="username" autocomplete="username" placeholder="e.g. ilia_22" maxlength="20" required>' +
+        '<small>3–20 characters: letters, numbers or _</small></label>' +
+      '<label class="auth-field"><span>Password</span>' +
+        '<input name="password" type="password" autocomplete="current-password" placeholder="At least 6 characters" maxlength="100" required>' +
+        '<small id="auth-pass-hint">Use at least 6 characters</small></label>' +
+      '<button type="submit" class="primary-button auth-submit" id="auth-submit">Sign in</button>' +
       '<p id="plus-auth-error" class="account-error" role="alert"></p>' +
     '</form></div>';
 }
@@ -277,20 +286,36 @@ function bindAccountPanel() {
   const form = document.getElementById('plus-auth-form');
   if (!form) return;
   let mode = 'login';
-  form.querySelectorAll('button[data-mode]').forEach(btn => btn.addEventListener('click', () => { mode = btn.dataset.mode; }));
+  const tabs = document.querySelectorAll('#auth-tabs [role="tab"]');
+  const submit = document.getElementById('auth-submit');
+  const passInput = form.querySelector('input[name="password"]');
+  const passHint = document.getElementById('auth-pass-hint');
+  const setMode = next => {
+    mode = next;
+    tabs.forEach(tab => tab.setAttribute('aria-selected', String(tab.dataset.mode === next)));
+    submit.textContent = next === 'login' ? 'Sign in' : 'Create account';
+    passInput.autocomplete = next === 'login' ? 'current-password' : 'new-password';
+    passHint.textContent = next === 'login' ? 'Enter your password' : 'Use at least 6 characters';
+    document.getElementById('plus-auth-error').textContent = '';
+  };
+  tabs.forEach(tab => tab.addEventListener('click', () => setMode(tab.dataset.mode)));
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const data = new FormData(form);
     const username = String(data.get('username') || '').trim();
     const password = String(data.get('password') || '');
     const errorBox = document.getElementById('plus-auth-error');
-    if (errorBox) errorBox.textContent = '';
+    errorBox.textContent = '';
+    if (!username || !password) { errorBox.textContent = 'Please fill in both fields'; return; }
+    submit.disabled = true;
+    submit.textContent = 'Please wait…';
     try {
       await authenticate(mode, username, password);
     } catch (error) {
       const messages = { 401: 'Wrong username or password', 409: 'This username is already taken' };
-      const text = error.status === 0 ? 'Cannot reach the server (offline mode)' : (messages[error.status] || error.message || 'Something went wrong');
-      if (errorBox) errorBox.textContent = text;
+      errorBox.textContent = error.status === 0 ? 'Cannot reach the server (offline mode)' : (messages[error.status] || error.message || 'Something went wrong');
+      submit.disabled = false;
+      submit.textContent = mode === 'login' ? 'Sign in' : 'Create account';
     }
   });
 }

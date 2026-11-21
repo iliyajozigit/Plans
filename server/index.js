@@ -67,7 +67,7 @@ function readJson(req, limit) {
     req.on('data', chunk => {
       size += chunk.length;
       if (size > limit) {
-        reject(new HttpError(413, 'درخواست خیلی بزرگه'));
+        reject(new HttpError(413, 'The request is too large'));
         req.destroy();
         return;
       }
@@ -76,7 +76,7 @@ function readJson(req, limit) {
     req.on('end', () => {
       if (!chunks.length) return resolve({});
       try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8'))); }
-      catch { reject(new HttpError(400, 'داده نامعتبره')); }
+      catch { reject(new HttpError(400, 'Invalid data')); }
     });
     req.on('error', reject);
   });
@@ -89,7 +89,7 @@ function currentUser(req) {
 
 function requireUser(req) {
   const user = currentUser(req);
-  if (!user) throw new HttpError(401, 'لطفاً دوباره وارد شو');
+  if (!user) throw new HttpError(401, 'Please sign in again');
   return user;
 }
 
@@ -102,8 +102,8 @@ function issueSession(userId) {
 function validCredentials(body) {
   const username = typeof body.username === 'string' ? body.username.trim() : '';
   const password = typeof body.password === 'string' ? body.password : '';
-  if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) throw new HttpError(400, 'نام کاربری فقط حروف انگلیسی، عدد و _ (۳ تا ۲۰ کاراکتر)');
-  if (password.length < 6 || password.length > 100) throw new HttpError(400, 'رمز عبور باید بین ۶ تا ۱۰۰ کاراکتر باشه');
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) throw new HttpError(400, 'Username: 3–20 characters, English letters, numbers or _ only');
+  if (password.length < 6 || password.length > 100) throw new HttpError(400, 'Password must be 6–100 characters');
   return { username: username.toLowerCase(), password };
 }
 
@@ -112,7 +112,7 @@ async function handleApi(req, res, url) {
 
   if (route === 'POST /api/register') {
     const { username, password } = validCredentials(await readJson(req, 4096));
-    if (stmt.userByName.get(username)) throw new HttpError(409, 'این نام کاربری قبلاً گرفته شده');
+    if (stmt.userByName.get(username)) throw new HttpError(409, 'This username is already taken');
     const salt = crypto.randomBytes(16).toString('hex');
     stmt.insertUser.run(username, salt, hashPassword(password, salt), now());
     const user = stmt.userByName.get(username);
@@ -124,7 +124,7 @@ async function handleApi(req, res, url) {
     const user = stmt.userByName.get(username);
     const candidate = user ? hashPassword(password, user.salt) : '';
     const ok = user && crypto.timingSafeEqual(Buffer.from(candidate, 'hex'), Buffer.from(user.hash, 'hex'));
-    if (!ok) throw new HttpError(401, 'نام کاربری یا رمز عبور اشتباهه');
+    if (!ok) throw new HttpError(401, 'Wrong username or password');
     return send(res, 200, { token: issueSession(user.id), username: user.username });
   }
 
@@ -149,16 +149,16 @@ async function handleApi(req, res, url) {
     const user = requireUser(req);
     const body = await readJson(req, MAX_STATE_BYTES + 1024);
     if (!body || typeof body.state !== 'object' || Array.isArray(body.state) || body.state === null) {
-      throw new HttpError(400, 'وضعیت نامعتبره');
+      throw new HttpError(400, 'Invalid state');
     }
     const data = JSON.stringify(body.state);
-    if (data.length > MAX_STATE_BYTES) throw new HttpError(413, 'اطلاعات خیلی بزرگه');
+    if (data.length > MAX_STATE_BYTES) throw new HttpError(413, 'The data is too large');
     const updatedAt = now();
     stmt.upsertState.run(user.id, data, updatedAt);
     return send(res, 200, { updatedAt });
   }
 
-  throw new HttpError(404, 'پیدا نشد');
+  throw new HttpError(404, 'Not found');
 }
 
 const mime = {
