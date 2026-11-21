@@ -13,4 +13,12 @@ Then open `http://localhost:3000/Plans/`, create an account from **تنظیما�
 
 For development with hot reload, run `npm run dev` in one terminal and `npm start` in another; Vite forwards `/api` requests to the server.
 
-Environment variables: `PORT` (default `3000`) and `DATA_DIR` (default `./data`).
+Environment variables:
+
+- `PORT`: port to listen on (default `3000`).
+- `DATA_DIR`: folder for the SQLite database (default `./data`).
+- `TRUST_PROXY`: set to `1` when running behind a reverse proxy, so the sign-in rate limit uses the `X-Forwarded-For` address.
+
+Health check: `GET /api/health` returns `{"ok":true}`.
+
+Sign-in and sign-up are limited to 10 attempts per 15 minutes per address. Sessions last 30 days.

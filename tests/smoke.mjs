@@ -14,7 +14,7 @@ const readState = page => page.evaluate(() => JSON.parse(localStorage.getItem('m
 const browser = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox'] });
 try {
   for (const width of [390, 1280]) {
-    const page = await browser.newPage({ viewport: { width, height: 900 }, locale: 'fa-IR' });
+    const page = await browser.newPage({ viewport: { width, height: 900 }, locale: 'en-US' });
     const errors = [];
     page.on('pageerror', e => errors.push(String(e)));
     await page.goto(BASE, { waitUntil: 'networkidle' });
@@ -27,7 +27,9 @@ try {
     await page.close();
   }
 
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, locale: 'fa-IR' });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, locale: 'en-US' });
+  const errors = [];
+  page.on('pageerror', e => errors.push(String(e)));
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'networkidle' });
@@ -67,6 +69,25 @@ try {
   await page.waitForTimeout(1300);
   await page.reload({ waitUntil: 'networkidle' });
   check('owned shop item persists', (await readState(page)).profile?.unlocked?.length === 1);
+
+  // Accessibility and recovery checks
+  await page.goto(`${BASE}#planner`, { waitUntil: 'networkidle' });
+  const tasksBefore = await page.locator('.task-item').count();
+  await page.fill('#task-input', 'Undo check');
+  await page.locator('#task-input').locator('xpath=..').locator('button[type=submit]').click();
+  await page.waitForTimeout(200);
+  await page.locator('.task-item').filter({ hasText: 'Undo check' }).locator('.delete-button').click();
+  check('delete removes the task', await page.locator('.task-item').count() === tasksBefore);
+  await page.locator('.toast-undo .toast-action').click();
+  check('undo restores the task', await page.locator('.task-item').count() === tasksBefore + 1);
+  check('active nav link is marked as current page', await page.locator('.nav-item[aria-current="page"]').count() === 1);
+  check('filter buttons expose pressed state', await page.locator('.filter-btn[aria-pressed="true"]').count() === 1);
+  check('skip link targets the main landmark', await page.locator('#app-main').count() === 1);
+  await page.goto(`${BASE}#profile`, { waitUntil: 'networkidle' });
+  await page.locator('[data-profile-tab=character]').focus();
+  await page.keyboard.press('ArrowRight');
+  check('arrow keys move between profile tabs', await page.locator('[data-profile-tab=shop][aria-selected=true]').count() === 1);
+  check('no uncaught page errors in these flows', errors.length === 0, errors.join(' | '));
 
   await page.reload({ waitUntil: 'networkidle' });
   check('state persists across reload', (await readState(page)).settings?.waterTarget === 10);
