@@ -6,15 +6,15 @@ const readPrefs = () => {
 };
 
 const weatherText = code => {
-  if (code === 0) return 'آسمان صاف';
-  if ([1, 2].includes(code)) return 'کمی ابری';
-  if (code === 3) return 'ابری';
-  if ([45, 48].includes(code)) return 'مه‌آلود';
-  if ([51, 53, 55, 56, 57].includes(code)) return 'نم‌نم باران';
-  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return 'بارانی';
-  if ([71, 73, 75, 77, 85, 86].includes(code)) return 'برفی';
-  if ([95, 96, 99].includes(code)) return 'رعدوبرق';
-  return 'وضعیت متغیر';
+  if (code === 0) return 'Clear sky';
+  if ([1, 2].includes(code)) return 'Partly cloudy';
+  if (code === 3) return 'Cloudy';
+  if ([45, 48].includes(code)) return 'Foggy';
+  if ([51, 53, 55, 56, 57].includes(code)) return 'Drizzle';
+  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return 'Rainy';
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return 'Snowy';
+  if ([95, 96, 99].includes(code)) return 'Thunderstorm';
+  return 'Changing conditions';
 };
 
 const weatherIcon = code => {
@@ -47,25 +47,25 @@ function buildCoachInsight(data) {
   const hour = new Date().getHours();
 
   if (!tasks.length && !habits.length) {
-    return { title: 'با یک قدم کوچک شروع کن', body: 'اول یک وظیفه مهم یا یک عادت ساده ثبت کن. بعد از ثبت فعالیت‌ها، پیشنهادها دقیق‌تر می‌شوند.', tag: 'شروع مسیر' };
+    return { title: 'Start with one small step', body: 'Log one important task or a simple habit first. Suggestions get sharper as you log more.', tag: 'Getting started' };
   }
   if (pending.length >= 4) {
-    return { title: 'اولویت را کمتر کن', body: `از بین ${pending.length} کار باقی‌مانده، فقط مهم‌ترین کار را انتخاب کن و ۲۰ دقیقه روی همان تمرکز کن. لازم نیست همه‌چیز را یک‌جا انجام بدهی.`, tag: 'مدیریت وظایف' };
+    return { title: 'Narrow your focus', body: `Of the ${pending.length} tasks left, pick the most important one and focus on it for 20 minutes. You don't have to do everything at once.`, tag: 'Task management' };
   }
   if (pending.length > 0) {
-    return { title: 'یک کار را به پایان برسان', body: `«${pending[0].title}» می‌تواند قدم بعدی تو باشد. آن را به یک بازه کوتاه تقسیم کن و بعد سراغ کار بعدی برو.`, tag: 'پیشنهاد بعدی' };
+    return { title: 'Finish one task', body: `«${pending[0].title}» could be your next step. Split it into a short block, then move on.`, tag: 'Next step' };
   }
   if (habits.length && completedHabits.length < habits.length) {
     const nextHabit = habits.find(habit => !habit.done);
-    return { title: 'زمان رسیدگی به عادت‌هاست', body: `بخش زیادی از کارها را مدیریت کردی. اگر شرایطش را داری، عادت «${nextHabit?.title || 'بعدی'}» را هم به‌آرامی انجام بده.`, tag: 'ساخت عادت' };
+    return { title: 'Time for your habits', body: `You've handled a lot already. If you can, gently do the habit «${nextHabit?.title || 'next'}» too.`, tag: 'Build a habit' };
   }
   if (pendingGoals.length) {
-    return { title: 'برای هدفت یک قدم بردار', body: `یکی از هدف‌هایت را انتخاب کن و کوچک‌ترین اقدام قابل انجام برای آن را مشخص کن. هدف: «${pendingGoals[0].title}».`, tag: 'رشد شخصی' };
+    return { title: 'Take one step toward your goal', body: `Pick one goal and define the smallest action you can take for it. Goal: «${pendingGoals[0].title}».`, tag: 'Personal growth' };
   }
   if (completed.length || completedHabits.length) {
-    return { title: 'امروز پیشرفت داشتی', body: `تا اینجا ${completed.length} وظیفه و ${completedHabits.length} عادت را ثبت کرده‌ای. کمی استراحت کن و اگر انرژی داشتی، یک قدم کوچک دیگر بردار.`, tag: 'مرور پیشرفت' };
+    return { title: 'You made progress today', body: `So far you've logged ${completed.length} tasks and ${completedHabits.length} habits. Take a short break, and if you have energy left, take one more small step.`, tag: 'Progress review' };
   }
-  return { title: hour < 12 ? 'صبح را آرام شروع کن' : 'با یک قدم کوچک ادامه بده', body: 'یک کار مشخص انتخاب کن، زمان کوتاهی برایش کنار بگذار و بعد نتیجه را بررسی کن.', tag: 'پیشنهاد روز' };
+  return { title: hour < 12 ? 'Start the morning calmly' : 'Keep going with a small step', body: 'Pick one clear task, set aside a short time for it, then check the result.', tag: 'Daily suggestion' };
 }
 
 function answerCoach(question, data) {
@@ -77,26 +77,26 @@ function answerCoach(question, data) {
   const habitsDone = habits.filter(habit => habit.done).length;
   const insight = buildCoachInsight(data);
 
-  if (/گزارش|عملکرد|پیشرفت|آمار/.test(q)) {
-    return `تا الان ${done} وظیفه تمام شده و ${pending.length} وظیفه باقی مانده. ${habitsDone} عادت از ${habits.length} عادت امروز انجام شده. ${insight.body}`;
+  if (/report|progress|performance|stats|how am i doing|summary|گزارش|پیشرفت|آمار/i.test(q)) {
+    return `So far ${done} tasks are done and ${pending.length} are left. ${habitsDone} of ${habits.length} habits are done today. ${insight.body}`;
   }
-  if (/اولویت|شروع|از کجا|چی کار|چه کار/.test(q)) {
+  if (/priorit|start|where to begin|what should i do|what next|اولویت|شروع|از کجا|چی کار|چه کار/i.test(q)) {
     return insight.body;
   }
-  if (/عادت/.test(q)) {
+  if (/habit|عادت/i.test(q)) {
     const next = habits.find(habit => !habit.done);
-    return next ? `پیشنهاد من این است که عادت «${next.title}» را انتخاب کنی و آن را به ساده‌ترین شکل ممکن انجام بدهی. تا الان ${habitsDone} عادت از ${habits.length} عادت ثبت شده.` : 'عادت ثبت‌نشده‌ای باقی نمانده؛ اگر دوست داری می‌توانی برای فردا یک عادت تازه تعریف کنی.';
+    return next ? `I suggest you pick the habit «${next.title}» and do it in the simplest way possible. So far ${habitsDone} of ${habits.length} habits are logged.` : 'No unlogged habits are left; if you like, define a new habit for tomorrow.';
   }
-  if (/هدف/.test(q)) {
+  if (/goal|target|هدف/i.test(q)) {
     const goal = (data.goals || []).find(item => !item.done);
-    return goal ? `برای هدف «${goal.title}» فقط یک اقدام کوچک و قابل انجام برای امروز مشخص کن.` : 'هنوز هدف فعالی ثبت نشده. یک هدف روشن و واقع‌بینانه اضافه کن تا بتوانیم قدم بعدی را مشخص کنیم.';
+    return goal ? `For the goal «${goal.title}», choose just one small action you can do today.` : 'No active goal yet. Add one clear, realistic goal so we can plan the next step.';
   }
-  return insight.body + ' می‌توانی درباره اولویت‌ها، عادت‌ها، هدف‌ها یا گزارش پیشرفتت سؤال کنی.';
+  return insight.body + ' You can ask me about priorities, habits, goals or your progress report.';
 }
 
 async function loadWeather(city) {
   const geoUrl = new URL('https://geocoding-api.open-meteo.com/v1/search');
-  geoUrl.search = new URLSearchParams({ name: city, count: '1', language: 'fa', format: 'json' });
+  geoUrl.search = new URLSearchParams({ name: city, count: '1', language: 'en', format: 'json' });
   const geoResponse = await fetch(geoUrl, { signal: AbortSignal.timeout(10000) });
   if (!geoResponse.ok) throw new Error('geocoding');
   const geo = await geoResponse.json();
@@ -131,22 +131,22 @@ function mountSmartHub() {
   hub.id = 'smart-hub';
   hub.className = 'smart-hub smart-tools-details';
   hub.innerHTML = `
-    <summary class="smart-tools-summary"><span>پیشنهادهای روزانه</span><small>آب‌وهوا و پیشنهاد روزانه</small><b>+</b></summary>
+    <summary class="smart-tools-summary"><span>Daily suggestions</span><small>Weather and today's tip</small><b>+</b></summary>
     <div class="smart-grid">
       <article class="smart-card weather-card">
-        <div class="smart-card-top"><h3>آب‌وهوای امروز</h3><span class="smart-icon">🌤️</span></div>
-        <div class="weather-result" id="smart-weather-result"><span>برای دریافت آب‌وهوا، این بخش را باز کن.</span></div>
+        <div class="smart-card-top"><h3>Today's weather</h3><span class="smart-icon">🌤️</span></div>
+        <div class="weather-result" id="smart-weather-result"><span>Open this section to see the weather.</span></div>
         <form id="smart-city-form" class="smart-city-form">
-          <input id="smart-city" value="${safeText(prefs.city)}" maxlength="60" aria-label="نام شهر" placeholder="نام شهر">
-          <button type="submit">نمایش</button>
+          <input id="smart-city" value="${safeText(prefs.city)}" maxlength="60" aria-label="City name" placeholder="City name">
+          <button type="submit">Show</button>
         </form>
       </article>
       <article class="smart-card coach-card">
-        <div class="smart-card-top"><h3>پیشنهاد برای ادامه روز</h3><span class="smart-icon">↗</span></div>
+        <div class="smart-card-top"><h3>Ideas for the rest of the day</h3><span class="smart-icon">↗</span></div>
         <div class="coach-insight"><h4 id="coach-title">${safeText(insight.title)}</h4><p id="coach-body">${safeText(insight.body)}</p></div>
         <form id="smart-coach-form" class="smart-coach-form">
-          <input id="smart-coach-question" maxlength="180" placeholder="سؤالت را بنویس..." aria-label="سؤال از مربی">
-          <button type="submit" aria-label="ارسال سؤال">←</button>
+          <input id="smart-coach-question" maxlength="180" placeholder="Ask your question..." aria-label="Ask the coach">
+          <button type="submit" aria-label="Send question">←</button>
         </form>
         <p id="smart-coach-answer" class="smart-coach-answer" aria-live="polite"></p>
       </article>
@@ -161,21 +161,21 @@ function mountSmartHub() {
   if (smartCache.weatherHTML) weatherResult.innerHTML = smartCache.weatherHTML;
   const refreshWeather = async city => {
     const requestId = ++weatherRequestId;
-    weatherResult.innerHTML = '<span class="smart-loading"></span><span>در حال دریافت...</span>';
+    weatherResult.innerHTML = '<span class="smart-loading"></span><span>Loading...</span>';
     try {
       const data = await loadWeather(city);
       if (requestId !== weatherRequestId) return;
       const c = data.current, d = data.daily;
       weatherResult.innerHTML = `
         <div class="weather-main"><span>${weatherIcon(c.weather_code)}</span><strong>${Math.round(c.temperature_2m)}°</strong><small>${safeText(weatherText(c.weather_code))}</small></div>
-        <div class="weather-place">${safeText(data.place.name)}، ${safeText(data.place.country || '')}</div>
-        <div class="weather-details"><span>حس‌شده <b>${Math.round(c.apparent_temperature)}°</b></span><span>بیشینه <b>${Math.round(d.temperature_2m_max[0])}°</b></span><span>کمینه <b>${Math.round(d.temperature_2m_min[0])}°</b></span></div>`;
+        <div class="weather-place">${safeText(data.place.name)}, ${safeText(data.place.country || '')}</div>
+        <div class="weather-details"><span>Feels like <b>${Math.round(c.apparent_temperature)}°</b></span><span>High <b>${Math.round(d.temperature_2m_max[0])}°</b></span><span>Low <b>${Math.round(d.temperature_2m_min[0])}°</b></span></div>`;
       smartCache.weatherHTML = weatherResult.innerHTML;
       const saved = readPrefs(); saved.city = city;
       localStorage.setItem(SMART_PREFS_KEY, JSON.stringify(saved));
     } catch {
       if (requestId !== weatherRequestId) return;
-      weatherResult.innerHTML = '<span class="weather-error">آب‌وهوا دریافت نشد؛ اتصال اینترنت یا نام شهر را بررسی کن.</span>';
+      weatherResult.innerHTML = '<span class="weather-error">Could not load the weather. Check your connection or the city name.</span>';
     }
   };
 

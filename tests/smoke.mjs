@@ -33,14 +33,14 @@ try {
   await page.reload({ waitUntil: 'networkidle' });
 
   await page.goto(`${BASE}#planner`, { waitUntil: 'networkidle' });
-  await page.fill('#task-input', 'تست');
+  await page.fill('#task-input', 'Test task');
   await page.click('#task-form button[type=submit]');
   check('task added', await page.locator('.task-item').count() === 1);
   await page.click('.task-check');
   check('task completion gives 10 XP', (await readState(page)).xp === 10);
 
   const habitsBefore = await page.locator('.habit-item').count();
-  await page.fill('#habit-input', 'عادت تست');
+  await page.fill('#habit-input', 'Test habit');
   await page.click('#habit-form button');
   check('habit added', await page.locator('.habit-item').count() === habitsBefore + 1);
   await page.locator('.habit-row').last().locator('[data-action=habit-delete]').click();
