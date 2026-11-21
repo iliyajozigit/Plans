@@ -1318,64 +1318,29 @@ function applyAvatarChoice(cat,val,main){
  render();
 }
 function characterMarkup(p){
- const group=avatarGroups.find(g=>g.cats.includes(activeAvatarCategory))||avatarGroups[0];
- const groups=avatarGroups.map(g=>'<button type="button" class="look-group '+(g.id===group.id?'active':'')+'" data-avatar-group="'+g.id+'"><span>'+g.icon+'</span>'+g.label+'</button>').join('');
- const cats=group.cats.map(id=>{const c=catInfo(id);return '<button type="button" class="look-cat '+(activeAvatarCategory===id?'active':'')+'" data-avatar-tab="'+id+'">'+c.icon+' '+c.label+'</button>';}).join('');
+ const rail=avatarCategories.map(c=>'<button type="button" class="look-icon '+(c.id===activeAvatarCategory?'active':'')+'" data-avatar-tab="'+c.id+'" aria-label="'+c.label+'" title="'+c.label+'"><span aria-hidden="true">'+c.icon+'</span></button>').join('');
  const choices=(avatarChoices[activeAvatarCategory]||[]).map(item=>{
   const key=activeAvatarCategory+':'+item.value;
   const owned=!item.cost||p.unlocked.includes(key);
   const selected=p[activeAvatarCategory]===item.value;
-  const visual=avatarMarkup('mini',{[activeAvatarCategory]:item.value});
   return '<button type="button" class="look-choice '+(selected?'selected':'')+(owned?'':' locked')+'" data-avatar-choice="'+activeAvatarCategory+'" data-avatar-value="'+item.value+'" aria-pressed="'+selected+'">'+
+   '<span class="look-visual">'+avatarMarkup('mini',{[activeAvatarCategory]:item.value})+'</span>'+
+   '<span class="look-name">'+item.label+'</span>'+
    (selected?'<span class="look-check" aria-hidden="true">✓</span>':'')+
-   '<span class="look-visual">'+visual+'</span><span class="look-name">'+item.label+'</span>'+
    (owned?'':'<small class="price">💎 '+item.cost+'</small>')+
    '</button>';
  }).join('');
  return '<div class="look-layout">'+
-  '<aside class="look-stage-card">'+avatarMarkup('large')+'<div class="look-name-big">'+plusEscape(p.displayName||'شخصیت من')+'</div>'+
-   '<form id="simple-avatar-name" class="look-name-form"><input id="simple-avatar-name-input" name="displayName" maxlength="32" value="'+plusEscape(p.displayName||'')+'" placeholder="اسم شخصیتت"><button type="submit">ذخیره</button></form>'+
+  '<aside class="look-stage-card">'+avatarMarkup('large')+
+   '<div class="look-name-big">'+plusEscape(p.displayName||'شخصیت من')+'</div>'+
+   '<form id="simple-avatar-name" class="look-name-form"><input id="simple-avatar-name-input" name="displayName" maxlength="32" value="'+plusEscape(p.displayName||'')+'" placeholder="اسم شخصیتت" aria-label="اسم شخصیت"><button type="submit">ذخیره</button></form>'+
   '</aside>'+
   '<section class="look-editor">'+
-   '<div class="look-groups" role="tablist">'+groups+'</div>'+
-   '<div class="look-cats">'+cats+'</div>'+
-   '<div class="look-head"><h3>'+catInfo(activeAvatarCategory).icon+' '+catInfo(activeAvatarCategory).label+'</h3><span>'+(avatarChoices[activeAvatarCategory]||[]).length+' گزینه</span></div>'+
+   '<nav class="look-rail" aria-label="بخش‌های شخصیت">'+rail+'</nav>'+
+   '<div class="look-head"><h3>'+catInfo(activeAvatarCategory).label+'</h3></div>'+
    '<div class="look-options">'+(choices||'<p class="simple-avatar-empty">موردی برای نمایش وجود ندارد.</p>')+'</div>'+
   '</section>'+
  '</div>';
-}
-function shopPool(){
- const pool=[];
- Object.keys(avatarChoices).forEach(cat=>avatarChoices[cat].forEach(item=>{if(item.cost)pool.push({cat,item});}));
- return pool;
-}
-function dayIndex(){
- const t=Date.parse(String(state.date||'')+'T00:00:00Z');
- return Number.isFinite(t)?Math.floor(t/864e5):0;
-}
-function dailyPicks(){
- const order=shopPool();
- let seed=7;
- const rand=()=>{seed=(seed*1664525+1013904223)>>>0; return seed/4294967296;};
- for(let i=order.length-1;i>0;i--){const j=Math.floor(rand()*(i+1)); [order[i],order[j]]=[order[j],order[i]];}
- const n=order.length, d=dayIndex();
- return [order[((2*d)%n+n)%n], order[((2*d+1)%n+n)%n]];
-}
-function shopCard({cat,item},p,featured){
- const key=cat+':'+item.value;
- const owned=p.unlocked.includes(key);
- const equipped=p[cat]===item.value;
- const r=rarityOf(item.cost);
- const action=equipped
-  ? '<span class="shop-badge">✓ در حال استفاده</span>'
-  : owned
-   ? '<button type="button" class="shop-action equip" data-shop-item="'+cat+'" data-shop-value="'+item.value+'">پوشیدن</button>'
-   : '<button type="button" class="shop-action buy '+(state.gems<item.cost?'short':'')+'" data-shop-item="'+cat+'" data-shop-value="'+item.value+'">💎 '+item.cost+' خرید</button>';
- return '<article class="shop-card '+(equipped?'equipped':'')+' '+(featured?'featured':'')+'">'+
-  (item.isNew?'<span class="new-tag">جدید</span>':'')+
-  '<span class="rarity r-'+r.id+'">'+r.label+'</span>'+
-  '<div class="shop-visual">'+avatarMarkup('mini',{[cat]:item.value})+'</div>'+
-  '<h4>'+item.label+'</h4><small>'+catInfo(cat).label+(owned&&!equipped?' · در کمدت':'')+'</small>'+action+'</article>';
 }
 function shopMarkup(p){
  const premium=shopPool();

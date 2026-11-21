@@ -808,3 +808,39 @@ html[data-theme="dark"] .look-group.active { color: #bff59a; }
 .shop-card.featured h4 { font-size: 17px; }
 .new-tag { position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 900; padding: 3px 9px; border-radius: 999px; background: var(--blue); color: #fff; z-index: 1; }
 @media (max-width: 560px) { .daily-grid { grid-template-columns: 1fr; } }
+
+/* ===== Minimal character editor (v7) ===== */
+.look-layout { grid-template-columns: minmax(240px, 300px) minmax(0, 1fr); gap: 32px; }
+.look-stage-card { background: transparent; border: 0; box-shadow: none; padding: 8px 0; gap: 12px; position: sticky; }
+.look-stage-card::before { content: ''; position: absolute; top: 40px; left: 50%; width: 280px; height: 280px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, var(--green-soft) 0%, transparent 70%); z-index: 0; pointer-events: none; }
+.look-stage-card > * { position: relative; z-index: 1; }
+.look-stage-card .ml-avatar-stage { border: 0; box-shadow: none; border-radius: 32px; }
+.look-name-big { font-size: 22px; font-weight: 900; text-align: center; }
+.look-name-form { grid-template-columns: 1fr auto; }
+.look-name-form input { background: transparent; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; padding: 0 4px; }
+.look-name-form input:focus { outline: none; border-bottom-color: var(--blue); }
+.look-name-form button { background: var(--blue); box-shadow: 0 4px 0 #1686c0; min-height: 40px; }
+.look-editor { gap: 18px; }
+.look-rail { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 8px; scrollbar-width: none; }
+.look-rail::-webkit-scrollbar { display: none; }
+.look-icon { flex: 0 0 auto; width: 58px; height: 58px; display: grid; place-items: center; font-size: 24px; background: var(--card); border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 18px; cursor: pointer; transition: transform .08s ease; }
+.look-icon:active { transform: translateY(2px); border-bottom-width: 2px; }
+.look-icon.active { border-color: var(--blue); background: #ddf4ff; }
+html[data-theme="dark"] .look-icon.active { background: #15344a; }
+.look-head h3 { font-size: 20px; font-weight: 900; }
+.look-head span { display: none; }
+.look-options { grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); gap: 12px; }
+.look-choice { border: 2px solid var(--line); border-bottom-width: 4px; border-radius: 20px; background: var(--card); padding: 10px; }
+.look-choice:active { transform: translateY(2px); border-bottom-width: 2px; }
+.look-choice.selected { border-color: var(--green); background: var(--green-soft); }
+.look-choice .look-name { font-size: 13px; font-weight: 800; color: var(--ink); }
+.look-choice.locked .look-visual { opacity: .6; }
+.look-check { width: 24px; height: 24px; top: 8px; left: 8px; }
+@media (max-width: 900px) {
+  .look-layout { gap: 18px; }
+  .look-stage-card::before { display: none; }
+  .look-stage-card { padding: 0; }
+  .look-stage-card .ml-avatar-stage { border-radius: 26px; }
+}
+.look-editor, .look-rail { min-width: 0; width: 100%; box-sizing: border-box; }
+@media (max-width: 900px) { .look-layout { grid-template-columns: minmax(0, 1fr); } }
