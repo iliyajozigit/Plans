@@ -450,6 +450,26 @@ function showToast(message) {
   }, 3000);
 }
 
+function showUndoToast(message, onUndo) {
+  const toast = document.createElement('div');
+  toast.className = 'toast toast-undo';
+  toast.setAttribute('role', 'status');
+  const text = document.createElement('span');
+  text.textContent = message;
+  const undo = document.createElement('button');
+  undo.type = 'button';
+  undo.className = 'toast-action';
+  undo.textContent = 'Undo';
+  toast.append(text, undo);
+  document.body.appendChild(toast);
+  const close = () => {
+    toast.classList.add('toast-out');
+    setTimeout(() => toast.remove(), 300);
+  };
+  undo.addEventListener('click', () => { onUndo(); close(); showToast('Restored'); });
+  setTimeout(close, 5000);
+}
+
 function recordActiveDay() {
   const current = today();
   if (state.lastActiveDate !== current) {
@@ -995,12 +1015,18 @@ function bindEvents() {
         }
       }
 
-      if (button.dataset.action === 'habit-delete') {
-        state.habits = state.habits.filter(h => h.id !== id);
-      }
-
-      if (button.dataset.action === 'task-delete') {
-        state.tasks = state.tasks.filter(t => t.id !== id);
+      if (button.dataset.action === 'habit-delete' || button.dataset.action === 'task-delete') {
+        const isHabit = button.dataset.action === 'habit-delete';
+        const list = isHabit ? state.habits : state.tasks;
+        const index = list.findIndex(item => item.id === id);
+        if (index >= 0) {
+          const [removed] = list.splice(index, 1);
+          showUndoToast(isHabit ? 'Habit deleted' : 'Task deleted', () => {
+            list.splice(Math.min(index, list.length), 0, removed);
+            save();
+            render();
+          });
+        }
       }
 
       if (button.dataset.action === 'habit-toggle') {
@@ -1655,7 +1681,20 @@ function plusRender() {
     showToast('Water goal saved 💧');
   });
 }
-render = function() { plusRender(); };
+function renderSafely() {
+  try {
+    plusRender();
+  } catch (error) {
+    console.error(error);
+    const app = document.getElementById('app');
+    if (app && !app.querySelector('.sidebar')) {
+      app.innerHTML = '<div class="crash-card" role="alert"><h2>Something went wrong</h2>' +
+        '<p>Your data is still saved on this device. Reloading usually fixes it.</p>' +
+        '<button type="button" class="primary-button" onclick="location.reload()">Reload Mylo</button></div>';
+    }
+  }
+}
+render = renderSafely;
 render();
 
 // Keep signed-in devices in step: pull on load, when the tab returns, and when the connection comes back

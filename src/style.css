@@ -958,3 +958,20 @@ html[data-theme="dark"] .look-icon.active { background: #15344a; }
     transition-duration: .01ms !important; scroll-behavior: auto !important;
   }
 }
+
+/* ---------- Robustness and touch (v11) ---------- */
+.toast-undo { display: flex; align-items: center; gap: 14px; padding: 10px 10px 10px 18px; text-align: left; }
+.toast-action {
+  min-height: 36px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent;
+  color: var(--green); font: inherit; font-weight: 900; cursor: pointer;
+}
+html[data-theme="dark"] .toast-action { color: #58cc02; }
+.toast-action:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.crash-card { max-width: 420px; margin: 15vh auto; padding: 28px; text-align: center; display: grid; gap: 14px; justify-items: center; }
+.crash-card h2 { font-size: 22px; }
+.crash-card p { color: var(--muted); }
+@media (pointer: coarse) {
+  .delete-button { width: 44px; height: 44px; }
+  .task-check { width: 40px; height: 40px; }
+  .filter-btn, .look-cat { min-height: 44px; }
+}
