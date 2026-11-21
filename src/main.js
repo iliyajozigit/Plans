@@ -281,6 +281,23 @@ function accountMarkup() {
     '</form></div>';
 }
 
+function bindTabKeys(container) {
+  if (!container) return;
+  const tabs = [...container.querySelectorAll('[role="tab"]')];
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('keydown', event => {
+      const keys = { ArrowRight: 1, ArrowLeft: -1, Home: 'first', End: 'last' };
+      if (!(event.key in keys)) return;
+      event.preventDefault();
+      const target = keys[event.key] === 'first' ? 0
+        : keys[event.key] === 'last' ? tabs.length - 1
+        : (index + keys[event.key] + tabs.length) % tabs.length;
+      tabs[target].focus();
+      tabs[target].click();
+    });
+  });
+}
+
 function bindAccountPanel() {
   document.getElementById('plus-signout')?.addEventListener('click', () => signOut(true));
   const form = document.getElementById('plus-auth-form');
@@ -299,6 +316,7 @@ function bindAccountPanel() {
     document.getElementById('plus-auth-error').textContent = '';
   };
   tabs.forEach(tab => tab.addEventListener('click', () => setMode(tab.dataset.mode)));
+  bindTabKeys(document.getElementById('auth-tabs'));
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const data = new FormData(form);
@@ -378,6 +396,8 @@ function checkBadges() {
 function showToast(message) {
   const toast = document.createElement('div');
   toast.className = 'toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
   toast.textContent = message;
   document.body.appendChild(toast);
 
@@ -472,14 +492,14 @@ function render() {
 
         <nav class="navigation">
           <p class="nav-label">Personal space</p>
-          <a class="nav-item ${activeView === 'dashboard' ? 'active' : ''}" href="#dashboard" data-view="dashboard"><span class="nav-symbol">⌂</span><span>Overview</span></a>
-          <a class="nav-item ${activeView === 'planner' ? 'active' : ''}" href="#planner" data-view="planner"><span class="nav-symbol">✓</span><span>Planner</span></a>
-          <a class="nav-item ${activeView === 'growth' ? 'active' : ''}" href="#growth" data-view="growth"><span class="nav-symbol">↗</span><span>Growth</span></a>
-          <a class="nav-item ${activeView === 'profile' ? 'active' : ''}" href="#profile" data-view="profile"><span class="nav-symbol">●</span><span>Character</span></a>
+          <a class="nav-item ${activeView === 'dashboard' ? 'active' : ''}" ${activeView === 'dashboard' ? 'aria-current="page"' : ''} href="#dashboard" data-view="dashboard"><span class="nav-symbol">⌂</span><span>Overview</span></a>
+          <a class="nav-item ${activeView === 'planner' ? 'active' : ''}" ${activeView === 'planner' ? 'aria-current="page"' : ''} href="#planner" data-view="planner"><span class="nav-symbol">✓</span><span>Planner</span></a>
+          <a class="nav-item ${activeView === 'growth' ? 'active' : ''}" ${activeView === 'growth' ? 'aria-current="page"' : ''} href="#growth" data-view="growth"><span class="nav-symbol">↗</span><span>Growth</span></a>
+          <a class="nav-item ${activeView === 'profile' ? 'active' : ''}" ${activeView === 'profile' ? 'aria-current="page"' : ''} href="#profile" data-view="profile"><span class="nav-symbol">●</span><span>Character</span></a>
           <p class="nav-label">My tools</p>
-          <a class="nav-item ${activeView === 'focus' ? 'active' : ''}" href="#focus" data-view="focus"><span class="nav-symbol">◷</span><span>Focus</span></a>
-          <a class="nav-item ${activeView === 'journal' ? 'active' : ''}" href="#journal" data-view="journal"><span class="nav-symbol">▤</span><span>Journal</span></a>
-          <a class="nav-item ${activeView === 'settings' ? 'active' : ''}" href="#settings" data-view="settings"><span class="nav-symbol">⚙</span><span>Settings</span></a>
+          <a class="nav-item ${activeView === 'focus' ? 'active' : ''}" ${activeView === 'focus' ? 'aria-current="page"' : ''} href="#focus" data-view="focus"><span class="nav-symbol">◷</span><span>Focus</span></a>
+          <a class="nav-item ${activeView === 'journal' ? 'active' : ''}" ${activeView === 'journal' ? 'aria-current="page"' : ''} href="#journal" data-view="journal"><span class="nav-symbol">▤</span><span>Journal</span></a>
+          <a class="nav-item ${activeView === 'settings' ? 'active' : ''}" ${activeView === 'settings' ? 'aria-current="page"' : ''} href="#settings" data-view="settings"><span class="nav-symbol">⚙</span><span>Settings</span></a>
         </nav>
 
         <div class="sidebar-bottom">
@@ -495,7 +515,7 @@ function render() {
         </div>
       </aside>
 
-      <main class="main-content" id="dashboard">
+      <main class="main-content" id="app-main" tabindex="-1">
 
         <header class="topbar">
           <div>
@@ -649,7 +669,7 @@ function render() {
                 maxlength="100"
                 required
               >
-              <button type="submit">+</button>
+              <button type="submit" aria-label="Add task">+</button>
             </form>
 
             <div class="task-list">
@@ -659,6 +679,7 @@ function render() {
                     class="task-check"
                     data-action="task-toggle"
                     data-id="${task.id}"
+                    aria-label="${task.done ? 'Mark as not done' : 'Mark as done'}"
                   >${task.done ? '✓' : ''}</button>
 
                   <span>${escapeHTML(task.title)}</span>
@@ -688,10 +709,9 @@ function render() {
 
             <div class="habit-list">
               ${state.habits.map(habit => `
-                <div class="habit-row" style="display:flex;gap:8px;align-items:center">
+                <div class="habit-row">
                   <button
                     class="habit-item ${habit.done ? 'habit-done' : ''}"
-                    style="flex:1"
                     data-action="habit-toggle"
                     data-id="${habit.id}"
                   >
@@ -710,7 +730,7 @@ function render() {
             </div>
             <form id="habit-form" class="add-form">
               <input id="habit-input" placeholder="New habit..." maxlength="80" required>
-              <button type="submit">+</button>
+              <button type="submit" aria-label="Add habit">+</button>
             </form>
 
             <div class="habit-summary">
@@ -749,9 +769,9 @@ function render() {
 
           <div class="badge-filter-heading"><div><strong>Badge collection</strong><small>Track your progress</small></div><span>${state.earned.length} of ${badges.length}</span></div>
           <div class="badge-filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="earned">Earned</button>
-            <button class="filter-btn" data-filter="locked">Locked</button>
+            <button class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter-btn" data-filter="earned" aria-pressed="false">Earned</button>
+            <button class="filter-btn" data-filter="locked" aria-pressed="false">Locked</button>
           </div>
 
           <div class="badge-grid">
@@ -1419,6 +1439,7 @@ function mountProfile(main) {
   '<button type="button" role="tab" aria-selected="'+(activeProfileTab==='shop')+'" class="profile-tab '+(activeProfileTab==='shop'?'active':'')+'" data-profile-tab="shop">🛍 Shop</button>'+
   '</div>';
  root.innerHTML = '<div class="profile-bar">'+tabs+'</div>' + (activeProfileTab==='shop' ? shopMarkup(p) : characterMarkup(p));
+  bindTabKeys(root.querySelector('.profile-tabs'));
  root.querySelectorAll('[data-profile-tab]').forEach(btn=>btn.addEventListener('click',()=>{
   activeProfileTab=btn.dataset.profileTab;
   mountProfile(main);

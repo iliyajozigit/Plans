@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  --green: #58cc02;   --green-d: #46a302;  --green-soft: #d7ffb8;  --green-ink: #3d8c00;
+  --green: #58cc02;   --green-d: #46a302;  --green-soft: #d7ffb8;  --green-ink: #357a00;
   --blue: #1cb0f6;    --blue-d: #1899d6;   --blue-soft: #ddf4ff;
   --yellow: #ffc800;  --yellow-d: #e5a500; --yellow-soft: #fff4c2;
   --red: #ff4b4b;     --red-soft: #ffdfe0;
@@ -17,7 +17,7 @@
   --card: #ffffff;
   --card-muted: #f7faf4;
   --ink: #2b3a2f;
-  --muted: #6f7c70;
+  --muted: #5d6b5f;
   --line: #e2e8df;
   --line-strong: #cfd9cc;
   --shadow-card: 0 2px 0 var(--line-strong);
@@ -940,3 +940,21 @@ html[data-theme="dark"] .look-icon.active { background: #15344a; }
 .auth-card { max-width: 720px; margin: 8px auto 0; }
 .auth-head, .auth-tabs, .auth-form { max-width: 460px; width: 100%; margin-inline: auto; }
 /* Top-right character shortcut shows the real avatar */
+
+
+/* ---------- Accessibility pass (v10) ---------- */
+.skip-link {
+  position: fixed; top: 10px; left: 10px; z-index: 1000; transform: translateY(-160%);
+  padding: 10px 16px; border-radius: 12px; background: var(--ink); color: var(--bg); font-weight: 800;
+  text-decoration: none; transition: transform .15s ease;
+}
+.skip-link:focus { transform: translateY(0); outline: 3px solid var(--blue); outline-offset: 2px; }
+#app-main:focus { outline: none; }
+.habit-row { display: flex; gap: 8px; align-items: center; }
+.habit-row > .habit-item { flex: 1; min-width: 0; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+}
