@@ -474,7 +474,7 @@ function render() {
           <p class="nav-label">Personal space</p>
           <a class="nav-item ${activeView === 'dashboard' ? 'active' : ''}" href="#dashboard" data-view="dashboard"><span class="nav-symbol">⌂</span><span>Overview</span></a>
           <a class="nav-item ${activeView === 'planner' ? 'active' : ''}" href="#planner" data-view="planner"><span class="nav-symbol">✓</span><span>Planner</span></a>
-          <a class="nav-item ${activeView === 'growth' ? 'active' : ''}" href="#growth" data-view="growth"><span class="nav-symbol">↗</span><span>My growth</span></a>
+          <a class="nav-item ${activeView === 'growth' ? 'active' : ''}" href="#growth" data-view="growth"><span class="nav-symbol">↗</span><span>Growth</span></a>
           <a class="nav-item ${activeView === 'profile' ? 'active' : ''}" href="#profile" data-view="profile"><span class="nav-symbol">●</span><span>Character</span></a>
           <p class="nav-label">My tools</p>
           <a class="nav-item ${activeView === 'focus' ? 'active' : ''}" href="#focus" data-view="focus"><span class="nav-symbol">◷</span><span>Focus</span></a>
@@ -485,7 +485,7 @@ function render() {
         <div class="sidebar-bottom">
           <div class="mini-level">
             <span>Current level</span>
-            <strong>LV. ${getLevel()}</strong>
+            <strong>Level ${getLevel()}</strong>
             <div class="progress-track">
               <div style="width:${getLevelProgress()}%"></div>
             </div>
@@ -500,13 +500,13 @@ function render() {
         <header class="topbar">
           <div>
             <span class="eyebrow">YOUR DAILY PROGRESS</span>
-            <h1>${({dashboard:'Build your day',planner:'Daily planner',growth:'Your growth path',profile:'My character & badges',focus:'Focus space',journal:'Journal',settings:'Settings'})[activeView]}</h1>
+            <h1>${({dashboard:'Build your day',planner:'Daily planner',growth:'Your growth path',profile:'Character & shop',focus:'Focus space',journal:'Journal',settings:'Settings'})[activeView]}</h1>
             <p class="date-text" id="live-date">${formatDate()}</p>
           </div>
 
           <div class="topbar-right">
             <div class="level-pill">⭐ Level ${getLevel()}</div><div class="level-pill gem-wallet">💎 ${state.gems.toLocaleString('en-US')}</div>
-            <button class="avatar profile-shortcut" data-view="profile" aria-label="Go to character"><span class="profile-shortcut-mark" aria-hidden="true"><i></i><b></b><em></em></span></button>
+            <button class="avatar profile-shortcut" data-view="profile" aria-label="Go to character" title="My character"><span class="profile-shortcut-mark" aria-hidden="true"><i></i><b></b><em></em></span></button>
           </div>
         </header>
 
@@ -554,7 +554,7 @@ function render() {
                   <div class="growth-detail">
                     <span class="growth-dot orange-dot"></span>
                     <span>Goals</span>
-                    <strong>${getLevel()} LV</strong>
+                    <strong>${state.goals.filter(g => g.done).length} of ${state.goals.length}</strong>
                   </div>
                 </div>
               </div>
@@ -614,16 +614,16 @@ function render() {
           </div>
           <div class="daily-path-steps">
             <a href="#planner" data-view="planner" class="daily-path-step ${completedTasks > 0 ? 'step-started' : ''}">
-              <span class="daily-step-node">✓</span><span><strong>Plan</strong><small>${completedTasks} of ${state.tasks.length} tasks</small></span><b>←</b>
+              <span class="daily-step-node">✓</span><span><strong>Plan</strong><small>${completedTasks} of ${state.tasks.length} tasks</small></span><b>→</b>
             </a>
             <a href="#planner" data-view="planner" class="daily-path-step ${completedHabits > 0 ? 'step-started' : ''}">
-              <span class="daily-step-node">🌱</span><span><strong>Build a habit</strong><small>${completedHabits} of ${state.habits.length} habits</small></span><b>←</b>
+              <span class="daily-step-node">🌱</span><span><strong>Build a habit</strong><small>${completedHabits} of ${state.habits.length} habits</small></span><b>→</b>
             </a>
             <a href="#focus" data-view="focus" class="daily-path-step ${state.focusSessions > 0 ? 'step-started' : ''}">
-              <span class="daily-step-node">◷</span><span><strong>Deep focus</strong><small>${state.focusSessions} sessions completed</small></span><b>←</b>
+              <span class="daily-step-node">◷</span><span><strong>Deep focus</strong><small>${state.focusSessions} sessions completed</small></span><b>→</b>
             </a>
             <a href="#journal" data-view="journal" class="daily-path-step">
-              <span class="daily-step-node">✎</span><span><strong>Review your day</strong><small>Write a short note</small></span><b>←</b>
+              <span class="daily-step-node">✎</span><span><strong>Review your day</strong><small>Write a short note</small></span><b>→</b>
             </a>
           </div>
         </section>
@@ -851,7 +851,7 @@ function render() {
           <div class="page-intro"><h2>Journal</h2></div>
         </section>
 
-        <section class="page-view ${activeView === 'profile' ? 'active' : ''} profile-page" data-page="profile"><div class="page-intro"><span class="eyebrow">YOUR CHARACTER · YOUR JOURNEY</span><h2>My character & badges</h2><p>Build your look, collect your experiences and see your progress.</p></div><div id="profile-experience"></div></section>
+        <section class="page-view ${activeView === 'profile' ? 'active' : ''} profile-page" data-page="profile"><div class="page-intro"><span class="eyebrow">YOUR CHARACTER · YOUR JOURNEY</span><h2>Character & shop</h2><p>Build your look, collect your experiences and see your progress.</p></div><div id="profile-experience"></div></section>
         <section class="page-view ${activeView === 'settings' ? 'active' : ''}" data-page="settings">
           <div class="page-intro"><span class="eyebrow">PREFERENCES</span><h2>Your settings</h2><p>Manage the app's look, your goals and your data backup.</p></div>
         </section>
@@ -877,7 +877,7 @@ function bindEvents() {
       activeView = link.dataset.view;
       document.querySelectorAll('[data-view]').forEach(item => item.classList.toggle('active', item.classList.contains('nav-item') && item.dataset.view === activeView));
       document.querySelectorAll('[data-page]').forEach(page => page.classList.toggle('active', page.dataset.page === activeView));
-      const titles = { dashboard: 'Build your day', planner: 'Smart planner', growth: 'Your growth path', profile: 'My character & badges', focus: 'Focus space', journal: 'Journal', settings: 'Settings' };
+      const titles = { dashboard: 'Build your day', planner: 'Smart planner', growth: 'Your growth path', profile: 'Character & shop', focus: 'Focus space', journal: 'Journal', settings: 'Settings' };
       const heading = $('.topbar h1');
       if (heading) heading.innerHTML = `${titles[activeView]}`;
       history.replaceState(null, '', `#${activeView}`);
@@ -1353,13 +1353,12 @@ function characterMarkup(p){
  }).join('');
  return '<div class="look-layout">'+
   '<aside class="look-stage-card">'+avatarMarkup('large')+
-   '<div class="look-name-big">'+plusEscape(p.displayName||'My character')+'</div>'+
-   '<form id="simple-avatar-name" class="look-name-form"><input id="simple-avatar-name-input" name="displayName" maxlength="32" value="'+plusEscape(p.displayName||'')+'" placeholder="Character name" aria-label="Character name"><button type="submit">Save</button></form>'+
+      '<form id="simple-avatar-name" class="look-name-form"><input id="simple-avatar-name-input" name="displayName" maxlength="32" value="'+plusEscape(p.displayName||'')+'" placeholder="Character name" aria-label="Character name"><button type="submit">Save</button></form>'+
   '</aside>'+
   '<section class="look-editor">'+
    '<nav class="look-rail" aria-label="Character sections">'+rail+'</nav>'+
    '<div class="look-head"><h3>'+catInfo(activeAvatarCategory).label+'</h3></div>'+
-   '<div class="look-options">'+(choices||'<p class="simple-avatar-empty">Nothing to show here.</p>')+'</div>'+
+   '<div class="look-options" style="--cols:'+Math.min(5,Math.max(2,Math.ceil(((avatarChoices[activeAvatarCategory]||[]).length)/2)))+'">'+(choices||'<p class="simple-avatar-empty">Nothing to show here.</p>')+'</div>'+
   '</section>'+
  '</div>';
 }
@@ -1419,7 +1418,7 @@ function mountProfile(main) {
   '<button type="button" role="tab" aria-selected="'+(activeProfileTab==='character')+'" class="profile-tab '+(activeProfileTab==='character'?'active':'')+'" data-profile-tab="character">🧑 My character</button>'+
   '<button type="button" role="tab" aria-selected="'+(activeProfileTab==='shop')+'" class="profile-tab '+(activeProfileTab==='shop'?'active':'')+'" data-profile-tab="shop">🛍 Shop</button>'+
   '</div>';
- root.innerHTML = '<div class="profile-bar">'+tabs+gems+'</div>' + (activeProfileTab==='shop' ? shopMarkup(p) : characterMarkup(p));
+ root.innerHTML = '<div class="profile-bar">'+tabs+'</div>' + (activeProfileTab==='shop' ? shopMarkup(p) : characterMarkup(p));
  root.querySelectorAll('[data-profile-tab]').forEach(btn=>btn.addEventListener('click',()=>{
   activeProfileTab=btn.dataset.profileTab;
   mountProfile(main);

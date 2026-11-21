@@ -2,7 +2,7 @@
    Mylo — design system
    Duolingo-inspired: chunky 3D buttons, bold color, clear hierarchy.
    ========================================================= */
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   --green: #58cc02;   --green-d: #46a302;  --green-soft: #d7ffb8;  --green-ink: #3d8c00;
@@ -25,7 +25,7 @@
   --radius-md: 16px;
   --radius-sm: 12px;
 
-  font-family: 'Vazirmatn', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--ink);
   background: var(--bg);
   line-height: 1.7;
@@ -909,3 +909,34 @@ html[data-theme="dark"] .look-icon.active { background: #15344a; }
 @media (prefers-reduced-motion: reduce) {
   .auth-tabs [role="tab"], .auth-field input { transition: none; }
 }
+
+
+/* ---------- Audit fixes (v9) ---------- */
+/* Mobile bottom nav: labels fit in 7 equal columns */
+@media (max-width: 900px) {
+  .nav-item { font-size: 9.5px; letter-spacing: -.1px; padding: 6px 0; }
+}
+/* Character: section icons wrap instead of running off the edge */
+.look-rail { flex-wrap: wrap; overflow: visible; gap: 8px; }
+@media (max-width: 560px) { .look-icon { width: 48px; height: 48px; font-size: 21px; } }
+/* Character options: column count matches item count (avoids a lone last tile) */
+.look-options { grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)); }
+@media (max-width: 560px) { .look-options { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Buttons: green for actions, blue reserved for crystal purchases */
+.look-name-form button, .water-add { background: var(--green); box-shadow: 0 4px 0 var(--green-d); }
+.look-name-form input:focus { border-bottom-color: var(--green); }
+/* Habit rows read left-to-right */
+.habit-item { justify-content: flex-start; text-align: left; }
+.habit-title { text-align: left; }
+.habit-status { margin-left: auto; }
+/* Shop: badges sit above the item art, not on it; featured picks use the green accent */
+.shop-card { padding-top: 40px; }
+.shop-card.featured { border-color: var(--green); background: var(--card); box-shadow: 0 5px 0 var(--green-d); }
+.rarity { top: 10px; right: 10px; }
+.new-tag { top: 10px; left: 10px; }
+/* Growth: the hall of badges is not framed by a second card */
+.achievements-panel { background: transparent; border: 0; box-shadow: none; padding: 0; }
+/* Sign-in card matches the width of the settings panels */
+.auth-card { max-width: 720px; margin: 8px auto 0; }
+.auth-head, .auth-tabs, .auth-form { max-width: 460px; width: 100%; margin-inline: auto; }
+/* Top-right character shortcut shows the real avatar */
