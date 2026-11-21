@@ -148,7 +148,7 @@ const badges = [
 
 const SYNC_TOKEN_KEY = 'myLifeToken';
 const SYNC_USER_KEY = 'myLifeAccount';
-const sync = { token: null, username: null, timer: null, status: 'local', pending: false };
+const sync = { token: null, username: null, timer: null, retry: null, status: 'local', pending: false };
 try {
   sync.token = localStorage.getItem(SYNC_TOKEN_KEY);
   sync.username = localStorage.getItem(SYNC_USER_KEY);
@@ -175,8 +175,29 @@ async function apiCall(route, options = {}) {
   return body;
 }
 
+const DIRTY_KEY = 'myLifeDirty';
+let retryDelay = 5000;
+let lastPull = 0;
+
+function isDirty() {
+  try { return localStorage.getItem(DIRTY_KEY) === '1'; } catch { return false; }
+}
+function markDirty(value) {
+  try { value ? localStorage.setItem(DIRTY_KEY, '1') : localStorage.removeItem(DIRTY_KEY); } catch {}
+}
+function syncLabelText() {
+  if (sync.status === 'synced') return '☁️ Synced';
+  if (sync.status === 'offline') return '⚠️ Offline: changes are saved here and will sync automatically';
+  return '☁️ Syncing…';
+}
+function refreshSyncLabel() {
+  const el = document.getElementById('sync-label');
+  if (el) el.textContent = syncLabelText();
+}
+
 function scheduleSync() {
   if (!sync.token) return;
+  markDirty(true);
   sync.pending = true;
   clearTimeout(sync.timer);
   sync.timer = setTimeout(pushState, 800);
@@ -186,14 +207,27 @@ async function pushState() {
   if (!sync.token) return;
   clearTimeout(sync.timer);
   sync.pending = false;
+  sync.status = 'syncing';
+  refreshSyncLabel();
   try {
     await apiCall('/state', { method: 'PUT', body: JSON.stringify({ state }) });
     sync.status = 'synced';
+    markDirty(false);
+    retryDelay = 5000;
+    clearTimeout(sync.retry);
+    sync.retry = null;
   } catch (error) {
     if (error.status === 401) { signOut(false); return; }
     sync.status = 'offline';
     sync.pending = true;
+    markDirty(true);
+    // Retry with a growing delay so a flaky connection heals without user action
+    if (!sync.retry) {
+      sync.retry = setTimeout(() => { sync.retry = null; pushState(); }, retryDelay);
+      retryDelay = Math.min(retryDelay * 2, 120000);
+    }
   }
+  refreshSyncLabel();
 }
 
 function replaceStateFromServer(remote) {
@@ -207,6 +241,9 @@ function save_local_only() {
 
 async function pullState() {
   if (!sync.token) return;
+  // Local edits made while offline must reach the server before anything is replaced
+  if (isDirty()) return pushState();
+  lastPull = Date.now();
   try {
     const result = await apiCall('/state');
     if (result.state) {
@@ -214,12 +251,14 @@ async function pullState() {
       render();
     } else {
       await pushState();
+      return;
     }
     sync.status = 'synced';
   } catch (error) {
     if (error.status === 401) { signOut(false); return; }
     sync.status = 'offline';
   }
+  refreshSyncLabel();
 }
 
 async function authenticate(mode, username, password) {
@@ -231,6 +270,7 @@ async function authenticate(mode, username, password) {
     localStorage.setItem(SYNC_USER_KEY, result.username);
   } catch {}
   const remote = await apiCall('/state');
+  try { localStorage.setItem('myLifeLocalBackup', JSON.stringify(state)); } catch {}
   if (remote.state) replaceStateFromServer(remote.state);
   else await pushState();
   sync.status = 'synced';
@@ -244,6 +284,9 @@ function signOut(notify = true) {
   sync.username = null;
   sync.status = 'local';
   clearTimeout(sync.timer);
+  clearTimeout(sync.retry);
+  sync.retry = null;
+  markDirty(false);
   try {
     localStorage.removeItem(SYNC_TOKEN_KEY);
     localStorage.removeItem(SYNC_USER_KEY);
@@ -255,11 +298,11 @@ const SPROUT_MARK = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden
 
 function accountMarkup() {
   if (sync.token) {
-    const label = sync.status === 'synced' ? '☁️ Synced' : sync.status === 'offline' ? '⚠️ Offline; will sync later' : '☁️ Syncing';
+    const label = syncLabelText();
     return '<div class="plus-panel account-panel" id="plus-account">' +
       '<div class="plus-heading"><div><span class="eyebrow">ACCOUNT</span><h2>My account</h2>' +
       '<p>Your data syncs across all your devices.</p></div></div>' +
-      '<div class="settings-row"><div><strong>' + plusEscape(sync.username || '') + '</strong><small>' + label + '</small></div>' +
+      '<div class="settings-row"><div><strong>' + plusEscape(sync.username || '') + '</strong><small id="sync-label">' + label + '</small></div>' +
       '<button id="plus-signout" class="secondary-button" type="button">Sign out</button></div></div>';
   }
   return '<div class="plus-panel account-panel auth-card" id="plus-account">' +
@@ -1614,3 +1657,10 @@ function plusRender() {
 }
 render = function() { plusRender(); };
 render();
+
+// Keep signed-in devices in step: pull on load, when the tab returns, and when the connection comes back
+if (sync.token) pullState();
+window.addEventListener('online', () => { if (sync.token) (isDirty() ? pushState() : pullState()); });
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && sync.token && !isDirty() && Date.now() - lastPull > 60000) pullState();
+});
