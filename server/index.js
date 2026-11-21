@@ -13,6 +13,36 @@ const dist = path.join(root, 'dist');
 const dataDir = process.env.DATA_DIR || path.join(root, 'data');
 const port = Number(process.env.PORT) || 3000;
 const MAX_STATE_BYTES = 900_000;
+const SESSION_DAYS = 30;
+const AUTH_WINDOW_MS = 15 * 60 * 1000;
+const AUTH_MAX_ATTEMPTS = 10;
+const TRUST_PROXY = Boolean(process.env.TRUST_PROXY);
+
+// Simple in-memory limiter for sign-in and sign-up (per client address)
+const authAttempts = new Map();
+function limitAuth(req) {
+  const ip = (TRUST_PROXY && String(req.headers['x-forwarded-for'] || '').split(',')[0].trim()) || req.socket.remoteAddress || 'unknown';
+  const nowMs = Date.now();
+  const entry = authAttempts.get(ip);
+  if (!entry || entry.reset < nowMs) {
+    authAttempts.set(ip, { count: 1, reset: nowMs + AUTH_WINDOW_MS });
+    return;
+  }
+  entry.count += 1;
+  if (entry.count > AUTH_MAX_ATTEMPTS) throw new HttpError(429, 'Too many attempts. Please wait a few minutes and try again.');
+}
+setInterval(() => {
+  const nowMs = Date.now();
+  for (const [ip, entry] of authAttempts) if (entry.reset < nowMs) authAttempts.delete(ip);
+}, AUTH_WINDOW_MS).unref();
+
+const securityHeaders = {
+  'x-content-type-options': 'nosniff',
+  'x-frame-options': 'DENY',
+  'referrer-policy': 'same-origin',
+  'permissions-policy': 'camera=(), microphone=(), geolocation=()',
+  'content-security-policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+};
 
 fs.mkdirSync(dataDir, { recursive: true });
 const db = new DatabaseSync(path.join(dataDir, 'app.db'));
@@ -41,7 +71,7 @@ const stmt = {
   userByName: db.prepare('SELECT id, username, salt, hash FROM users WHERE username = ?'),
   insertUser: db.prepare('INSERT INTO users (username, salt, hash, created_at) VALUES (?, ?, ?, ?)'),
   insertSession: db.prepare('INSERT INTO sessions (token, user_id, created_at) VALUES (?, ?, ?)'),
-  sessionUser: db.prepare('SELECT u.id, u.username FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ?'),
+  sessionUser: db.prepare('SELECT u.id, u.username FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ? AND s.created_at > ?'),
   deleteSession: db.prepare('DELETE FROM sessions WHERE token = ?'),
   getState: db.prepare('SELECT data, updated_at FROM states WHERE user_id = ?'),
   upsertState: db.prepare(`INSERT INTO states (user_id, data, updated_at) VALUES (?, ?, ?)
@@ -52,7 +82,7 @@ const now = () => new Date().toISOString();
 const hashPassword = (password, salt) => crypto.scryptSync(password, salt, 64).toString('hex');
 
 function send(res, status, body) {
-  res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
+  res.writeHead(status, { ...securityHeaders, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
   res.end(JSON.stringify(body));
 }
 
@@ -84,7 +114,8 @@ function readJson(req, limit) {
 
 function currentUser(req) {
   const match = /^Bearer ([a-f0-9]{64})$/.exec(req.headers.authorization || '');
-  return match ? stmt.sessionUser.get(match[1]) || null : null;
+  const oldest = new Date(Date.now() - SESSION_DAYS * 24 * 3600 * 1000).toISOString();
+  return match ? stmt.sessionUser.get(match[1], oldest) || null : null;
 }
 
 function requireUser(req) {
@@ -111,6 +142,7 @@ async function handleApi(req, res, url) {
   const route = `${req.method} ${url.pathname}`;
 
   if (route === 'POST /api/register') {
+    limitAuth(req);
     const { username, password } = validCredentials(await readJson(req, 4096));
     if (stmt.userByName.get(username)) throw new HttpError(409, 'This username is already taken');
     const salt = crypto.randomBytes(16).toString('hex');
@@ -120,6 +152,7 @@ async function handleApi(req, res, url) {
   }
 
   if (route === 'POST /api/login') {
+    limitAuth(req);
     const { username, password } = validCredentials(await readJson(req, 4096));
     const user = stmt.userByName.get(username);
     const candidate = user ? hashPassword(password, user.salt) : '';
@@ -131,6 +164,10 @@ async function handleApi(req, res, url) {
   if (route === 'POST /api/logout') {
     const match = /^Bearer ([a-f0-9]{64})$/.exec(req.headers.authorization || '');
     if (match) stmt.deleteSession.run(match[1]);
+    return send(res, 200, { ok: true });
+  }
+
+  if (route === 'GET /api/health') {
     return send(res, 200, { ok: true });
   }
 
@@ -177,7 +214,7 @@ function serveStatic(req, res, url) {
     if (path.extname(rel)) return send(res, 404, { error: 'not found' });
     target = path.join(dist, 'index.html');
   }
-  res.writeHead(200, { 'content-type': mime[path.extname(target)] || 'application/octet-stream', 'cache-control': target.includes(`${path.sep}assets${path.sep}`) ? 'public, max-age=31536000, immutable' : 'no-cache' });
+  res.writeHead(200, { ...securityHeaders, 'content-type': mime[path.extname(target)] || 'application/octet-stream', 'cache-control': target.includes(`${path.sep}assets${path.sep}`) ? 'public, max-age=31536000, immutable' : 'no-cache' });
   fs.createReadStream(target).pipe(res);
 }
 
@@ -186,7 +223,7 @@ const server = http.createServer(async (req, res) => {
   try {
     if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
     if (url.pathname === '/' || url.pathname === '/Plans') {
-      res.writeHead(302, { location: '/Plans/' });
+      res.writeHead(302, { ...securityHeaders, location: '/Plans/' });
       return res.end();
     }
     if (url.pathname.startsWith('/Plans/') && fs.existsSync(dist)) return serveStatic(req, res, url);
@@ -194,8 +231,19 @@ const server = http.createServer(async (req, res) => {
   } catch (error) {
     if (error instanceof HttpError) return send(res, error.status, { error: error.message });
     console.error(error);
-    return send(res, 500, { error: 'خطای سرور' });
+    return send(res, 500, { error: 'Server error. Please try again.' });
   }
 });
 
-server.listen(port, () => console.log(`My Life running at http://localhost:${port}/Plans/`));
+server.requestTimeout = 30_000;
+server.listen(port, () => console.log(`Mylo running at http://localhost:${port}/Plans/`));
+
+function shutdown() {
+  server.close(() => {
+    try { db.close(); } catch {}
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(0), 5000).unref();
+}
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
