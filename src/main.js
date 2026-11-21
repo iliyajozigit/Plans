@@ -28,7 +28,7 @@ const defaultState = {
   notes: '',
   earned: [],
   focusSessions: 0,
-  profile: { displayName: 'My Life Adventurer', gender: 'boy', bio: 'On my way to a better me', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {}, genderInitialized: true },
+  profile: { displayName: 'Mylo Adventurer', gender: 'boy', bio: 'On my way to a better me', skin: '#d99b72', hairColor: '#49312f', hairStyle: 'wave', eyeColor: '#4b8177', outfitStyle: 'hoodie', outfitColor: '#7666df', accessory: 'glasses', background: 'blossom', unlocked: [], questClaims: {}, genderInitialized: true },
   gems: 120, streak: 0, longestStreak: 0, lastActiveDate: null,
   totalTasksCompleted: 0, totalHabitsCompleted: 0, xpByDate: {}, createdAt: today()
 };
@@ -143,7 +143,7 @@ const badges = [
   { id: 'water-lover', title: 'Health droplets', description: 'Log 8 glasses of water', icon: '💎', color: 'cyan', target: 8, type: 'water' },
   { id: 'focus-master', title: 'Focus master', description: 'Complete 5 focus sessions', icon: '⏱️', color: 'orange', target: 5, type: 'focus' },
   { id: 'xp-collector', title: 'XP hunter', description: 'Earn 100 XP', icon: '⭐', color: 'gold', target: 100, type: 'xp' },
-  { id: 'legend', title: 'My Life Legend', description: 'Reach 500 XP', icon: '👑', color: 'pink', target: 500, type: 'xp' }
+  { id: 'legend', title: 'Mylo Legend', description: 'Reach 500 XP', icon: '👑', color: 'pink', target: 500, type: 'xp' }
 ];
 
 const SYNC_TOKEN_KEY = 'myLifeToken';
@@ -303,7 +303,7 @@ function save() {
     scheduleSync();
     return true;
   } catch (error) {
-    console.warn('My Life could not save local data:', error);
+    console.warn('Mylo could not save local data:', error);
     if (!storageWarningShown && document.body) {
       storageWarningShown = true;
       showToast('Browser storage is unavailable; data will not persist after closing the page.');
@@ -438,9 +438,9 @@ function render() {
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-icon" aria-label="My Life">M</div>
+          <div class="brand-icon" role="img" aria-label="Mylo"><svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path d="M12 21.5V12.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M12.6 12.8C12.6 8.6 15.2 6 19.8 6c0 4.3-2.6 6.8-7.2 6.8z" fill="#fff"/><path d="M11.6 15.2C11.6 11.4 9.3 9.2 5 9.2c0 3.8 2.3 6 6.6 6z" fill="#fff" opacity=".8"/></svg></div>
           <div>
-            <h2>My Life</h2>
+            <h2>Mylo</h2>
             <span>YOUR DAILY PROGRESS</span>
           </div>
         </div>
@@ -832,7 +832,7 @@ function render() {
         </section>
 
         <footer class="footer">
-          <span>MY LIFE ✦</span>
+          <span>MYLO ✦</span>
           <p>Small steps. Big changes.</p>
           <span>Built for your better self</span>
         </footer>
@@ -1061,7 +1061,7 @@ save();
 render();
 
 
-// My Life Plus — incremental feature layer (keeps existing data and workflows).
+// Mylo Plus — incremental feature layer (keeps existing data and workflows).
 const originalRender = render;
 const plusDefaults = { theme: 'light', waterTarget: 8 };
 state.goals = Array.isArray(state.goals) ? state.goals : [];
