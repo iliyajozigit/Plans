@@ -1165,8 +1165,8 @@ function avatarMarkup(size, override) {
   vest:'<path d="M74 168 L90 200 L106 168 L114 238 H66Z" fill="#00000022"/><path d="M90 200 V238" stroke="#ffffffb0" stroke-width="2.4"/>',
   hanfu:'<path d="M74 168 L90 200 L76 238 H58Z" fill="#ffffff26"/><path d="M106 168 L90 200 L104 238 H122Z" fill="#ffffff26"/><path d="M90 200 V238" stroke="#f4d16b" stroke-width="3"/><path d="M60 230 H120" stroke="#f4d16b" stroke-width="2.4"/>'
  }[outfitStyle]||'';
- const eyeRx=eyeStyle==='wide'?7.4:eyeStyle==='round'?7:eyeStyle==='almond'?6.4:6.1;
- const eyeRy=eyeStyle==='wide'?8.6:eyeStyle==='round'?8:eyeStyle==='almond'?4.9:(girl?7.1:6.5);
+ const eyeRx=eyeStyle==='wide'?10.4:eyeStyle==='round'?10:eyeStyle==='almond'?9:9.2;
+ const eyeRy=eyeStyle==='wide'?12:eyeStyle==='round'?11.6:eyeStyle==='almond'?7:(girl?11.4:10.6);
  const eyeArt=(cx,mode,side)=>{
   const rx=eyeRx, ry=expression==='confident'?eyeRy*0.8:expression==='surprised'?eyeRy+1.2:eyeRy;
   if(mode==='closed') return '<path d="M'+(cx-rx)+' 102 Q'+cx+' '+(102+5)+' '+(cx+rx)+' 102" fill="none" stroke="'+ink+'" stroke-width="2.6" stroke-linecap="round"/>';
@@ -1175,12 +1175,8 @@ function avatarMarkup(size, override) {
   s+='<ellipse cx="'+cx+'" cy="'+(101.8)+'" rx="'+(rx*0.66).toFixed(2)+'" ry="'+(ry*0.74).toFixed(2)+'" fill="'+eyes+'"/>';
   s+='<ellipse cx="'+cx+'" cy="101.8" rx="'+(rx*0.66).toFixed(2)+'" ry="'+(ry*0.74).toFixed(2)+'" fill="url(#'+uid+'ir)"/>';
   s+='<circle cx="'+cx+'" cy="102" r="'+(rx*0.3).toFixed(2)+'" fill="#1d1512"/>';
-  s+='<circle cx="'+(cx+rx*0.28).toFixed(2)+'" cy="'+(101-ry*0.36).toFixed(2)+'" r="1.6" fill="#fff"/><circle cx="'+(cx-rx*0.3).toFixed(2)+'" cy="'+(101+ry*0.42).toFixed(2)+'" r=".8" fill="#fff" opacity=".8"/>';
+  s+='<circle cx="'+(cx+rx*0.28).toFixed(2)+'" cy="'+(101-ry*0.36).toFixed(2)+'" r="2.6" fill="#fff"/><circle cx="'+(cx-rx*0.3).toFixed(2)+'" cy="'+(101+ry*0.42).toFixed(2)+'" r="1.2" fill="#fff" opacity=".9"/>';
   s+='<path d="M'+(cx-rx-0.4)+' 101 Q'+cx+' '+(top-2.2).toFixed(2)+' '+(cx+rx+0.4)+' 101" fill="none" stroke="'+ink+'" stroke-width="2.1" stroke-linecap="round"/>';
-  if(girl){
-   const sg=side;
-   s+='<path d="M'+(cx+sg*rx)+' '+(top+2)+' l'+(sg*3.4)+' -1.6 M'+(cx+sg*(rx-1.2))+' '+(top+0.6)+' l'+(sg*3.1)+' -3.2" fill="none" stroke="'+ink+'" stroke-width="1.5" stroke-linecap="round"/>';
-  }
   return s;
  };
  const leftMode=expression==='sleepy'?'closed':expression==='wink'?'closed':'open';
@@ -1199,7 +1195,7 @@ function avatarMarkup(size, override) {
      : mouthStyle==='small'
       ? '<path d="M84 134 Q90 138 96 134" fill="none" stroke="'+lipC+'" stroke-width="2.4" stroke-linecap="round"/>'
       : '<path d="M79 131 Q90 145 102 131" fill="none" stroke="'+lipC+'" stroke-width="3" stroke-linecap="round"/>'+(girl?'<path d="M84 132.5 Q90 135.5 96 132.5" fill="none" stroke="#ffffff99" stroke-width="1.1" stroke-linecap="round"/>':'');
- const blush=detail==='blush'?0.46:girl?0.28:0.16;
+ const blush=detail==='blush'?0.8:girl?0.6:0.4;
  const faceDetail=detail==='freckles'
   ? '<g fill="#9c654b" opacity=".75"><circle cx="63" cy="119" r="1.5"/><circle cx="69" cy="122" r="1.4"/><circle cx="76" cy="120" r="1.3"/><circle cx="104" cy="120" r="1.3"/><circle cx="111" cy="122" r="1.4"/><circle cx="117" cy="119" r="1.5"/></g>'
   : detail==='beauty'?'<circle cx="115" cy="119" r="2" fill="#80513e"/>'
@@ -1226,19 +1222,19 @@ function avatarMarkup(size, override) {
   +'<radialGradient id="'+uid+'ir" cx=".5" cy=".38" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></radialGradient>'
   +'</defs>'
   +'<ellipse cx="90" cy="240" rx="58" ry="5.5" fill="#1e3a2a" opacity=".14"/>'
-  +shirtFill+shirtShade+clothes
+  +'<path d="'+shoulderW+'" fill="#000" opacity=".2" transform="translate(0 6)"/>'+shirtFill+shirtShade+clothes
   +'<path d="M80 146 H100 L104 178 Q90 188 76 178 Z" fill="var(--skin)"/><path d="M80 146 H100 L101 158 Q90 166 79 158Z" fill="#000" opacity=".14"/>'
-  +'<g fill="var(--hair)">'+hairBack+'</g>'
+  +'<g transform="translate(90 150) scale(1.06) translate(-90 -150)">'+'<g fill="var(--hair)">'+hairBack+'</g>'
   +'<g fill="var(--skin)"><ellipse cx="49" cy="105" rx="8" ry="12"/><ellipse cx="131" cy="105" rx="8" ry="12"/></g>'
   +'<path d="M52 101 Q48 105 52 110" fill="none" stroke="'+ink+'" stroke-opacity=".2" stroke-width="1.4" stroke-linecap="round"/><path d="M128 101 Q132 105 128 110" fill="none" stroke="'+ink+'" stroke-opacity=".2" stroke-width="1.4" stroke-linecap="round"/>'
-  +'<path d="'+facePath+'" fill="var(--skin)"/><path d="'+facePath+'" fill="url(#'+uid+'sg)"/>'
+  +'<path d="'+facePath+'" fill="var(--skin)"/><path d="M52 124 Q90 166 128 124 Q124 156 90 160 Q56 156 52 124Z" fill="#000" opacity=".08"/>'
   +faceDetail
   +'<path d="M88 116 Q91 124 94 120" fill="none" stroke="'+ink+'" stroke-opacity=".5" stroke-width="1.6" stroke-linecap="round"/>'
   +'<path d="'+browPath+'" fill="none" stroke="var(--hair)" stroke-width="'+browWeight+'" stroke-linecap="round"/>'
   +eyesArt
   +mouth
   +'<g fill="var(--hair)">'+fringe+'</g>'+shine
-  +accessoryArt
+  +accessoryArt+'</g>'
   +'</svg></div>';
 }
 function badgeArt(id) {
